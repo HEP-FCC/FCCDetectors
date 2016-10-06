@@ -1,5 +1,5 @@
-#ifndef DETSENSITIVE_ECALCALORIMETERSD_H
-#define DETSENSITIVE_ECALCALORIMETERSD_H
+#ifndef DETSENSITIVE_AGGREGATECALORIMETERSD_H
+#define DETSENSITIVE_AGGREGATECALORIMETERSD_H
 
 // DD4hep
 #include "DDG4/Geant4Hits.h"
@@ -9,17 +9,18 @@
 #include "G4VSensitiveDetector.hh"
 #include "G4THitsCollection.hh"
 
-/** EcalCalorimeterSD DetectorDescription/DetSensitive/src/EcalCalorimeterSD.h EcalCalorimeterSD.h
+/** AggregateCalorimeterSD DetectorDescription/DetSensitive/src/AggregateCalorimeterSD.h AggregateCalorimeterSD.h
  *
- *  Ecal sensitive detector for calorimeter (accumulates energy deposits).
+ *  Sensitive detector for calorimeter (aggregates energy deposits within each cell).
  *  It is based on DD4hep::Simulation::Geant4GenericSD<Calorimeter> (but it is not identical).
- *  No timing information is saved (energy deposits aggregated in the cells)
+ *  In particular, the position of the hit is set to G4Step::GetPreStepPoint() position.
+ *  No timing information is saved (energy deposits are aggregated in the cells)
  *
- *  @author    Jana Faltova
+ *  @author    Anna Zaborowska
  */
 
 namespace det {
-class EcalCalorimeterSD : public G4VSensitiveDetector
+class AggregateCalorimeterSD : public G4VSensitiveDetector
 {
   public:
   /** Constructor.
@@ -27,11 +28,11 @@ class EcalCalorimeterSD : public G4VSensitiveDetector
    *  @param aReadoutName Name of the readout (used to name the collection)
    *  @param aSeg Segmentation of the detector (used to retrieve the cell ID)
    */
-  EcalCalorimeterSD(const std::string& aDetectorName,
+  AggregateCalorimeterSD(const std::string& aDetectorName,
     const std::string& aReadoutName,
     const DD4hep::Geometry::Segmentation& aSeg);
   /// Destructor
-  virtual ~EcalCalorimeterSD();
+  virtual ~AggregateCalorimeterSD();
   /** Initialization.
    *  Creates the hit collection with the name passed in the constructor.
    *  The hit collection is registered in Geant.
@@ -49,10 +50,10 @@ class EcalCalorimeterSD : public G4VSensitiveDetector
 
 private:
   /// Collection of calorimeter hits
-  G4THitsCollection<DD4hep::Simulation::Geant4CalorimeterHit>* calorimeterCollection;
+  G4THitsCollection<DD4hep::Simulation::Geant4CalorimeterHit>* m_calorimeterCollection;
   /// Segmentation of the detector used to retrieve the cell Ids
   DD4hep::Geometry::Segmentation m_seg;
 };
 }
 
-#endif /* DETSENSITIVE_ECALCALORIMETERSD_H */
+#endif /* DETSENSITIVE_AGGREGATECALORIMETERSD_H */
