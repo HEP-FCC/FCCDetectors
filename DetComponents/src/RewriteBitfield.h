@@ -1,5 +1,5 @@
-#ifndef DETCOMPONENTS_REDOSEGMENTATION_H
-#define DETCOMPONENTS_REDOSEGMENTATION_H
+#ifndef DETCOMPONENTS_REWRITEBITFIELD_H
+#define DETCOMPONENTS_REWRITEBITFIELD_H
 
 // GAUDI
 #include "GaudiAlg/GaudiAlgorithm.h"
@@ -19,29 +19,27 @@ class Segmentation;
 
 // datamodel
 namespace fcc {
-class PositionedCaloHitCollection;
 class CaloHitCollection;
 }
 
-/** @class RedoSegmentation Detector/DetComponents/src/RedoSegmentation.h RedoSegmentation.h
+/** @class RewriteBitfield Detector/DetComponents/src/RewriteBitfield.h RewriteBitfield.h
  *
- *  Redo the segmentation after the simulation has ended.
- *  True positions of the hits are required!
- *  New readout (with new segmentation) has to be added to <readouts> tag in the detector description xml.
+ *  Rewrite the readout bitfield.
+ *  This can be used if the order of fields in the bitfield changed, or if some field should be removed.
+ *  Removal may be needed for some types of reconstruction.
+ *  New readout bitfield has to be added to <readouts> tag in the detector description xml.
  *  Cell IDs are rewritten from the old readout (`\b oldReadoutName`) to the new readout (`\b newReadoutName`).
- *  Names of the old segmentation fields need to be passed as a vector '\b oldSegmentationIds'.
- *  Those fields are replaced by the new segmentation.
+ *  Names of the fields to be removed (for verification) are passed as a vector '\b removeIds'.
  *
- *  For an example see Detector/DetComponents/tests/options/redoSegmentationXYZ.py
- *  and Detector/DetComponents/tests/options/redoSegmentationRPhi.py.
+ *  For an example see Detector/DetComponents/tests/options/rewriteBitfield.py
  *
  *  @author Anna Zaborowska
  */
 
-class RedoSegmentation : public GaudiAlgorithm {
+class RewriteBitfield : public GaudiAlgorithm {
 public:
-  explicit RedoSegmentation(const std::string&, ISvcLocator*);
-  virtual ~RedoSegmentation();
+  explicit RewriteBitfield(const std::string&, ISvcLocator*);
+  virtual ~RewriteBitfield();
   /**  Initialize.
    *   @return status code
    */
@@ -56,19 +54,12 @@ public:
   virtual StatusCode finalize() final;
 
 private:
-  /**  Get ID of the volume that contains the cell.
-   *   @param[in] aCellId ID of the cell.
-   *   @return ID of the volume.
-   */
-  uint64_t volumeID(uint64_t aCellId) const;
   /// Pointer to the geometry service
   SmartIF<IGeoSvc> m_geoSvc;
-  /// Handle for the EDM positioned hits to be read
-  DataHandle<fcc::PositionedCaloHitCollection> m_inHits{"hits/positionedCaloHits", Gaudi::DataHandle::Reader, this};
+  /// Handle for the EDM hits to be read
+  DataHandle<fcc::CaloHitCollection> m_inHits{"hits/caloInHits", Gaudi::DataHandle::Reader, this};
   /// Handle for the EDM hits to be written
   DataHandle<fcc::CaloHitCollection> m_outHits{"hits/caloOutHits", Gaudi::DataHandle::Writer, this};
-  /// New segmentation
-  dd4hep::DDSegmentation::Segmentation* m_segmentation;
   /// Name of the detector readout used in simulation
   Gaudi::Property<std::string> m_oldReadoutName{this, "oldReadoutName", "",
                                                 "Name of the detector readout used in simulation"};
@@ -76,12 +67,14 @@ private:
   Gaudi::Property<std::string> m_newReadoutName{this, "newReadoutName", "", "Name of the new detector readout"};
   /// Old bitfield decoder
   dd4hep::DDSegmentation::BitField64* m_oldDecoder;
-  /// Segmentation fields that are going to be replaced by the new segmentation
+  /// New bitfield decoder
+  dd4hep::DDSegmentation::BitField64* m_newDecoder;
+  /// Segmentation fields that are going to be removed from the readout
   Gaudi::Property<std::vector<std::string>> m_oldIdentifiers{
-      this, "oldSegmentationIds", {}, "Segmentation fields that are going to be replaced by the new segmentation"};
-  /// Detector fields that are going to be rewritten
+      this, "removeIds", {}, "Segmentation fields that are going to be removed"};
+  /// Detector fields that are going to be rewritten ( = old field - to be removed)
   std::vector<std::string> m_detectorIdentifiers;
   /// Limit of debug printing
   Gaudi::Property<uint> m_debugPrint{this, "debugPrint", 10, "Limit of debug printing"};
 };
-#endif /* DETCOMPONENTS_REDOSEGMENTATION_H */
+#endif /* DETCOMPONENTS_REWRITEBITFIELD_H */
