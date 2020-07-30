@@ -27,6 +27,7 @@ target_link_libraries(
   ${Geant4_LIBRARIES}
   rootIO
   DD4hep::DDCore
+  DD4hep::DDG4
 )
 
 dd4hep_generate_rootmap(ddDRsensitive)
