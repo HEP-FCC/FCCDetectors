@@ -29,16 +29,22 @@ message(${CMAKE_MODULE_PATH})
 
 add_subdirectory(Detector)
 
+# - install and export
+install(FILES
+  "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}"
+  )
 
 
 
 
 
-#install(EXPORT ${PROJECT_NAME}Targets
-#  NAMESPACE ${PROJECT_NAME}::
-#  FILE "${PROJECT_NAME}Targets.cmake"
-#  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/"
-#  )
+
+install(EXPORT ${PROJECT_NAME}Targets
+  NAMESPACE ${PROJECT_NAME}::
+  FILE "${PROJECT_NAME}Targets.cmake"
+  DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/"
+  )
 
 #gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)
 
