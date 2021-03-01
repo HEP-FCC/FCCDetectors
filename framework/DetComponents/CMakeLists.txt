@@ -13,7 +13,6 @@ gaudi_add_module(DetComponents
                  SOURCES ${_sources}
                  LINK k4FWCore::k4FWCore
                       k4FWCore::k4Interface
-                      DelphesEDM4HepConverter
                       Gaudi::GaudiAlgLib
                       Gaudi::GaudiKernel
                       EDM4HEP::edm4hep
