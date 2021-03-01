@@ -1,6 +1,5 @@
-#include "DetInterface/IGeoSvc.h"
+#include "k4Interface/IGeoSvc.h"
 
-#include "GaudiKernel/Property.h"
 #include "GaudiKernel/RndmGenerators.h"
 #include "GaudiKernel/Service.h"
 

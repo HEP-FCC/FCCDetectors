@@ -1,10 +1,10 @@
 #include "MergeCells.h"
 
 // FCCSW
-#include "DetInterface/IGeoSvc.h"
+#include "k4Interface/IGeoSvc.h"
 
 // datamodel
-#include "datamodel/CaloHitCollection.h"
+#include "edm4hep/CalorimeterHitCollection.h"
 
 // DD4hep
 #include "DD4hep/Detector.h"
@@ -74,7 +74,7 @@ StatusCode MergeCells::initialize() {
 
 StatusCode MergeCells::execute() {
   const auto inHits = m_inHits.get();
-  auto outHits = new fcc::CaloHitCollection();
+  auto outHits = new edm4hep::CalorimeterHitCollection();
 
   uint field_id = m_descriptor.fieldID(m_idToMerge);
   auto decoder = m_descriptor.decoder();
@@ -83,8 +83,13 @@ StatusCode MergeCells::execute() {
   uint debugIter = 0;
 
   for (const auto& hit : *inHits) {
-    fcc::CaloHit newHit = outHits->create(hit.core());
-    cellId = hit.cellId();
+    edm4hep::CalorimeterHit newHit = outHits->create();
+    newHit.setEnergy(hit.getEnergy());
+    newHit.setEnergyError(hit.getEnergyError());
+    newHit.setPosition(hit.getPosition());
+    newHit.setType(hit.getType());
+    newHit.setTime(hit.getTime());
+    cellId = hit.getCellID();
     value = (*decoder)[field_id].value(cellId);
     if (debugIter < m_debugPrint) {
       debug() << "old ID = " << value << endmsg;
@@ -104,7 +109,7 @@ StatusCode MergeCells::execute() {
     //decoder->set(cellId, field_id, value);
     //newHit.cellId(cellId);
     (*decoder)[field_id].set(cellId, value);
-    newHit.cellId(cellId);
+    newHit.setCellID(cellId);
   }
   m_outHits.put(outHits);
 

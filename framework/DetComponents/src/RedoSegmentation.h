@@ -6,7 +6,7 @@
 #include "GaudiKernel/ToolHandle.h"
 
 // FCCSW
-#include "FWCore/DataHandle.h"
+#include "k4FWCore/DataHandle.h"
 class IGeoSvc;
 
 // DD4hep
@@ -18,9 +18,8 @@ class Segmentation;
 }
 
 // datamodel
-namespace fcc {
-class PositionedCaloHitCollection;
-class CaloHitCollection;
+namespace edm4hep {
+class CalorimeterHitCollection;
 }
 
 /** @class RedoSegmentation Detector/DetComponents/src/RedoSegmentation.h RedoSegmentation.h
@@ -64,9 +63,9 @@ private:
   /// Pointer to the geometry service
   ServiceHandle<IGeoSvc> m_geoSvc;
   /// Handle for the EDM positioned hits to be read
-  DataHandle<fcc::PositionedCaloHitCollection> m_inHits{"hits/positionedCaloHits", Gaudi::DataHandle::Reader, this};
+  DataHandle<edm4hep::CalorimeterHitCollection> m_inHits{"hits/caloInHits", Gaudi::DataHandle::Reader, this};
   /// Handle for the EDM hits to be written
-  DataHandle<fcc::CaloHitCollection> m_outHits{"hits/caloOutHits", Gaudi::DataHandle::Writer, this};
+  DataHandle<edm4hep::CalorimeterHitCollection> m_outHits{"hits/caloOutHits", Gaudi::DataHandle::Writer, this};
   /// New segmentation
   dd4hep::DDSegmentation::Segmentation* m_segmentation;
   /// Name of the detector readout used in simulation

@@ -5,14 +5,14 @@
 #include "GaudiAlg/GaudiAlgorithm.h"
 
 // FCCSW
-#include "FWCore/DataHandle.h"
+#include "k4FWCore/DataHandle.h"
 class IGeoSvc;
 
 #include "DD4hep/IDDescriptor.h"
 
 // datamodel
-namespace fcc {
-class CaloHitCollection;
+namespace edm4hep {
+class CalorimeterHitCollection;
 }
 
 /** @class MergeCells Detector/DetComponents/src/MergeCells.h MergeCells.h
@@ -52,9 +52,9 @@ private:
   /// Pointer to the geometry service
   ServiceHandle<IGeoSvc> m_geoSvc;
   /// Handle for the EDM Hits to be read
-  DataHandle<fcc::CaloHitCollection> m_inHits{"hits/caloInHits", Gaudi::DataHandle::Reader, this};
+  DataHandle<edm4hep::CalorimeterHitCollection> m_inHits{"hits/caloInHits", Gaudi::DataHandle::Reader, this};
   /// Handle for the EDM Hits to be written
-  DataHandle<fcc::CaloHitCollection> m_outHits{"hits/caloOutHits", Gaudi::DataHandle::Writer, this};
+  DataHandle<edm4hep::CalorimeterHitCollection> m_outHits{"hits/caloOutHits", Gaudi::DataHandle::Writer, this};
   // Handle to the detector ID descriptor
   dd4hep::IDDescriptor m_descriptor;
   /// Name of the detector readout

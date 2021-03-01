@@ -2,10 +2,10 @@
 
 // FCCSW
 #include "DetCommon/DetUtils.h"
-#include "DetInterface/IGeoSvc.h"
+#include "k4Interface/IGeoSvc.h"
 
 // datamodel
-#include "datamodel/CaloHitCollection.h"
+#include "edm4hep/CalorimeterHitCollection.h"
 
 // DD4hep
 #include "DD4hep/Detector.h"
@@ -64,7 +64,7 @@ StatusCode MergeLayers::initialize() {
 
 StatusCode MergeLayers::execute() {
   const auto inHits = m_inHits.get();
-  auto outHits = new fcc::CaloHitCollection();
+  auto outHits = new edm4hep::CalorimeterHitCollection();
 
   // rewriting list of cell sizes to list of top boundaries to facilitate the loop over hits
   std::vector<unsigned int> listToMergeBoundary(m_listToMerge.size());
@@ -81,8 +81,13 @@ StatusCode MergeLayers::execute() {
   unsigned int debugIter = 0;
 
   for (const auto& hit : *inHits) {
-    fcc::CaloHit newHit = outHits->create(hit.core());
-    cellId = hit.cellId();
+    edm4hep::CalorimeterHit newHit = outHits->create();
+    newHit.setEnergy(hit.getEnergy());
+    newHit.setEnergyError(hit.getEnergyError());
+    newHit.setPosition(hit.getPosition());
+    newHit.setType(hit.getType());
+    newHit.setTime(hit.getTime());
+    cellId = hit.getCellID();
     value = decoder->get(cellId, field_id);
     if (debugIter < m_debugPrint) {
       debug() << "old ID = " << value << endmsg;
@@ -98,7 +103,7 @@ StatusCode MergeLayers::execute() {
       debugIter++;
     }
     decoder->set(cellId, field_id, value);
-    newHit.cellId(cellId);
+    newHit.setCellID(cellId);
   }
   m_outHits.put(outHits);
 

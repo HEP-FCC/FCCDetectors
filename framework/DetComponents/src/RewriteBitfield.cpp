@@ -1,10 +1,10 @@
 #include "RewriteBitfield.h"
 
 // FCCSW
-#include "DetInterface/IGeoSvc.h"
+#include "k4Interface/IGeoSvc.h"
 
 // datamodel
-#include "datamodel/CaloHitCollection.h"
+#include "edm4hep/CalorimeterHitCollection.h"
 
 // DD4hep
 #include "DD4hep/Detector.h"
@@ -79,10 +79,10 @@ StatusCode RewriteBitfield::execute() {
   uint64_t oldid = 0;
   uint debugIter = 0;
   for (const auto& hit : *inHits) {
-    fcc::CaloHit newHit = outHits->create();
-    newHit.energy(hit.energy());
-    newHit.time(hit.time());
-    dd4hep::DDSegmentation::CellID cID = hit.cellId();
+    edm4hep::CalorimeterHit newHit = outHits->create();
+    newHit.setEnergy(hit.getEnergy());
+    newHit.setTime(hit.getTime());
+    dd4hep::DDSegmentation::CellID cID = hit.getCellID();
     if (debugIter < m_debugPrint) {
       debug() << "OLD: " << m_oldDecoder->valueString(cID) << endmsg;
     }
@@ -92,7 +92,7 @@ StatusCode RewriteBitfield::execute() {
       oldid = m_oldDecoder->get(cID, detectorField);
       m_newDecoder->set(newID, detectorField, oldid);
     }
-    newHit.cellId(newID);
+    newHit.setCellID(newID);
     if (debugIter < m_debugPrint) {
       debug() << "NEW: " << m_newDecoder->valueString(newID) << endmsg;
       debugIter++;

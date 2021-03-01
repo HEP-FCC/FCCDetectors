@@ -1,5 +1,5 @@
 #include "MaterialScan.h"
-#include "DetInterface/IGeoSvc.h"
+#include "k4Interface/IGeoSvc.h"
 
 #include "GaudiKernel/IRndmGenSvc.h"
 #include "GaudiKernel/ITHistSvc.h"

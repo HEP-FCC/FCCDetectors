@@ -1,12 +1,10 @@
 #include "RedoSegmentation.h"
 
 // FCCSW
-#include "DetInterface/IGeoSvc.h"
+#include "k4Interface/IGeoSvc.h"
 
 // datamodel
-#include "datamodel/CaloHitCollection.h"
-#include "datamodel/Point.h"
-#include "datamodel/PositionedCaloHitCollection.h"
+#include "edm4hep/CalorimeterHitCollection.h"
 
 // DD4hep
 #include "DD4hep/Detector.h"
@@ -84,15 +82,16 @@ StatusCode RedoSegmentation::execute() {
   dd4hep::DDSegmentation::CellID oldid = 0;
   uint debugIter = 0;
   for (const auto& hit : *inHits) {
-    fcc::CaloHit newHit = outHits->create();
-    newHit.energy(hit.energy());
-    newHit.time(hit.time());
-    dd4hep::DDSegmentation::CellID cellId = hit.cellId();
+    edm4hep::CalorimeterHit newHit = outHits->create();
+    newHit.setEnergy(hit.getEnergy());
+    newHit.setTime(hit.getTime());
+    dd4hep::DDSegmentation::CellID cellId = hit.getCellID();
     if (debugIter < m_debugPrint) {
       debug() << "OLD: " << m_oldDecoder->valueString(cellId) << endmsg;
     }
-    // factor 10 to convert mm to cm
-    dd4hep::DDSegmentation::Vector3D position(hit.position().x / 10, hit.position().y / 10, hit.position().z / 10);
+    // factor 10 to convert mm to cm // TODO: check
+    auto pos = hit.getPosition();
+    dd4hep::DDSegmentation::Vector3D position(pos.x / 10., pos.y / 10., pos.z / 10.);
     // first calculate proper segmentation fields
     dd4hep::DDSegmentation::CellID newCellId = m_segmentation->cellID(position, position, 0);
     // now rewrite all other fields (detector ID)
@@ -100,7 +99,7 @@ StatusCode RedoSegmentation::execute() {
       oldid = m_oldDecoder->get(cellId, detectorField);
       m_segmentation->decoder()->set(newCellId, detectorField, oldid);
     }
-    newHit.cellId(newCellId);
+    newHit.setCellID(newCellId);
     if (debugIter < m_debugPrint) {
       debug() << "NEW: " << m_segmentation->decoder()->valueString(newCellId) << endmsg;
       debugIter++;
