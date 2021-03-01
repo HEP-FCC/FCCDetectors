@@ -1,10 +1,10 @@
 #include "SamplingFractionInLayers.h"
 
 // FCCSW
-#include "DetInterface/IGeoSvc.h"
+#include "k4Interface/IGeoSvc.h"
 
 // datamodel
-#include "datamodel/PositionedCaloHitCollection.h"
+#include "edm4hep/CalorimeterHitCollection.h"
 
 #include "CLHEP/Vector/ThreeVector.h"
 #include "GaudiKernel/ITHistSvc.h"
@@ -89,17 +89,17 @@ StatusCode SamplingFractionInLayers::execute() {
 
   const auto deposits = m_deposits.get();
   for (const auto& hit : *deposits) {
-    dd4hep::DDSegmentation::CellID cID = hit.core().cellId;
+    dd4hep::DDSegmentation::CellID cID = hit.getCellID();
     auto id = decoder->get(cID, m_layerFieldName);
-    sumElayers[id] += hit.core().energy;
+    sumElayers[id] += hit.getEnergy();
     // check if energy was deposited in the calorimeter (active/passive material)
     if (id >= m_firstLayerId) {
-      sumE += hit.core().energy;
+      sumE += hit.getEnergy();
       // active material of calorimeter
       auto activeField = decoder->get(cID, m_activeFieldName);
       if (activeField == m_activeFieldValue) {
-        sumEactive += hit.core().energy;
-        sumEactiveLayers[id] += hit.core().energy;
+        sumEactive += hit.getEnergy();
+        sumEactiveLayers[id] += hit.getEnergy();
       }
     }
   }

@@ -7,6 +7,8 @@ project(FCCDetectors)
 find_package(DD4hep)
 #---------------------------------------------------------------
 
+option(BUILD_FRAMEWORK "Build framework integration" ON)
+
 include(GNUInstallDirs)
 include(CTest)
 
@@ -28,6 +30,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 message(${CMAKE_MODULE_PATH})
 
 add_subdirectory(Detector)
+if(BUILD_FRAMEWORK)
+  add_subdirectory(framework)
+endif()
 
 # - install and export
 install(FILES

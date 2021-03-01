@@ -1,7 +1,6 @@
 #include "UpstreamMaterial.h"
 
-// FCCSW
-#include "DetInterface/IGeoSvc.h"
+#include "k4Interface/IGeoSvc.h"
 
 // datamodel
 #include "edm4hep/CalorimeterHitCollection.h"
@@ -75,7 +74,7 @@ StatusCode UpstreamMaterial::execute() {
   const auto particle = m_particle.get();
   double phi = 0;
   for (const auto& part : *particle) {
-    auto mom = part.getMomentum()
+    auto mom = part.getMomentum();
     phi = atan2(mom.y, mom.x);
   }
 
@@ -86,9 +85,9 @@ StatusCode UpstreamMaterial::execute() {
     const auto& field = "cryo";
     int id = decoder->get(cID, field);
     if (id == 0) {
-      sumEcells[id - m_firstLayerId] += hit.getEDep();
+      sumEcells[id - m_firstLayerId] += hit.getEnergy();
     } else {
-      sumEupstream += hit.getEDep();
+      sumEupstream += hit.getEnergy();
     }
   }
   for (uint i = 0; i < m_numLayers; i++) {
