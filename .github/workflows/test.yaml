@@ -17,7 +17,7 @@ jobs:
 
     - name: Setup Spack
       run: |
-        docker exec CI_container /bin/bash -c 'cd ./Package; curl -L -o spack.tar.gz https://gitlab.cern.ch/key4hep/k4-deploy/-/jobs/artifacts/master/raw/key4hep-spack_centos7-cvmfs.tar.gz?job=setup_spack_push;\
+        docker exec CI_container /bin/bash -c 'cd ./Package; curl -L -o spack.tar.gz https://gitlab.cern.ch/key4hep/k4-deploy/-/jobs/artifacts/release/raw/key4hep-spack_centos7-cvmfs.tar.gz?job=setup_spack_push;\
         tar xfz spack.tar.gz && rm spack.tar.gz;'
     - name: Compile
       run: |
