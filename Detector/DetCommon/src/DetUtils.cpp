@@ -73,7 +73,7 @@ std::vector<std::vector<uint>> combinations(int N, int K) {
     }
     indexes.push_back(tmp);
   } while (std::prev_permutation(bitmask.begin(), bitmask.end()));
-  return std::move(indexes);
+  return indexes;
 }
 
 std::vector<std::vector<int>> permutations(int K) {
@@ -91,7 +91,7 @@ std::vector<std::vector<int>> permutations(int K) {
     }
     indexes.push_back(tmp);
   }
-  return std::move(indexes);
+  return indexes;
 }
 
 int cyclicNeighbour(int aCyclicId, std::pair<int, int> aFieldExtremes) {
@@ -172,7 +172,7 @@ std::vector<uint64_t> neighbours(const dd4hep::DDSegmentation::BitFieldCoder& aD
       }
     }
   }
-  return std::move(neighbours);
+  return neighbours;
 }
 
 std::vector<std::pair<int, int>> bitfieldExtremes(const dd4hep::DDSegmentation::BitFieldCoder& aDecoder,
@@ -187,7 +187,7 @@ std::vector<std::pair<int, int>> bitfieldExtremes(const dd4hep::DDSegmentation::
       extremes.emplace_back(std::make_pair(0, (1 << width) - 1));
     }
   }
-  return std::move(extremes);
+  return extremes;
 }
 
 CLHEP::Hep3Vector envelopeDimensions(uint64_t aVolumeId) {
