@@ -1,11 +1,11 @@
-name: k4SimGeant4CITests
+name: CITestsSpack
 on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
-    - uses: cvmfs-contrib/github-action-cvmfs@main
+    - uses: cvmfs-contrib/github-action-cvmfs@v2
       with:
         cvmfs_repositories: 'sw.hsf.org,sw-nightlies.hsf.org,sft-nightlies.cern.ch,sft.cern.ch,geant4.cern.ch'
     - name: Start container
@@ -23,4 +23,5 @@ jobs:
       run: |
         docker exec CI_container /bin/bash -c 'cd ./Package; 
         source spack/share/spack/setup-env.sh;\
-        spack dev-build fccdetectors@master;' # --test=all needs some work
+        packagename=$(basename ${GITHUB_REPOSITORY,,});\
+        spack dev-build --test=root ${packagename}@main;' 
