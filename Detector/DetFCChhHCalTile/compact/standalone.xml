@@ -3,6 +3,11 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
 
+ <includes>
+    <gdmlFile  ref="${DD4hepINSTALL}/DDDetectors/compact/elements.xml"/>
+ </includes>
+
+
     <materials>
       <material name="Vacuum">
         <D type="density" unit="g/cm3" value="0.00000001" />
