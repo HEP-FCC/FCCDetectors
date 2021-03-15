@@ -29,6 +29,22 @@ message(${CMAKE_MODULE_PATH})
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 message(${CMAKE_MODULE_PATH})
 
+
+
+get_target_property(ddcore_lib DD4hep::DDCore LOCATION)
+get_filename_component(ddcore_loc ${ddcore_lib} DIRECTORY)
+function(k4_set_test_env _testname)
+foreach(_subdir DetCommon DetFCCeeCLD DetFCCeeCommon DetFCCeeECalInclined DetFCCeeHCalTile DetFCCeeIDEA DetFCCeeIDEA-LAr DetFCChhBaseline1 DetFCChhCalDiscs DetFCChhECalInclined DetFCChhECalSimple DetFCChhHCalTile DetFCChhTailCatcher DetFCChhTrackerTkLayout DetSegmentation DetSensitive DetTrackerSimple)
+   set( _subdirs "${CMAKE_BINARY_DIR}/Detector/${_subdir}:${_subdirs}")
+endforeach()
+  set_property(TEST ${_testname} APPEND PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}:${CMAKE_CURRENT_BINARY_DIR}:${ddcore_loc}:${_subdirs}:$ENV{LD_LIBRARY_PATH}")
+  set_property(TEST ${_testname} APPEND PROPERTY ENVIRONMENT "ROOT_INCLUDE_PATH=${ddcore_loc}/../include:$ENV{ROOT_INCLUDE_PATH}")
+  set_property(TEST ${_testname} APPEND PROPERTY ENVIRONMENT "DD4hepINSTALL=${ddcore_loc}/../")
+
+endfunction()
+
+
+
 add_subdirectory(Detector)
 if(BUILD_FRAMEWORK)
   add_subdirectory(framework)
