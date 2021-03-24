@@ -7,7 +7,6 @@ project(FCCDetectors)
 find_package(DD4hep)
 #---------------------------------------------------------------
 
-option(BUILD_FRAMEWORK "Build framework integration" ON)
 
 include(GNUInstallDirs)
 include(CTest)
@@ -46,9 +45,6 @@ endfunction()
 
 
 add_subdirectory(Detector)
-if(BUILD_FRAMEWORK)
-  add_subdirectory(framework)
-endif()
 
 # - install and export
 install(FILES
