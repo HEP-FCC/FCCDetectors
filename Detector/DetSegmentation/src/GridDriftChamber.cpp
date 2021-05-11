@@ -194,6 +194,7 @@ TVector3 GridDriftChamber::IntersectionTrackWire(const CellID& cID, const TVecto
 
 
 
-REGISTER_SEGMENTATION(GridDriftChamber)
-}
-}
+} // namespace DDSegmentation
+} // namespace dd4hep
+
+DECLARE_SEGMENTATION(GridDriftChamber, create_segmenation<dd4hep::DDSegmentation::GridDriftChamber>)

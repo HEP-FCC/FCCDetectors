@@ -50,6 +50,8 @@ double GridEta::eta(const CellID& cID) const {
   CellID etaValue = _decoder->get(cID, m_etaID);
   return binToPosition(etaValue, m_gridSizeEta, m_offsetEta);
 }
-REGISTER_SEGMENTATION(GridEta)
-}
-}
+
+} // namespace DDSegmentation
+} // namespace dd4hep
+
+DECLARE_SEGMENTATION(GridEta, create_segmenation<dd4hep::DDSegmentation::GridEta>)

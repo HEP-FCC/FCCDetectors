@@ -50,6 +50,8 @@ double GridTheta::theta(const CellID& cID) const {
   CellID thetaValue = _decoder->get(cID, m_thetaID);
   return binToPosition(thetaValue, m_gridSizeTheta, m_offsetTheta);
 }
-REGISTER_SEGMENTATION(GridTheta)
-}
-}
+
+} // namespace DDSegmentation
+} // namespace dd4hep
+
+DECLARE_SEGMENTATION(GridTheta, create_segmenation<dd4hep::DDSegmentation::GridTheta>)
