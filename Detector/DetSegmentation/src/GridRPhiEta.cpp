@@ -57,6 +57,6 @@ double GridRPhiEta::r(const CellID& cID) const {
   CellID rValue = _decoder->get(cID, m_rID);
   return binToPosition(rValue, m_gridSizeR, m_offsetR);
 }
-REGISTER_SEGMENTATION(GridRPhiEta)
-}
-}
+} // namespace DDSegmentation
+} // namespace dd4hep
+

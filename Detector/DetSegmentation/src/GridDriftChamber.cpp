@@ -1,4 +1,5 @@
 #include "DetSegmentation/GridDriftChamber.h"
+#include "DD4hep/Factories.h"
 
 namespace dd4hep {
 namespace DDSegmentation {
@@ -194,6 +195,6 @@ TVector3 GridDriftChamber::IntersectionTrackWire(const CellID& cID, const TVecto
 
 
 
-REGISTER_SEGMENTATION(GridDriftChamber)
-}
-}
+} // namespace DDSegmentation
+} // namespace dd4hep
+

@@ -1,4 +1,5 @@
 #include "DetSegmentation/GridEta.h"
+#include "DD4hep/Factories.h"
 
 namespace dd4hep {
 namespace DDSegmentation {
@@ -50,6 +51,7 @@ double GridEta::eta(const CellID& cID) const {
   CellID etaValue = _decoder->get(cID, m_etaID);
   return binToPosition(etaValue, m_gridSizeEta, m_offsetEta);
 }
-REGISTER_SEGMENTATION(GridEta)
-}
-}
+
+} // namespace DDSegmentation
+} // namespace dd4hep
+
