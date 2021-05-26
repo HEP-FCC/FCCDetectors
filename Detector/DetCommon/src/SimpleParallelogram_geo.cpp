@@ -1,3 +1,4 @@
+#include <array>
 #include "DD4hep/DetFactoryHelper.h"
 
 namespace det {
