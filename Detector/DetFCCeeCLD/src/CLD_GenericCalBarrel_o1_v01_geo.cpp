@@ -91,8 +91,7 @@ static Ref_t CLD_GenericCalBarrel_o1_v01_geo(Detector& theDetector, xml_h e, Sen
 
     dd4hep::xml::Dimension sdTyp = x_det.child(_U(sensitive));  
     std::string thesenstype = sdTyp.typeStr() ;
-    std::cout << " MANU  TYPE = " << thesenstype  << std::endl ;
-    //std::cout << " MANU  TYPE = " << thesenstype  << std::endl ;
+    sens.setType( "SimpleCalorimeterSD"  ) ;
 
     //std::string thesenstype = "calorimeter";  // default as of LCGEO
     //if ( x_det.hasAttr(_U(sensitive))  ) {
@@ -214,9 +213,6 @@ static Ref_t CLD_GenericCalBarrel_o1_v01_geo(Detector& theDetector, xml_h e, Sen
                 thickness_sum += slice_thickness/2;
                 
                 if (x_slice.isSensitive()) {
-                    //sens.setType("calorimeter");
-                    // sens.setType("SimpleCalorimeterSD");
-                    sens.setType( thesenstype  ) ;
                     slice_vol.setSensitiveDetector(sens);
                     
 #if DD4HEP_VERSION_GE( 0, 15 )
