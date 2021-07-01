@@ -17,8 +17,8 @@
   </info>
 
   <includes>
-    <gdmlFile  ref="../../DetCommon/compact/elements.xml"/>
-    <gdmlFile  ref="../../DetCommon/compact/materials.xml"/>
+    <gdmlFile  ref="../../../DetCommon/compact/elements.xml"/>
+    <gdmlFile  ref="../../../DetCommon/compact/materials.xml"/>
     <gdmlFile  ref="additional_materials.xml"/> 
   </includes>
 
@@ -31,10 +31,10 @@
 
   <include ref="./FCCee_DectDimensions.xml" />
 
-  <include ref="../../DetFCCeeCommon/compact/Beampipe.xml"/>
-  <include ref="../../DetFCCeeCommon/compact/HOMAbsorber.xml"/>
-  <include ref="../../DetFCCeeCommon/compact/BeamInstrumentation.xml"/>
-  <include ref="../../DetFCCeeCommon/compact/LumiCal.xml"/>
+  <include ref="../../../DetFCCeeCommon/compact/Beampipe.xml"/>
+  <include ref="../../../DetFCCeeCommon/compact/HOMAbsorber.xml"/>
+  <include ref="../../../DetFCCeeCommon/compact/BeamInstrumentation.xml"/>
+  <include ref="../../../DetFCCeeCommon/compact/LumiCal.xml"/>
 
   <include ref="Vertex.xml"/> 
   <include ref="InnerTracker.xml"/>
