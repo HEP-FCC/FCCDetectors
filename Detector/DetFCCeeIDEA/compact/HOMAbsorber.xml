@@ -2,11 +2,11 @@
 
   <info name="FCCee"
         title="FCCee Beam instrumentation: taken correspoding to CLD: HOMAbsorber_v00.xml"
-        author="nalipour taken from lcgeo"
+        author="from ILCSOFT/lcgeo/FCCee/compact/FCCee_o1_v04"
         url="no"
         status="development"
         version="1.0">
-    <comment> Higher mode absorber for FCCee detector based on CLD</comment>
+    <comment> Higher mode absorber for FCCee </comment>
   </info>
 
   <detectors>
@@ -43,7 +43,7 @@
 
     </detector>
 
-    <detector name="HOMAbsorbers_PunchThrough" type="Mask_o1_v01" insideTrackingVolume="true" vis="ITVis" >
+    <detector name="HOMAbsorbers_PunchThrough" type="DD4hep_Mask_o1_v01" insideTrackingVolume="true" vis="ITVis" >
       <parameter crossingangle="CrossingAngle" />
       
       <section type="PunchedCenter"        
