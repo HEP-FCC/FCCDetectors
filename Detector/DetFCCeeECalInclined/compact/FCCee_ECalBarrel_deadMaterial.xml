@@ -14,7 +14,6 @@
   <define>
     <!-- Redefinition of a constant from Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectDimensions.xml -->
     <constant name="BarECal_rmax" value="3700*mm"/>
-
     <!-- Inclination angle of the lead plates -->
     <constant name="InclinationAngle" value="50*degree"/>
     <!-- thickness of active volume between two absorber plates at barrel Rmin, measured perpendicular to the readout plate -->
@@ -39,11 +38,11 @@
     <!-- thickness of active volume between two absorber plates at EMBarrel_rmin, measuring perpendicular to the readout plate -->
     <constant name="LAr_thickness" value="LArGapThickness"/>
     <!-- passive layer consists of lead in the middle and steel on the outside, glued -->
-    <constant name="Pb_thickness" value="1.4*mm"/>
+    <constant name="Pb_thickness" value="1.8*mm"/>
     <!-- total amount of steel in one passive plate: it is divided for the outside layer on top and bottom -->
-    <constant name="Steel_thickness" value="0.4*mm"/>
+    <constant name="Steel_thickness" value="0.1*mm"/>
     <!-- total amount of glue in one passive plate: it is divided for the outside layer on top and bottom -->
-    <constant name="Glue_thickness" value="0.2*mm"/>
+    <constant name="Glue_thickness" value="0.1*mm"/>
     <!-- readout in between two absorber plates -->
     <constant name="readout_thickness" value="1.2*mm"/>
   </define>
