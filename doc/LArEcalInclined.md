@@ -71,7 +71,7 @@ Examples from the configuration file [Detector/DetFCCeeECalInclined/compact/FCCe
 
 Full simulations of the calorimeter consist of simulation, digitisation and reconstruction. What exactly is done in these steps is described below. It is recommended to run the simulation and digitisation in one go. The simulation is the most CPU consuming part. By performing the digitisation step we reduce the size of the output file a lot (the Geant4 hits are merged into cells). The output from this first step is used for the reconstruction. This allows to perform the optimisation of the reconstruction algorithms on the prepared simulated samples.
 
-You can find more details about the implemented algorithms [here](../../Reconstruction/doc/RecCalorimeter.md).
+You can find more details about the implemented algorithms [here](https://github.com/HEP-FCC/k4RecCalorimeter/blob/main/doc/RecCalorimeter.md).
 
 ### Geant4 simulation and digitisation
  - Generation of particle (e.g. particle gun, event generator)
@@ -124,7 +124,7 @@ createEcalBarrelCellsStep1 = CreateCaloCells("CreateECalBarrelCellsStep1",
  - Merge cells into clusters (sliding window algorithm, topoclusters)
    - Sliding window algorithm is used for electrons/photons
    - Topoclustering algorithm for hadrons/jets.
-   - Details are described [here](../../Reconstruction/doc/RecCalorimeter.md).
+   - Details are described [here](https://github.com/HEP-FCC/k4RecCalorimeter/blob/main/doc/RecCalorimeter.md).
  - Output: calorimeter clusters
  - Example script [Reconstruction/RecFCCeeCalorimeter/options/runFullCaloSystem_ReconstructionSW_noiseFromFile.py](../../Reconstruction/RecFCCeeCalorimeter/options/runFullCaloSystem_ReconstructionSW_noiseFromFile.py)
 
