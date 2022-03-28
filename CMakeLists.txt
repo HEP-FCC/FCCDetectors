@@ -3,9 +3,6 @@ CMAKE_MINIMUM_REQUIRED(VERSION 3.15)
 project(FCCDetectors)
 
 
-#---------------------------------------------------------------
-find_package(DD4hep)
-#---------------------------------------------------------------
 
 
 include(GNUInstallDirs)
@@ -29,6 +26,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 message(${CMAKE_MODULE_PATH})
 
 
+#---------------------------------------------------------------
+find_package(DD4hep)
+#---------------------------------------------------------------
 
 get_target_property(ddcore_lib DD4hep::DDCore LOCATION)
 get_filename_component(ddcore_loc ${ddcore_lib} DIRECTORY)
