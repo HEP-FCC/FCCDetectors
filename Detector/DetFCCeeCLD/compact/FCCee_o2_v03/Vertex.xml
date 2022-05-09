@@ -13,17 +13,21 @@
     <comment>CLD Vertex Detector for FCCee</comment>
   </info>
 
+  <define>
+    <constant name="VertexBarrel_zmax" value="12.5*cm"/>
+  </define>
+
     <comment>Tracking detectors</comment>
     <detectors>
         <detector name="Vertex" type="DD4hep_SubdetectorAssembly" vis="VXDVis">
 		<shape type="BooleanShape" operation="Subtraction" material="Air">
 		    <shape type="BooleanShape" operation="Subtraction">
 			<shape type="Tube" rmin="Vertex_inner_radius" rmax="Vertex_outer_radius" dz="Vertex_half_length"/>
-		        <shape type="Cone" rmin1="0" rmax1="0.150*Vertex_half_length-env_safety" rmin2="0" rmax2="Vertex_inner_radius" z="((Vertex_half_length-CentralBeamPipe_zmax)/2+env_safety)"/>
-		        <position x="0" y="0" z="-(CentralBeamPipe_zmax+(Vertex_half_length-CentralBeamPipe_zmax)/2+env_safety)" />
+		        <shape type="Cone" rmin1="0" rmax1="0.150*Vertex_half_length-env_safety" rmin2="0" rmax2="Vertex_inner_radius" z="((Vertex_half_length-VertexBarrel_zmax)/2+env_safety)"/>
+		        <position x="0" y="0" z="-(VertexBarrel_zmax+(Vertex_half_length-VertexBarrel_zmax)/2+env_safety)" />
 		    </shape>
-		    <shape type="Cone" rmin1="0" rmax1="Vertex_inner_radius" rmin2="0" rmax2="0.150*Vertex_half_length-env_safety" z="(Vertex_half_length-CentralBeamPipe_zmax)/2+env_safety"/>
-		    <position x="0" y="0" z="CentralBeamPipe_zmax+(Vertex_half_length-CentralBeamPipe_zmax)/2+env_safety" />
+		    <shape type="Cone" rmin1="0" rmax1="Vertex_inner_radius" rmin2="0" rmax2="0.150*Vertex_half_length-env_safety" z="(Vertex_half_length-VertexBarrel_zmax)/2+env_safety"/>
+		    <position x="0" y="0" z="VertexBarrel_zmax+(Vertex_half_length-VertexBarrel_zmax)/2+env_safety" />
 		</shape>
             <comment>Vertex Assembly</comment>
             <composite name="VertexBarrel"/>
@@ -41,7 +45,7 @@
     </display>
      
     <define>
-        <constant name="VertexBarrel_zmax" value="12.5*cm"/>
+        <!-- <constant name="VertexBarrel_zmax" value="CentralBeamPipe_zmax"/>  moved up to help volume definition -->
 	<constant name="VertexBarrel_r1" value="1.75*cm"/> 
         <constant name="VertexBarrel_r2" value="3.7*cm"/>
         <constant name="VertexBarrel_r3" value="5.7*cm"/>
