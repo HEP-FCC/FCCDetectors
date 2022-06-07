@@ -87,7 +87,6 @@
     <constant name="DCH_inner_radius" value="350*mm"/>
     <constant name="DCH_outer_radius" value="2000*mm"/>
     <constant name="DCH_half_length" value="2850*mm"/>
-    <!-- JF: silicon wrappers - is it a part of DCH? -->
     
     <!-- LAr ECAL Calo Barrel -->
     <constant name="BarECal_id" value="DetID_ECAL_Barrel"/>
@@ -95,6 +94,7 @@
     <constant name="BarECal_rmax" value="2800*mm"/>
     <constant name="BarECal_dz" value="3100*mm"/>
 
+    <!-- LAr ECAL Endcaps -->
     <constant name="ECalEndcap_inner_radius" value="350*mm"/>
     <constant name="ECalEndcap_outer_radius" value="2900*mm"/>
     <constant name="ECalEndcap_min_z" value="3200*mm"/>
@@ -106,13 +106,13 @@
     <constant name="BarHCal_rmax" value="4500*mm"/>
     <constant name="BarHCal_dz" value="2800*mm"/>
 
+    <!-- HCAL Endcaps -->
     <constant name="HCalEndcap_inner_radius1" value="3600*mm"/>
     <constant name="HCalEndcap_outer_radius1" value="4500*mm"/>
     <constant name="HCalEndcap_inner_radius2" value="2900*mm"/>
     <constant name="HCalEndcap_outer_radius2" value="HCalEndcap_outer_radius1"/>
     <constant name="HCalEndcap_inner_radius3" value="350*mm"/>
     <constant name="HCalEndcap_outer_radius3" value="HCalEndcap_outer_radius1"/>
-
     <constant name="HCalEndcap_min_z1" value="2900*mm"/>
     <constant name="HCalEndcap_max_z1" value="3400*mm"/>
     <constant name="HCalEndcap_min_z2" value="HCalEndcap_max_z1"/>
