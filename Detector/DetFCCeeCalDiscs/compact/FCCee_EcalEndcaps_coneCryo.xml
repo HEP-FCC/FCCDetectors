@@ -112,7 +112,7 @@
         <layer thickness="2" repeat="2" vis="emec_layer_vis"/>
         <layer thickness="4" repeat="16" vis="emec_layer_vis"/>
       </layers>
-      <active thickness="EMEC_lAr_thickness" vis="emec_lar_vis" sensitive="true">
+      <active thickness="EMEC_lAr_thickness" vis="emec_lar_vis">
         <material name="LAr"/>
       </active>
       <passive sensitive="false">
