@@ -8,27 +8,112 @@
         version="1.0">
     <comment> Final Focusing Quadrupoles simplified model </comment>
   </info>
+  
+  <define>
+    <!--  Definition of global dictionary constants          -->
+      <constant name="QC1_rmin" value="42/2*mm"/>
+      <constant name="QC1_rmax" value="64/2*mm"/>
+      <constant name="QC1L1_len" value="700*mm"/>
+      <constant name="QC1L2_len" value="1250*mm"/>
+      <constant name="QC1L3_len" value="1250*mm"/>
+      <constant name="QC1L1_start" value="2200*mm"/>
+      <constant name="QC1L2_start" value="QC1L1_start+QC1L1_len+8*cm"/>
+      <constant name="QC1L3_start" value="QC1L2_start+QC1L2_len+8*cm"/>    
+  </define>
 
   <detectors>
 
-    <detector name="QC1L1" type="MaterialEnvelope_o1_v01" vis="SeeThrough" id="DetID_FFQs" insideTrackingVolume="false" >
+    <detector name="QC1" type="MaterialEnvelope_o1_v01" vis="SeeThrough" id="DetID_FFQs" insideTrackingVolume="false" >
 	<parameter crossingangle="CrossingAngle" />
       <envelope vis="ECALVis">
       
      	 <shape type="BooleanShape" operation="union" material="Iron">
+	 
+	 	<!-- QC1L1 -->
       		<shape type="BooleanShape" operation="Intersection">
 			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
-      			<shape type="Cone" rmin1="42/2*mm" rmax1="64/2*mm" rmin2="42/2*mm" rmax2="64/2*mm" z="700/2*mm" material="Iron" />
-          		<position x="tan(0.5*abs(CrossingAngle))*(2.2+0.7/2)*m" y="0" z="(2.2+0.7/2)*m"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L1_len/2" material="Iron" />
+          		<position x="tan(0.5*abs(CrossingAngle))*(QC1L1_start+QC1L1_len/2)" y="0" z="(QC1L1_start+QC1L1_len/2)"/>
           		<rotation x="0" y="0.5*abs(CrossingAngle)" z="0"/>
 		</shape>
 		<shape type="BooleanShape" operation="Intersection">
 			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
-      			<shape type="Cone" rmin1="42/2*mm" rmax1="64/2*mm" rmin2="42/2*mm" rmax2="64/2*mm" z="700/2*mm" material="Iron" />
-          		<position x="tan(0.5*abs(CrossingAngle))*(2.2+0.7/2)*m" y="0" z="-(2.2+0.7/2)*m"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L1_len/2" material="Iron" />
+          		<position x="tan(0.5*abs(CrossingAngle))*(QC1L1_start+QC1L1_len/2)" y="0" z="-(QC1L1_start+QC1L1_len/2)"/>
           		<rotation x="0" y="-0.5*abs(CrossingAngle)" z="0"/>
 		</shape>
+		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L1_len/2" material="Iron" />
+          		<position x="-tan(0.5*abs(CrossingAngle))*(QC1L1_start+QC1L1_len/2)" y="0" z="(QC1L1_start+QC1L1_len/2)"/>
+          		<rotation x="0" y="-0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L1_len/2" material="Iron" />
+          		<position x="-tan(0.5*abs(CrossingAngle))*(QC1L1_start+QC1L1_len/2)" y="0" z="-(QC1L1_start+QC1L1_len/2)"/>
+          		<rotation x="0" y="0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		
+		<!-- QC1L2 -->
+      		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L2_len/2" material="Iron" />
+          		<position x="tan(0.5*abs(CrossingAngle))*(QC1L2_start+QC1L2_len/2)" y="0" z="(QC1L2_start+QC1L2_len/2)"/>
+          		<rotation x="0" y="0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L2_len/2" material="Iron" />
+          		<position x="tan(0.5*abs(CrossingAngle))*(QC1L2_start+QC1L2_len/2)" y="0" z="-(QC1L2_start+QC1L2_len/2)"/>
+          		<rotation x="0" y="-0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L2_len/2" material="Iron" />
+          		<position x="-tan(0.5*abs(CrossingAngle))*(QC1L2_start+QC1L2_len/2)" y="0" z="(QC1L2_start+QC1L2_len/2)"/>
+          		<rotation x="0" y="-0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L2_len/2" material="Iron" />
+          		<position x="-tan(0.5*abs(CrossingAngle))*(QC1L2_start+QC1L2_len/2)" y="0" z="-(QC1L2_start+QC1L2_len/2)"/>
+          		<rotation x="0" y="0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		
+		<!-- QC1L23-->
+      		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L3_len/2" material="Iron" />
+          		<position x="tan(0.5*abs(CrossingAngle))*(QC1L3_start+QC1L3_len/2)" y="0" z="(QC1L3_start+QC1L3_len/2)"/>
+          		<rotation x="0" y="0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L3_len/2" material="Iron" />
+          		<position x="tan(0.5*abs(CrossingAngle))*(QC1L3_start+QC1L3_len/2)" y="0" z="-(QC1L3_start+QC1L3_len/2)"/>
+          		<rotation x="0" y="-0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L3_len/2" material="Iron" />
+          		<position x="-tan(0.5*abs(CrossingAngle))*(QC1L3_start+QC1L3_len/2)" y="0" z="(QC1L3_start+QC1L3_len/2)"/>
+          		<rotation x="0" y="-0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		<shape type="BooleanShape" operation="Intersection">
+			<shape type="Box"  dx="world_side" dy="world_side" dz="world_side"/>
+      			<shape type="Cone" rmin1="QC1_rmin" rmax1="QC1_rmax" rmin2="QC1_rmin" rmax2="QC1_rmax" z="QC1L3_len/2" material="Iron" />
+          		<position x="-tan(0.5*abs(CrossingAngle))*(QC1L3_start+QC1L3_len/2)" y="0" z="-(QC1L3_start+QC1L3_len/2)"/>
+          		<rotation x="0" y="0.5*abs(CrossingAngle)" z="0"/>
+		</shape>
+		
+		
+		
+		
+		
 	</shape>
+	
+	
           
   
 
