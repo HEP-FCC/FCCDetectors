@@ -368,8 +368,7 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
 
   // creating shape for rows of layers (active material between two passive planes, with readout in the middle)
   // first define area between two passive planes, area can reach up to the symmetry axis of passive plane
-  dd4hep::Trapezoid activeOuterShape(activeInThickness, activeOutThickness, caloDim.dz(), caloDim.dz(),
-                                               planeLength / 2.);
+  dd4hep::Trd1 activeOuterShape(activeInThickness, activeOutThickness, caloDim.dz(), planeLength / 2.);
   // subtract readout shape from the middle
   dd4hep::SubtractionSolid activeShapeNoReadout(activeOuterShape, readoutShape);
 
@@ -419,8 +418,7 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
   }
   double layerOffset = layerFirstOffset;
   for (uint iLayer = 0; iLayer < numLayers; iLayer++) {
-    dd4hep::Trapezoid layerOuterShape(layerInThickness[iLayer], layerOutThickness[iLayer], caloDim.dz(),
-                                                caloDim.dz(), layerHeight[iLayer] / 2.);
+    dd4hep::Trd1 layerOuterShape(layerInThickness[iLayer], layerOutThickness[iLayer], caloDim.dz(), layerHeight[iLayer] / 2.);
     dd4hep::SubtractionSolid layerShapeNoReadout(layerOuterShape, readoutShape);
     dd4hep::SubtractionSolid layerShapeNoPassiveAbove(
         layerShapeNoReadout, passiveShape,
