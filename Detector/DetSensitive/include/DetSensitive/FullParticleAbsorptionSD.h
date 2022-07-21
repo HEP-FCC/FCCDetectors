@@ -2,7 +2,7 @@
 #define DETSENSITIVE_FULLPARTICLEABSORPTIONSD_H
 
 // DD4hep
-#include "DDG4/Geant4Hits.h"
+#include "DD4hep/Segmentations.h"
 #include "DDSegmentation/Segmentation.h"
 
 // Geant

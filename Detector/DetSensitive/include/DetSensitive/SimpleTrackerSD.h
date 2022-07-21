@@ -2,7 +2,7 @@
 #define DETSENSITIVE_SIMPLETRACKERSD_H
 
 // DD4hep
-#include "DDG4/Geant4Hits.h"
+#include "DD4hep/Segmentations.h"
 
 // Geant
 #include "G4THitsCollection.hh"
