@@ -36,7 +36,7 @@
 
   <readouts>
     <readout name="FFQ_Readout">
-      <id>system:8</id>
+      <id>${GlobalTrackerReadoutID}</id>-->
     </readout>
   </readouts>
 
