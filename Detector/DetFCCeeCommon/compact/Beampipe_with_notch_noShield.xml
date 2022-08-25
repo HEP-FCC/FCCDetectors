@@ -55,14 +55,26 @@
 
         <comment>Part of beampipe made of Copper</comment>
         
-            <section type="Center" start="BePartEnd_z"  end="SeparatedBeamPipe_z"  rMin1="CentralBeamPipe_rmax+(BePartEnd_z-CentralBeamPipe_zmax)*0.017"  rMin2="CentralBeamPipe_rmax+(BePartEnd_z-CentralBeamPipe_zmax)*0.017+(SeparatedBeamPipe_z-BePartEnd_z)*0.017"      rMax1="CentralBeamPipe_rmax+BeamPipeWidthFirstCone+(BePartEnd_z-CentralBeamPipe_zmax)*0.017"  rMax2="CentralBeamPipe_rmax+BeamPipeWidthFirstCone+(BePartEnd_z-CentralBeamPipe_zmax)*0.017+(SeparatedBeamPipe_z-BePartEnd_z)*0.017" material="Copper" name="CopperCone" />
+            <section type="Center" start="BePartEnd_z"  end="SeparatedBeamPipe_z"  
+		     rMin1="CentralBeamPipe_rmax+(BePartEnd_z-CentralBeamPipe_zmax)*0.017"  
+		     rMin2="SeparatedBeamPipe_rmax+0.015*SeparatedBeamPipe_z"      
+		     rMax1="CentralBeamPipe_rmax+BeamPipeWidthFirstCone+(BePartEnd_z-CentralBeamPipe_zmax)*0.017"  
+		     rMax2="SeparatedBeamPipe_rmax+BeamPipeWidthFirstCone+0.015*SeparatedBeamPipe_z" 
+		     material="Copper" name="CopperCone" />
 
-
+<!--rMin2="CentralBeamPipe_rmax+(BePartEnd_z-CentralBeamPipe_zmax)*0.017+(SeparatedBeamPipe_z-BePartEnd_z)*0.017"
+    rMax2="CentralBeamPipe_rmax+BeamPipeWidthFirstCone+(BePartEnd_z-CentralBeamPipe_zmax)*0.017+(SeparatedBeamPipe_z-BePartEnd_z)*0.017"-->
 
 
 <!-- Fix 2020.04.08 : -->
-            <section type="PunchedCenter"        start="SeparatedBeamPipe_z" end="SeparatedBeamPipe_z+3*mm"    rMin1="SeparatedBeamPipe_rmax"      rMin2="SeparatedBeamPipe_rmax"       rMax1="CentralBeamPipe_rmax+BeamPipeWidthFirstCone+(BePartEnd_z-CentralBeamPipe_zmax)*0.017+(SeparatedBeamPipe_z-BePartEnd_z)*0.017"     rMax2="CentralBeamPipe_rmax+BeamPipeWidthFirstCone+(BePartEnd_z-CentralBeamPipe_zmax)*0.017+(SeparatedBeamPipe_z-BePartEnd_z)*0.017 + 3*mm*0.017" material="Copper"     name="SplitVacChambers"/>
+            <section type="PunchedCenter"        start="SeparatedBeamPipe_z" end="SeparatedBeamPipe_z+3*mm"    
+		     rMin1="SeparatedBeamPipe_rmax"      rMin2="SeparatedBeamPipe_rmax"       
+		     rMax1="SeparatedBeamPipe_rmax+0.015*(SeparatedBeamPipe_z+3*mm)"
+		     rMax2="SeparatedBeamPipe_rmax+BeamPipeWidthFirstCone+0.015*(SeparatedBeamPipe_z+3*mm)" 
+		     material="Copper"     name="SplitVacChambers"/>
 
+<!-- rMax1="CentralBeamPipe_rmax+BeamPipeWidthFirstCone+(BePartEnd_z-CentralBeamPipe_zmax)*0.017+(SeparatedBeamPipe_z-BePartEnd_z)*0.017"
+     rMax2="CentralBeamPipe_rmax+BeamPipeWidthFirstCone+(BePartEnd_z-CentralBeamPipe_zmax)*0.017+(SeparatedBeamPipe_z-BePartEnd_z)*0.017 + 3*mm*0.017" -->
 
              <section type="DnstreamClippedFront" start="SeparatedBeamPipe_z+3.01*mm" end="6000*mm"  rMin1="SeparatedBeamPipe_rmax"  rMin2="SeparatedBeamPipe_rmax" rMax1="SeparatedBeamPipe_rmax+1*mm"  rMax2="SeparatedBeamPipe_rmax+1*mm"  material="Copper"      name="DownStreamBeamPipe_1"/>
 
