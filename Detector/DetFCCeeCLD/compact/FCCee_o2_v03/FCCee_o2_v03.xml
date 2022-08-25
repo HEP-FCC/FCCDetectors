@@ -31,24 +31,28 @@
 
   <include ref="./FCCee_DectDimensions.xml" />
 
-  <include ref="../../../DetFCCeeCommon/compact/Beampipe.xml"/>
-  <include ref="../../../DetFCCeeCommon/compact/HOMAbsorber.xml"/>
+<include ref="../../../DetFCCeeCommon/compact/Beampipe_with_notch_noShield.xml"/>
+<!--  <include ref="../../../DetFCCeeCommon/compact/Beampipe_noShield.xml"/> -->
+<include ref="../../../DetFCCeeCommon/compact/SRshielding.xml"/>
   <include ref="../../../DetFCCeeCommon/compact/BeamInstrumentation.xml"/>
   <include ref="../../../DetFCCeeCommon/compact/LumiCal.xml"/>
 
-  <include ref="Vertex.xml"/> 
-  <include ref="InnerTracker.xml"/>
-  <include ref="OuterTracker.xml"/>
+  <include ref="Vertex.xml"/>  
+  <include ref="InnerTracker.xml"/> 
+  <include ref="OuterTracker.xml"/> 
 
   <include ref="ECalBarrel.xml"/>
   <include ref="ECalEndcap.xml"/>
 
-    <include ref="HCalBarrel.xml"/>
-    <include ref="HCalEndcap.xml"/>
+    <include ref="HCalBarrel.xml"/> 
+    <include ref="HCalEndcap.xml"/> 
     <include ref="Solenoid.xml"/>
 
     <include ref="YokeBarrel.xml"/>
     <include ref="YokeEndcap.xml"/>
-
+    
+  <include ref="../../../DetFCCeeCommon/compact/FFQuads_sens.xml"/>
+    <!--<include ref="../../../DetFCCeeCommon/compact/FFQuads.xml"/> -->
+    <!--<include ref="../../../DetFCCeeCommon/compact/HOMAbsorber.xml"/>-->
 
 </lccdd>
