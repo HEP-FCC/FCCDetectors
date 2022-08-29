@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0"
+       xmlns:xs="http://www.w3.org/2001/XMLSchema"
+       xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
+
+  <info name="FluxDetector"
+    title="FCC flux detector"
+    author="J. Smiesko"
+    url="no"
+    status="development"
+    version="0.1">
+    <comment>
+      Calculates particle flux comming from the detector(s) it envelopes.
+    </comment>
+  </info>
+
+  <define>
+    <constant name="BarFlux_thickness" value="5*mm" />
+  </define>
+
+  <display>
+    <vis name="FluxDetVis"
+         r="0.2" g="0.6" b="0.2" alpha="1"
+         showDaughters="false"
+         visible="true" />
+  </display>
+
+  <readouts>
+    <readout name="FluxBarrelPhiEta">
+      <segmentation type="FCCSWGridPhiEta"
+                    grid_size_eta="0.01"
+                    phi_bins="704"
+                    offset_eta="-1.0"
+                    offset_phi="-pi+(pi/704.)"/>
+      <id>system:4,eta:9,phi:10</id>
+    </readout>
+  </readouts>
+
+  <detectors>
+    <detector name="FluxBarrel"
+              type="SimpleCylinder"
+              id="99"
+              readout="FluxBarrelPhiEta"
+              sensitive="true"
+              vis="FluxDetVis">
+      <material name="Vacuum" />
+      <sensitive type="FluxSD" />
+      <dimensions rmin="BarHCal_rmax"
+                  rmax="BarHCal_rmax+BarFlux_thickness"
+                  dz="BarHCal_dz"
+                  phi0="0"
+                  deltaphi="360*deg"
+                  z_offset="0*cm"
+                  material="Vacuum" />
+    </detector>
+  </detectors>
+
+</lccdd>

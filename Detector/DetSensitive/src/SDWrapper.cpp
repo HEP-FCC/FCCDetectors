@@ -8,6 +8,7 @@
 #include "DetSensitive/SimpleCalorimeterSD.h"
 #include "DetSensitive/SimpleTrackerSD.h"
 #include "DetSensitive/SimpleDriftChamber.h"
+#include "DetSensitive/FluxSD.h"
 
 namespace dd4hep {
 namespace sim {
@@ -61,6 +62,13 @@ static G4VSensitiveDetector* create_simple_driftchamber(const std::string& aDete
   return new det::SimpleDriftChamber(
       aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
 }
+// Factory method to create an instance of FluxSD
+static G4VSensitiveDetector* create_flux_sd(const std::string& aDetectorName,
+                                            dd4hep::Detector& aLcdd) {
+  std::string readoutName = aLcdd.sensitiveDetector(aDetectorName).readout().name();
+  return new det::FluxSD(
+      aDetectorName, readoutName, aLcdd.sensitiveDetector(aDetectorName).readout().segmentation());
+}
 }
 }
 
@@ -71,4 +79,5 @@ DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR(AggregateCalorimeterSD, dd4hep::sim::cr
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR(GflashCalorimeterSD, dd4hep::sim::create_gflash_calorimeter_sd)
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR(FullParticleAbsorptionSD, dd4hep::sim::create_full_particle_absorbtion_sd)
 DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR(SimpleDriftChamber, dd4hep::sim::create_simple_driftchamber)
+DECLARE_EXTERNAL_GEANT4SENSITIVEDETECTOR(FluxSD, dd4hep::sim::create_flux_sd)
 

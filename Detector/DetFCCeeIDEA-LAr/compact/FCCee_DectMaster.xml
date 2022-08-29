@@ -41,5 +41,6 @@
   <include ref="../../DetFCCeeCalDiscs/compact/FCCee_EcalEndcaps_coneCryo.xml"/>
   <include ref="../../DetFCCeeHCalTile/compact/FCCee_HCalEndcaps_ThreeParts_TileCal.xml"/>
   <include ref="MuonTagger.xml"/>
+  <include ref="../../DetCommon/compact/FluxDet.xml" />
 
 </lccdd>
