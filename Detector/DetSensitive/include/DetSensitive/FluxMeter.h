@@ -1,5 +1,5 @@
-#ifndef DETSENSITIVE_FLUXSD_H
-#define DETSENSITIVE_FLUXSD_H
+#ifndef DETSENSITIVE_FLUXMETER_H
+#define DETSENSITIVE_FLUXMETER_H
 
 // DD4hep
 #include "DD4hep/Segmentations.h"
@@ -12,7 +12,7 @@ namespace k4 {
   class Geant4CaloHit;
 }
 
-/** FluxSD Detector/DetSensitive/src/FluxSD.h FluxSD.h
+/** FluxMeter Detector/DetSensitive/src/FluxMeter.h FluxMeter.h
  *
  *  Sensitive detector for flux determination.
  *  It is based on dd4hep::sim::Geant4GenericSD<Calorimeter> (but it is not identical).
@@ -24,18 +24,18 @@ namespace k4 {
  */
 
 namespace det {
-  class FluxSD : public G4VSensitiveDetector {
+  class FluxMeter : public G4VSensitiveDetector {
   public:
     /** Constructor.
      *  @param aDetectorName Name of the detector
      *  @param aReadoutName Name of the readout (used to name the collection)
      *  @param aSeg Segmentation of the detector (used to retrieve the cell ID)
      */
-    FluxSD(const std::string& aDetectorName,
-           const std::string& aReadoutName,
-           const dd4hep::Segmentation& aSeg);
+    FluxMeter(const std::string& aDetectorName,
+              const std::string& aReadoutName,
+              const dd4hep::Segmentation& aSeg);
     /// Destructor
-    virtual ~FluxSD();
+    virtual ~FluxMeter();
     /** Initialization.
      *  Creates the hit collection with the name passed in the constructor.
      *  The hit collection is registered in Geant.
@@ -58,4 +58,4 @@ namespace det {
   };
 }
 
-#endif /* DETSENSITIVE_FLUXSD_H */
+#endif /* DETSENSITIVE_FLUXMETER_H */

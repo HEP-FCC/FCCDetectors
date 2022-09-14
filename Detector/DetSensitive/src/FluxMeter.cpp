@@ -1,4 +1,4 @@
-#include "DetSensitive/FluxSD.h"
+#include "DetSensitive/FluxMeter.h"
 
 // FCCSW
 #include "DetCommon/DetUtils.h"
@@ -18,9 +18,9 @@
 
 
 namespace det {
-  FluxSD::FluxSD(const std::string& aDetectorName,
-                 const std::string& aReadoutName,
-                 const dd4hep::Segmentation& aSeg)
+  FluxMeter::FluxMeter(const std::string& aDetectorName,
+                       const std::string& aReadoutName,
+                       const dd4hep::Segmentation& aSeg)
       : G4VSensitiveDetector(aDetectorName),
         m_fluxCollection(nullptr),
         m_seg(aSeg) {
@@ -28,9 +28,9 @@ namespace det {
     collectionName.insert(aReadoutName);
   }
 
-  FluxSD::~FluxSD() {}
+  FluxMeter::~FluxMeter() {}
 
-  void FluxSD::Initialize(G4HCofThisEvent* aHitsCollections) {
+  void FluxMeter::Initialize(G4HCofThisEvent* aHitsCollections) {
     // create a collection of hits and add it to G4HCofThisEvent
     // deleted in ~G4Event
     m_fluxCollection = new G4THitsCollection<k4::Geant4CaloHit>(SensitiveDetectorName,
@@ -46,7 +46,7 @@ namespace det {
 
   }
 
-  bool FluxSD::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
+  bool FluxMeter::ProcessHits(G4Step* aStep, G4TouchableHistory*) {
     G4StepPoint* preStep = aStep->GetPreStepPoint();
     // Determine if step is on the boundary
     // I'm not sure if check on boundary closeness is needed

@@ -3,7 +3,7 @@
        xmlns:xs="http://www.w3.org/2001/XMLSchema"
        xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
 
-  <info name="FluxDetector"
+  <info name="FluxMeter"
     title="FCC flux detector"
     author="J. Smiesko"
     url="no"
@@ -19,7 +19,7 @@
   </define>
 
   <display>
-    <vis name="FluxDetVis"
+    <vis name="FluxMeterVis"
          r="0.2" g="0.6" b="0.2" alpha="1"
          showDaughters="false"
          visible="true" />
@@ -42,9 +42,9 @@
               id="99"
               readout="FluxBarrelPhiEta"
               sensitive="true"
-              vis="FluxDetVis">
+              vis="FluxMeterVis">
       <material name="Vacuum" />
-      <sensitive type="FluxSD" />
+      <sensitive type="FluxMeter" />
       <dimensions rmin="BarHCal_rmax"
                   rmax="BarHCal_rmax+BarFlux_thickness"
                   dz="BarHCal_dz"
