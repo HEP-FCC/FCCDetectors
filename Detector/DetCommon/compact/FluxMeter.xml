@@ -4,18 +4,20 @@
        xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
 
   <info name="FluxMeter"
-    title="FCC flux detector"
+    title="FCC flux meter"
     author="J. Smiesko"
     url="no"
     status="development"
     version="0.1">
     <comment>
-      Calculates particle flux comming from the detector(s) it envelopes.
+      Measures particle flux comming from the detector(s) it envelopes.
     </comment>
   </info>
 
   <define>
-    <constant name="BarFlux_thickness" value="5*mm" />
+    <constant name="Flux_thickness" value="5*mm" />
+    <constant name="Flux_r" value="BarHCal_rmax" />
+    <constant name="Flux_z" value="BarHCal_dz" />
   </define>
 
   <display>
@@ -26,31 +28,63 @@
   </display>
 
   <readouts>
-    <readout name="FluxBarrelPhiEta">
-      <segmentation type="FCCSWGridPhiEta"
-                    grid_size_eta="0.01"
+    <readout name="FluxPhiTheta">
+      <segmentation type="FCCSWGridPhiTheta"
+                    grid_size_theta="1."
                     phi_bins="704"
-                    offset_eta="-1.0"
+                    offset_theta="-pi"
                     offset_phi="-pi+(pi/704.)"/>
-      <id>system:4,eta:9,phi:10</id>
+      <id>system:4,theta:9,phi:10</id>
     </readout>
   </readouts>
 
   <detectors>
     <detector name="FluxBarrel"
               type="SimpleCylinder"
-              id="99"
-              readout="FluxBarrelPhiEta"
+              id="97"
+              readout="FluxPhiTheta"
               sensitive="true"
               vis="FluxMeterVis">
       <material name="Vacuum" />
       <sensitive type="FluxMeter" />
-      <dimensions rmin="BarHCal_rmax"
-                  rmax="BarHCal_rmax+BarFlux_thickness"
-                  dz="BarHCal_dz"
+      <dimensions rmin="Flux_r"
+                  rmax="Flux_r + Flux_thickness"
+                  dz="Flux_z"
                   phi0="0"
                   deltaphi="360*deg"
                   z_offset="0*cm"
+                  material="Vacuum" />
+    </detector>
+    <detector name="FluxEndcapNegative"
+              type="SimpleCylinder"
+              id="98"
+              readout="FluxPhiTheta"
+              sensitive="true"
+              vis="FluxMeterVis">
+      <material name="Vacuum" />
+      <sensitive type="FluxMeter" />
+      <dimensions rmin="BeamPipeWidth / 2"
+                  rmax="BarHCal_rmax + Flux_thickness"
+                  dz="Flux_thickness"
+                  phi0="0"
+                  deltaphi="360*deg"
+                  z_offset="-BarHCal_dz"
+                  material="Vacuum" />
+    </detector>
+    <detector name="FluxEndcapPositive"
+              type="SimpleCylinder"
+              id="99"
+              readout="FluxPhiTheta"
+              sensitive="true"
+              vis="FluxMeterVis">
+      <material name="Vacuum" />
+      <sensitive type="FluxMeter" />
+      <dimensions rmin="BeamPipeWidth / 2"
+                  rmax="BarHCal_rmax + Flux_thickness"
+                  dz="Flux_thickness"
+                  phi0="0"
+                  deltaphi="360*deg"
+                  z_offset="BarHCal_dz"
                   material="Vacuum" />
     </detector>
   </detectors>
