@@ -78,8 +78,8 @@ namespace det {
     // std::cout << "Angle factor: " << angleFactor << std::endl;
 
     // Get cell area (Not used, needs correct segmentation)
-    uint64_t cellId = utils::cellID(m_seg, *aStep);
-    // std::vector<double> cellDim = m_seg.segmentation()->cellDimensions(cellId);
+    uint64_t cellID = utils::cellID(m_seg, *aStep);
+    // std::vector<double> cellDim = m_seg.segmentation()->cellDimensions(cellID);
     double cellArea = 1.;
 
     // Flux into the flux meter
@@ -89,39 +89,23 @@ namespace det {
     // std::cout << "flux: " << flux << std::endl;
 
     // Getting track info
-    // G4Track* aTrack = aStep->GetTrack();
+    G4Track* aTrack = aStep->GetTrack();
 
     // Should the particle be killed or left alone?
     // aTrack->SetTrackStatus(fStopAndKill);
     // return true;
 
-    // Part from dd4hep::sim::Geant4GenericSD<Calorimeter>
+    auto hit = new k4::Geant4CaloHit(
+      aTrack->GetTrackID(),
+      aTrack->GetDefinition()->GetPDGEncoding(),
+      flux,
+      aTrack->GetGlobalTime()
+    );
+    hit->cellID = cellID;
+    hit->energyDeposit = flux;
     CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
-    CLHEP::Hep3Vector postPos = aStep->GetPostStepPoint()->GetPosition();
-    CLHEP::Hep3Vector midPos = 0.5 * (postPos + prePos);
-
-    k4::Geant4CaloHit* hit = nullptr;
-    k4::Geant4CaloHit* hitMatch = nullptr;
-    // Check if there is already some energy deposit in that cell
-    for (size_t i = 0; i < m_fluxCollection->entries(); i++) {
-      hit = dynamic_cast<k4::Geant4CaloHit*>(m_fluxCollection->GetHit(i));
-      if (hit->cellID == cellId) {
-        hitMatch = hit;
-        hitMatch->energyDeposit += flux;
-        return true;
-      }
-    }
-    // if not, create a new hit
-    // deleted in ~G4Event
-    hitMatch = new k4::Geant4CaloHit(0, // track->GetTrackID()
-                                     0, // track->GetDefinition()->GetPDGEncoding()
-                                     flux,
-                                     0 // track ->GetGlobalTime()
-                                     ) ;
-
-    hitMatch->position = midPos;
-    hitMatch->cellID = cellId;
-    m_fluxCollection->insert(hitMatch);
+    hit->position = prePos;
+    m_fluxCollection->insert(hit);
 
     return true;
   }

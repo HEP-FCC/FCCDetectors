@@ -16,8 +16,10 @@
 
   <define>
     <constant name="Flux_thickness" value="5*mm" />
-    <constant name="Flux_r" value="BarHCal_rmax" />
-    <constant name="Flux_z" value="BarHCal_dz" />
+    <!-- <constant name="Flux_r" value="MuonTagger_outer_radius" />
+    <constant name="Flux_z" value="MuonTaggerEndcap_max_z" /> -->
+    <constant name="Flux_r" value="YokeEndcap_outer_radius" />
+    <constant name="Flux_z" value="YokeEndcap_max_z" />
   </define>
 
   <display>
@@ -63,12 +65,12 @@
               vis="FluxMeterVis">
       <material name="Vacuum" />
       <sensitive type="FluxMeter" />
-      <dimensions rmin="BeamPipeWidth / 2"
-                  rmax="BarHCal_rmax + Flux_thickness"
-                  dz="Flux_thickness"
+      <dimensions rmin="BeamPipeWidth / 2.0"
+                  rmax="Flux_r + Flux_thickness"
+                  dz="Flux_thickness / 2.0"
                   phi0="0"
                   deltaphi="360*deg"
-                  z_offset="-BarHCal_dz"
+                  z_offset="-(Flux_z + Flux_thickness / 2.0)"
                   material="Vacuum" />
     </detector>
     <detector name="FluxEndcapPositive"
@@ -80,11 +82,11 @@
       <material name="Vacuum" />
       <sensitive type="FluxMeter" />
       <dimensions rmin="BeamPipeWidth / 2"
-                  rmax="BarHCal_rmax + Flux_thickness"
-                  dz="Flux_thickness"
+                  rmax="Flux_r + Flux_thickness"
+                  dz="Flux_thickness / 2.0"
                   phi0="0"
                   deltaphi="360*deg"
-                  z_offset="BarHCal_dz"
+                  z_offset="Flux_z + Flux_thickness / 2.0"
                   material="Vacuum" />
     </detector>
   </detectors>

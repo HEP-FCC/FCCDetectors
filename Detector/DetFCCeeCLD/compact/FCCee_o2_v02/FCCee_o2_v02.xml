@@ -47,8 +47,11 @@
     <include ref="HCalEndcap.xml"/>
     <include ref="Solenoid.xml"/>
 
+    <!--
     <include ref="YokeBarrel.xml"/>
     <include ref="YokeEndcap.xml"/>
+    -->
 
+    <include ref="../../../DetCommon/compact/FluxMeter.xml" />
 
 </lccdd>
