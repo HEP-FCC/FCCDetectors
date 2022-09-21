@@ -3,7 +3,7 @@
 add_subdirectory(DetCommon)
 add_subdirectory(DetSensitive)
 add_subdirectory(DetSegmentation)
-add_subdirectory(DetComponents)
+add_subdirectory(DetComponent)
 
 add_subdirectory(DetFCChhTailCatcher)
 add_subdirectory(DetFCChhHCalTile)

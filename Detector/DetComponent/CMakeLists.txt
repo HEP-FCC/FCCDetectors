@@ -1,10 +1,10 @@
 ################################################################################
-# Package: DetComponents
+# Package: DetComponent
 ################################################################################
 
 
 file(GLOB sources src/*.cpp)
-gaudi_add_module(DetComponents
+gaudi_add_module(DetComponent
                  SOURCES ${sources}
                  LINK Gaudi::GaudiAlgLib
                       k4FWCore::k4FWCore
@@ -14,11 +14,11 @@ gaudi_add_module(DetComponents
                       DD4hep::DDG4
                       k4FWCore::k4Interface)
 
-install(TARGETS DetComponents
+install(TARGETS DetComponent
   EXPORT ${PROJECT_NAME}Targets
   RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT bin
   LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}" COMPONENT shlib
-  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/DetComponents"
+  PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}/DetComponent"
   COMPONENT dev)
 
 
