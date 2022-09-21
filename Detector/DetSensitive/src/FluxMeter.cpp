@@ -109,10 +109,6 @@ namespace det {
     // aTrack->SetTrackStatus(fStopAndKill);
     // return true;
 
-    std::cout << "Track momentum: " << aTrack->GetMomentum() << "\n";
-    std::cout << "preStep momentum: " << preStep->GetMomentum() << "\n";
-    std::cout << "PDG ID: " << aTrack->GetDefinition()->GetPDGEncoding() << "\n";
-
     return true;
   }
 }
