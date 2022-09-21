@@ -24,14 +24,16 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 
 # Dependencies--------------------------------------------------
+find_package(Gaudi)
+find_package(k4FWCore)
 find_package(DD4hep)
-
+find_package(EDM4HEP)
 
 # Environment  for tests----------------------------------------
 get_target_property(ddcore_lib DD4hep::DDCore LOCATION)
 get_filename_component(ddcore_loc ${ddcore_lib} DIRECTORY)
 function(k4_set_test_env _testname)
-foreach(_subdir DetCommon DetFCCeeCLD DetFCCeeCommon DetFCCeeECalInclined DetFCCeeHCalTile DetFCCeeIDEA DetFCCeeIDEA-LAr DetFCChhBaseline1 DetFCChhCalDiscs DetFCChhECalInclined DetFCChhECalSimple DetFCChhHCalTile DetFCChhTailCatcher DetFCChhTrackerTkLayout DetSegmentation DetSensitive DetTrackerSimple)
+  foreach(_subdir DetCommon DetComponents DetFCCeeCLD DetFCCeeCommon DetFCCeeECalInclined DetFCCeeHCalTile DetFCCeeIDEA DetFCCeeIDEA-LAr DetFCChhBaseline1 DetFCChhCalDiscs DetFCChhECalInclined DetFCChhECalSimple DetFCChhHCalTile DetFCChhTailCatcher DetFCChhTrackerTkLayout DetSegmentation DetSensitive DetTrackerSimple)
    set( _subdirs "${CMAKE_BINARY_DIR}/Detector/${_subdir}:${_subdirs}")
 endforeach()
   set_property(TEST ${_testname} APPEND PROPERTY ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}:${CMAKE_CURRENT_BINARY_DIR}:${ddcore_loc}:${_subdirs}:$ENV{LD_LIBRARY_PATH}")
@@ -56,3 +58,5 @@ install(EXPORT ${PROJECT_NAME}Targets
   FILE "${PROJECT_NAME}Targets.cmake"
   DESTINATION "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}/"
   )
+
+gaudi_install(CMAKE cmake/${PROJECT_NAME}Config.cmake)

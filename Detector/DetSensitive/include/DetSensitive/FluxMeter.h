@@ -9,7 +9,7 @@
 #include "G4VSensitiveDetector.hh"
 
 namespace k4 {
-  class Geant4CaloHit;
+  class Geant4FluxHit;
 }
 
 /** FluxMeter Detector/DetSensitive/src/FluxMeter.h FluxMeter.h
@@ -51,8 +51,8 @@ namespace det {
     virtual bool ProcessHits(G4Step* aStep, G4TouchableHistory*) final;
 
   private:
-    /// Collection of calorimeter hits
-    G4THitsCollection<k4::Geant4CaloHit>* m_fluxCollection;
+    /// Collection of calorimeter hits used to store flux
+    G4THitsCollection<k4::Geant4FluxHit>* m_fluxCollection;
     /// Segmentation of the detector used to retrieve the cell Ids
     dd4hep::Segmentation m_seg;
   };

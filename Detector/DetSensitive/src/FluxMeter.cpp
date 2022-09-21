@@ -1,8 +1,8 @@
 #include "DetSensitive/FluxMeter.h"
 
-// FCCSW
+// FCCDetectors
 #include "DetCommon/DetUtils.h"
-#include "DetCommon/Geant4CaloHit.h"
+#include "DetCommon/Geant4FluxHit.h"
 
 // DD4hep
 #include "DDG4/Defs.h"
@@ -33,7 +33,7 @@ namespace det {
   void FluxMeter::Initialize(G4HCofThisEvent* aHitsCollections) {
     // create a collection of hits and add it to G4HCofThisEvent
     // deleted in ~G4Event
-    m_fluxCollection = new G4THitsCollection<k4::Geant4CaloHit>(SensitiveDetectorName,
+    m_fluxCollection = new G4THitsCollection<k4::Geant4FluxHit>(SensitiveDetectorName,
                                                                 collectionName[0]);
     aHitsCollections->AddHitsCollection(
       G4SDManager::GetSDMpointer()->GetCollectionID(m_fluxCollection),
@@ -82,30 +82,36 @@ namespace det {
     // std::vector<double> cellDim = m_seg.segmentation()->cellDimensions(cellID);
     double cellArea = 1.;
 
-    // Flux into the flux meter
-    double flux = 1 * preStep->GetWeight()
-                    * angleFactor
-                    / cellArea;
-    // std::cout << "flux: " << flux << std::endl;
-
     // Getting track info
     G4Track* aTrack = aStep->GetTrack();
+
+    // Flux into the flux meter
+    double particleFlux = 1 * preStep->GetWeight()
+                            * angleFactor
+                            / cellArea;
+
+    auto hit = new k4::Geant4FluxHit(
+      aTrack->GetTrackID(),
+      aTrack->GetDefinition()->GetPDGEncoding(),
+      particleFlux,
+      preStep->GetTotalEnergy(),
+      aTrack->GetGlobalTime()
+    );
+    hit->cellId = cellID;
+    hit->position = preStep->GetPosition();
+    hit->particleVertex = aTrack->GetVertexPosition();
+    hit->momentum = preStep->GetMomentum();
+    hit->mass = preStep->GetMass();
+    hit->charge = preStep->GetCharge();
+    m_fluxCollection->insert(hit);
 
     // Should the particle be killed or left alone?
     // aTrack->SetTrackStatus(fStopAndKill);
     // return true;
 
-    auto hit = new k4::Geant4CaloHit(
-      aTrack->GetTrackID(),
-      aTrack->GetDefinition()->GetPDGEncoding(),
-      flux,
-      aTrack->GetGlobalTime()
-    );
-    hit->cellID = cellID;
-    hit->energyDeposit = flux;
-    CLHEP::Hep3Vector prePos = aStep->GetPreStepPoint()->GetPosition();
-    hit->position = prePos;
-    m_fluxCollection->insert(hit);
+    std::cout << "Track momentum: " << aTrack->GetMomentum() << "\n";
+    std::cout << "preStep momentum: " << preStep->GetMomentum() << "\n";
+    std::cout << "PDG ID: " << aTrack->GetDefinition()->GetPDGEncoding() << "\n";
 
     return true;
   }
