@@ -113,7 +113,7 @@ StatusCode SimG4SaveFluxHits::saveOutput(const G4Event& aEvent) {
           trackIDVec->emplace_back(hit->trackId);
           pdgIDVec->emplace_back(hit->pdgId);
           particleFluxVec->emplace_back(hit->particleFlux);
-          energyVec->emplace_back(hit->energy);
+          energyVec->emplace_back(hit->energy) * sim::g42edm::energy;
           timeVec->emplace_back(hit->time);
           particleVertexVec->emplace_back(std::vector<double>{
             hit->particleVertex.x() * sim::g42edm::length,
