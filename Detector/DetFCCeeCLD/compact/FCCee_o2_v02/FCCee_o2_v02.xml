@@ -40,8 +40,10 @@
   <include ref="InnerTracker.xml"/>
   <include ref="OuterTracker.xml"/>
 
+  <!--
   <include ref="ECalBarrel.xml"/>
   <include ref="ECalEndcap.xml"/>
+  -->
 
     <include ref="HCalBarrel.xml"/>
     <include ref="HCalEndcap.xml"/>
