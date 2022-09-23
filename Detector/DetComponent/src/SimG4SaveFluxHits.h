@@ -63,8 +63,10 @@ private:
   DataHandle<std::vector<int>> m_pdgID{"ParticlePDGID", Gaudi::DataHandle::Writer, this};
   /// The particle flux into the fluxmeter
   DataHandle<std::vector<double>> m_particleFlux{"ParticleFlux", Gaudi::DataHandle::Writer, this};
-  /// The energy of incoming particle into the fluxmeter
+  /// The kinetic energy of incoming particle into the fluxmeter
   DataHandle<std::vector<double>> m_energy{"ParticleEnergy", Gaudi::DataHandle::Writer, this};
+  /// The total energy of incoming particle into the fluxmeter
+  DataHandle<std::vector<double>> m_totalEnergy{"ParticleTotalEnergy", Gaudi::DataHandle::Writer, this};
   /// The time coordinate of the hit
   DataHandle<std::vector<double>> m_time{"HitTime", Gaudi::DataHandle::Writer, this};
   /// The creation vertex of the incoming particle

@@ -94,13 +94,14 @@ namespace det {
       aTrack->GetTrackID(),
       aTrack->GetDefinition()->GetPDGEncoding(),
       particleFlux,
-      preStep->GetTotalEnergy(),
+      preStep->GetKineticEnergy(),
       aTrack->GetGlobalTime()
     );
     hit->cellId = cellID;
     hit->position = preStep->GetPosition();
     hit->particleVertex = aTrack->GetVertexPosition();
     hit->momentum = preStep->GetMomentum();
+    hit->totalEnergy = preStep->GetTotalEnergy();
     hit->mass = preStep->GetMass();
     hit->charge = preStep->GetCharge();
     m_fluxCollection->insert(hit);

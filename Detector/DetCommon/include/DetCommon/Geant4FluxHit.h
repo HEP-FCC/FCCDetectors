@@ -52,8 +52,10 @@ public:
   int pdgId;
   /// The particle flux into the fluxmeter
   double particleFlux;
-  /// The energy flux into the fluxmeter
+  /// The particle kinetic energy into the fluxmeter
   double energy;
+  /// The particle total energy into the fluxmeter
+  double totalEnergy;
   /// The time coordinate of the energy deposit
   double time;
   /// The creation vertex of the incident particle

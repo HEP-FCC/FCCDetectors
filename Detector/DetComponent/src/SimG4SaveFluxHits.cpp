@@ -27,7 +27,8 @@ SimG4SaveFluxHits::SimG4SaveFluxHits(const std::string& aType, const std::string
   declareProperty("TrackID", m_trackID, "Handle for track ID of the incident particle");
   declareProperty("ParticlePDGID", m_pdgID, "Handle for PDG ID of the incident particle");
   declareProperty("ParticleFlux", m_particleFlux, "Handle for particle flux");
-  declareProperty("ParticleEnergy", m_energy, "Handle for energy of incoming particle");
+  declareProperty("ParticleEnergy", m_energy, "Handle for kinetic energy of incoming particle");
+  declareProperty("ParticleTotalEnergy", m_totalEnergy, "Handle for total energy of incoming particle");
   declareProperty("HitTime", m_time, "Handle for hit time");
   declareProperty("ParticleVertex", m_particleVertex, "Handle for creation vertex of the incident particle");
   declareProperty("ParticleMomentum", m_momentum, "Handle for momentum of the particle when entering fluxmeter");
@@ -81,6 +82,7 @@ StatusCode SimG4SaveFluxHits::saveOutput(const G4Event& aEvent) {
     auto pdgIDVec = m_pdgID.createAndPut();
     auto particleFluxVec = m_particleFlux.createAndPut();
     auto energyVec = m_energy.createAndPut();
+    auto totalEnergyVec = m_totalEnergy.createAndPut();
     auto timeVec = m_time.createAndPut();
     auto particleVertexVec = m_particleVertex.createAndPut();
     auto momentumVec = m_momentum.createAndPut();
@@ -114,6 +116,7 @@ StatusCode SimG4SaveFluxHits::saveOutput(const G4Event& aEvent) {
           pdgIDVec->emplace_back(hit->pdgId);
           particleFluxVec->emplace_back(hit->particleFlux);
           energyVec->emplace_back(hit->energy * sim::g42edm::energy);
+          totalEnergyVec->emplace_back(hit->totalEnergy * sim::g42edm::energy);
           timeVec->emplace_back(hit->time);
           particleVertexVec->emplace_back(std::vector<double>{
             hit->particleVertex.x() * sim::g42edm::length,
