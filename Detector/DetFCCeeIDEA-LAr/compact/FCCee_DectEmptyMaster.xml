@@ -3,6 +3,8 @@
   xmlns:xs="http://www.w3.org/2001/XMLSchema"
   xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
 
+  <include ref="${DD4hepINSTALL}/DDDetectors/compact/detector_types.xml" />
+
   <includes>
     <gdmlFile  ref="../../DetCommon/compact/elements.xml"/>
     <gdmlFile  ref="../../DetCommon/compact/materials.xml"/>

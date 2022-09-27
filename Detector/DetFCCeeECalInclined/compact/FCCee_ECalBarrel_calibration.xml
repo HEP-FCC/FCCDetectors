@@ -75,7 +75,8 @@
   </readouts>
 
   <detectors>
-    <detector id="BarECal_id" name="ECalBarrel" type="EmCaloBarrelInclined" readout="ECalBarrelEta">
+    <detector id="BarECal_id" name="ECalBarrel" readout="ECalBarrelEta" type="EmCaloBarrelInclined">
+      <type_flags type=" DetType_CALORIMETER + DetType_ELECTROMAGNETIC + DetType_BARREL">
       <sensitive type="SimpleCalorimeterSD"/>
       <dimensions rmin="BarCryoECal_rmin" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz" vis="ecal_envelope"/>
       <cryostat name="ECAL_Cryo">

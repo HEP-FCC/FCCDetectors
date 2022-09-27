@@ -1,5 +1,6 @@
 #include "DD4hep/DetFactoryHelper.h"
 #include "DD4hep/Handle.h"
+#include "XML/Utilities.h"
 
 // todo: remove gaudi logging and properly capture output
 #define endmsg std::endl
@@ -517,6 +518,10 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
   dd4hep::PlacedVolume envelopePhysVol = motherVol.placeVolume(envelopeVol);
   envelopePhysVol.addPhysVolID("system", xmlDetElem.id());
   caloDetElem.setPlacement(envelopePhysVol);
+
+  // Set type flags
+  dd4hep::xml::setDetectorTypeFlag(xmlDetElem, caloDetElem);
+
   return caloDetElem;
 }
 }  // namespace det
