@@ -20,7 +20,9 @@
     <constant name="Flux_z" value="MuonTaggerEndcap_max_z" /> -->
     <!-- <constant name="Flux_r" value="YokeEndcap_outer_radius" />
     <constant name="Flux_z" value="YokeEndcap_max_z" /> -->
-    <constant name="Flux_r" value="Solenoid_outer_radius + 5*mm" />
+    <!-- <constant name="Flux_r" value="Solenoid_outer_radius + 5*mm" />
+    <constant name="Flux_z" value="world_z - 5*mm" /> -->
+    <constant name="Flux_r" value="YokeBarrel_outer_radius + 5*mm" />
     <constant name="Flux_z" value="world_z - 5*mm" />
   </define>
 
