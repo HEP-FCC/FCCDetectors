@@ -19,15 +19,6 @@
     </comment>
   </info>
 
-  <materials>
-    <material name="LKr">
-      <!--<D value="1.396" unit="g/cm3" />-->
-      <D value="2.416" unit="g/cm3" />
-      <composite n="1" ref="Kr"/>
-    </material>
-  </materials>
-
-
   <define>
     <!-- Inclination angle of the lead plates -->
     <constant name="InclinationAngle" value="50*degree"/>
