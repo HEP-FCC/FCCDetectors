@@ -40,6 +40,7 @@
     <constant name="LAr_thickness" value="2.306*mm"/>
     <!-- passive layer consists of lead in the middle and steel on the outside, glued -->
     <constant name="Pb_thickness" value="1.5*mm*2./2.16"/>
+    <constant name="Pb_thickness_max" value="Pb_thickness" />
     <!-- total amount of steel in one passive plate: it is divided for the outside layer on top and bottom -->
     <constant name="Steel_thickness" value="0.4*mm*2./2.16"/>
     <!-- total amount of glue in one passive plate: it is divided for the outside layer on top and bottom -->
@@ -89,6 +90,9 @@
 	       <inner thickness="Pb_thickness" sensitive="false">
             <material name="Lead"/>
           </inner>
+	       <innerMax thickness="Pb_thickness_max" sensitive="false">
+            <material name="Lead"/>
+          </innerMax>
 	       <glue thickness="Glue_thickness" sensitive="false">
             <material name="lArCaloGlue"/>
           </glue>
