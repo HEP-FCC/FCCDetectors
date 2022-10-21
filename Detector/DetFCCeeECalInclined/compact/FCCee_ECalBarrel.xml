@@ -51,8 +51,8 @@
     <!-- use a different value for Pb_thickness_max when employing trapezoidal planes -->
     <!-- approximate constant sampling fraction: make the absorber grow linearly with the radius,
          taking into account the angular projection effect -->
-    <!--<constant name="Pb_thickness_max" value="1.3 * Pb_thickness * EMBarrel_rmax/EMBarrel_rmin *
-    cos(InclinationAngle - phi) / cos(InclinationAngle)" />-->
+    <!-- <constant name="Pb_thickness_max" value="1.3 * Pb_thickness * EMBarrel_rmax/EMBarrel_rmin *
+         cos(InclinationAngle - phi) / cos(InclinationAngle)" />-->
     <constant name="Pb_thickness_max" value="Pb_thickness" />
     <!-- total amount of steel in one passive plate: it is divided for the outside layer on top and bottom -->
     <constant name="Steel_thickness" value="0.1*mm"/>
@@ -70,15 +70,15 @@
     <!-- readout for the simulation -->
     <!-- offset in eta is eta max value including cryostat -->
     <readout name="ECalBarrelEta">
-        <!-- segmentation type="GridTheta" grid_size_theta="0.5625" offset_theta="-0.83"/ -->
-        <segmentation type="GridEta" grid_size_eta="0.01" offset_eta="-1.0"/>
+      <!-- segmentation type="GridTheta" grid_size_theta="0.5625" offset_theta="-0.83"/ -->
+      <segmentation type="GridEta" grid_size_eta="0.01" offset_eta="-1.0"/>
       <id>system:4,cryo:1,type:3,subtype:3,layer:8,module:11,eta:9</id>
     </readout>
     <!-- readout for the reconstruction -->
     <!-- phi position is calculated based on the centre of volume (hence it cannot be done in the simulation from energy deposits position) -->
     <readout name="ECalBarrelPhiEta">
-        <!-- segmentation type="FCCSWGridPhiTheta" grid_size_theta="0.5625" phi_bins="768" offset_theta="-0.83" offset_phi="-pi+(pi/768.)"/ -->
-        <segmentation type="FCCSWGridPhiEta" grid_size_eta="0.01" phi_bins="768" offset_eta="-1.0" offset_phi="-pi+(pi/768.)"/>
+      <!-- segmentation type="FCCSWGridPhiTheta" grid_size_theta="0.5625" phi_bins="768" offset_theta="-0.83" offset_phi="-pi+(pi/768.)"/ -->
+      <segmentation type="FCCSWGridPhiEta" grid_size_eta="0.01" phi_bins="768" offset_eta="-1.0" offset_phi="-pi+(pi/768.)"/>
       <id>system:4,cryo:1,type:3,subtype:3,layer:8,eta:9,phi:10</id>
     </readout>
   </readouts>
@@ -90,44 +90,43 @@
       <dimensions rmin="BarCryoECal_rmin" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz" vis="ecal_envelope"/>
       <cryostat name="ECAL_Cryo">
         <material name="Aluminum"/>
-	      <dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoThicknessFront" rmax1="BarCryoECal_rmax-CryoThicknessBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
-	      <front sensitive="false"/> <!-- inner wall of the cryostat -->
-	      <side sensitive="false"/> <!-- both sides of the cryostat -->
-	      <back sensitive="false"/> <!-- outer wall of the cryostat -->
+        <dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoThicknessFront" rmax1="BarCryoECal_rmax-CryoThicknessBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
+        <front sensitive="false"/> <!-- inner wall of the cryostat -->
+        <side sensitive="false"/> <!-- both sides of the cryostat -->
+        <back sensitive="false"/> <!-- outer wall of the cryostat -->
       </cryostat>
       <calorimeter name="EM_barrel">
-	<!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
-	      <dimensions rmin="EMBarrel_rmin" rmax="EMBarrel_rmax" dz="EMBarrel_dz" offset="-InclinationAngle"/>
-	      <active thickness="LAr_thickness">
-          <material name="LAr"/>
-	  <!-- overlap offset is a specific feature of the construction; do not change! -->
-	  <!-- one volume for a gap on both side of the readout) --> 
+        <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
+        <dimensions rmin="EMBarrel_rmin" rmax="EMBarrel_rmax" dz="EMBarrel_dz" offset="-InclinationAngle"/>
+        <active thickness="LAr_thickness">
+          <material name="LKr"/>
+          <!-- overlap offset is a specific feature of the construction; do not change! -->
+          <!-- one volume for a gap on both side of the readout) --> 
           <overlap offset="0.5"/>
         </active>
         <passive>
           <rotation angle="InclinationAngle"/>  <!-- inclination angle -->
-	       <inner thickness="Pb_thickness" sensitive="false">
+          <inner thickness="Pb_thickness" sensitive="false">
             <material name="Lead"/>
           </inner>
-	       <innerMax thickness="Pb_thickness_max" sensitive="false">
+          <innerMax thickness="Pb_thickness_max" sensitive="false">
             <material name="Lead"/>
           </innerMax>
-	       <glue thickness="Glue_thickness" sensitive="false">
+          <glue thickness="Glue_thickness" sensitive="false">
             <material name="lArCaloGlue"/>
           </glue>
-	       <outer thickness="Steel_thickness" sensitive="false">
+          <outer thickness="Steel_thickness" sensitive="false">
             <material name="lArCaloSteel"/>
           </outer>
         </passive>
         <readout thickness="readout_thickness" sensitive="false">
           <material name="PCB"/>
         </readout>
-        <layers> <!-- pcb electrode longitudinal segmentation in the radial direction -->
-	       <layer thickness="1.5*cm" repeat="1"/>
-	       <layer thickness="3.5*cm" repeat="11"/>
+        <layers> <!-- pcb electrode segmentation in the radial direction -->
+           <layer thickness="1.5*cm" repeat="1"/>
+           <layer thickness="3.5*cm" repeat="11"/>
         </layers>
       </calorimeter>
     </detector>
   </detectors>
-
 </lccdd>
