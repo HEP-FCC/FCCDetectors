@@ -90,15 +90,15 @@
       <dimensions rmin="BarCryoECal_rmin" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz" vis="ecal_envelope"/>
       <cryostat name="ECAL_Cryo">
         <material name="Aluminum"/>
-	    <dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoThicknessFront" rmax1="BarCryoECal_rmax-CryoThicknessBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
-	    <front sensitive="false"/> <!-- inner wall of the cryostat -->
-	    <side sensitive="false"/> <!-- both sides of the cryostat -->
-	    <back sensitive="false"/> <!-- outer wall of the cryostat -->
+        <dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoThicknessFront" rmax1="BarCryoECal_rmax-CryoThicknessBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
+        <front sensitive="false"/> <!-- inner wall of the cryostat -->
+        <side sensitive="false"/> <!-- both sides of the cryostat -->
+        <back sensitive="false"/> <!-- outer wall of the cryostat -->
       </cryostat>
       <calorimeter name="EM_barrel">
-	    <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
-	    <dimensions rmin="EMBarrel_rmin" rmax="EMBarrel_rmax" dz="EMBarrel_dz" offset="-InclinationAngle"/>
-	    <active thickness="LAr_thickness">
+        <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
+        <dimensions rmin="EMBarrel_rmin" rmax="EMBarrel_rmax" dz="EMBarrel_dz" offset="-InclinationAngle"/>
+        <active thickness="LAr_thickness">
           <material name="LKr"/>
           <!-- overlap offset is a specific feature of the construction; do not change! -->
           <!-- one volume for a gap on both side of the readout) --> 
@@ -106,16 +106,16 @@
         </active>
         <passive>
           <rotation angle="InclinationAngle"/>  <!-- inclination angle -->
-	      <inner thickness="Pb_thickness" sensitive="false">
+          <inner thickness="Pb_thickness" sensitive="false">
             <material name="Lead"/>
           </inner>
-	      <innerMax thickness="Pb_thickness_max" sensitive="false">
+          <innerMax thickness="Pb_thickness_max" sensitive="false">
             <material name="Lead"/>
           </innerMax>
-	      <glue thickness="Glue_thickness" sensitive="false">
+          <glue thickness="Glue_thickness" sensitive="false">
             <material name="lArCaloGlue"/>
           </glue>
-	      <outer thickness="Steel_thickness" sensitive="false">
+          <outer thickness="Steel_thickness" sensitive="false">
             <material name="lArCaloSteel"/>
           </outer>
         </passive>
@@ -123,8 +123,8 @@
           <material name="PCB"/>
         </readout>
         <layers> <!-- pcb electrode segmentation in the radial direction -->
-	       <layer thickness="1.5*cm" repeat="1"/>
-	       <layer thickness="3.5*cm" repeat="11"/>
+           <layer thickness="1.5*cm" repeat="1"/>
+           <layer thickness="3.5*cm" repeat="11"/>
         </layers>
       </calorimeter>
     </detector>
