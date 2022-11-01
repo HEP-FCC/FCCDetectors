@@ -91,9 +91,9 @@
       <cryostat name="ECAL_Cryo">
         <material name="Aluminum"/>
 	<dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoBarrelFront" rmax1="BarCryoECal_rmax-CryoBarrelBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
-        <front sensitive="true"/> <!-- inner wall of the cryostat -->
-        <side sensitive="true"/> <!-- both sides of the cryostat -->
-        <back sensitive="true"/> <!-- outer wall of the cryostat -->
+        <front sensitive="false"/> <!-- inner wall of the cryostat -->
+        <side sensitive="false"/> <!-- both sides of the cryostat -->
+        <back sensitive="false"/> <!-- outer wall of the cryostat -->
       </cryostat>
       <calorimeter name="EM_barrel">
         <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
@@ -122,7 +122,7 @@
         <readout thickness="readout_thickness" sensitive="true">
           <material name="PCB"/>
         </readout>
-        <layers> <!-- pcb electrode segmentation in the radial direction -->
+        <layers> <!-- pcb electrode longitunidal segmentation in the radial direction -->
            <layer thickness="1.5*cm" repeat="1"/>
            <layer thickness="3.5*cm" repeat="11"/>
         </layers>
