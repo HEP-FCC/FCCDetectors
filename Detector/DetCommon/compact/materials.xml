@@ -165,6 +165,11 @@
     <composite n="1" ref="Ar"/>
   </material>
 
+  <material name="LKr">
+    <D value="2.416" unit="g/cm3" />
+    <composite n="1" ref="Kr"/>
+  </material>
+
   <!-- from  DD4hep/examples/SimpleDetector/compact/materials.xml -->
   <material name="PCB" state="solid">
     <D unit="g/cm3" value="1.7"/>
