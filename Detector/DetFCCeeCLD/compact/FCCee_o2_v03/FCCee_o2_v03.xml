@@ -35,8 +35,8 @@
   <include ref="../../../DetFCCeeCommon/compact/HOMAbsorber.xml"/>
   <include ref="../../../DetFCCeeCommon/compact/BeamInstrumentation.xml"/>
   <include ref="../../../DetFCCeeCommon/compact/LumiCal.xml"/>
-
   <include ref="Vertex.xml"/> 
+
   <include ref="InnerTracker.xml"/>
   <include ref="OuterTracker.xml"/>
 
@@ -50,5 +50,10 @@
     <include ref="YokeBarrel.xml"/>
     <include ref="YokeEndcap.xml"/>
 
+<!-- Adding plugins, suggested by André -->
+<plugins>
+    <plugin name="DD4hepVolumeManager"/>
+    <plugin name="InstallSurfaceManager"/>
+</plugins>
 
 </lccdd>

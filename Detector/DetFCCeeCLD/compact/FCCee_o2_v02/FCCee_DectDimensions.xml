@@ -42,7 +42,7 @@
     <constant name="DetID_HCAL_Endcap"      value=" 11"/>
 
     <constant name="DetID_HCAL_Ring"        value=" 12"/>
-    
+    <constant name="DetID_Yoke_Barrel"      value=" 13"/>
     <constant name="DetID_Yoke_Barrel"      value=" 13"/>
     <constant name="DetID_Yoke_Endcap"      value=" 14"/>
     
