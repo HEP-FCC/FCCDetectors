@@ -3,7 +3,8 @@ name: phoenix
 on:
   workflow_run:
     workflows: [linux]
-    types: [completed]
+    types:
+      - completed
 
 jobs:
   deploy:
@@ -43,11 +44,6 @@ jobs:
           source /cvmfs/sw.hsf.org/key4hep/setup.sh;\
           cd build;\
           ninja -k0 install;'
-    - name: Test
-      run: |
-        docker exec CI_container /bin/bash -c 'cd ./Package;\
-        source /cvmfs/sw.hsf.org/key4hep/setup.sh;\
-        cd build;\
-        ninja -k0 && ctest --output-on-failure;'
     - name: List files
       run: 'ls -al'
+    - name: Create root
