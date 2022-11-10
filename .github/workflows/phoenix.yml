@@ -1,10 +1,11 @@
 name: phoenix
 
-on:
-  workflow_run:
-    workflows: [linux]
-    branches: [phoenix]
-    types: [completed]
+  # on:
+  #   workflow_run:
+  #     workflows: [linux]
+  #     branches: [phoenix]
+  #     types: [completed]
+on: [push]
 
 jobs:
   deploy:
