@@ -3,8 +3,8 @@ name: phoenix
 on:
   workflow_run:
     workflows: [linux]
-    types:
-      - completed
+    branches: [phoenix]
+    types: [completed]
 
 jobs:
   deploy:
