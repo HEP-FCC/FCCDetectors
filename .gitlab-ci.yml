@@ -1,4 +1,4 @@
-build:
+generate-root:
   tags:
     - cvmfs
   script:
@@ -9,3 +9,13 @@ build:
             -DCMAKE_CXX_STANDARD=17 \
             -DCMAKE_CXX_FLAGS=" -fdiagnostics-color=always " \
             -G Ninja ..
+    - ninja -k0
+    - ninja -k0 install
+    - ninja -k0 && ctest --output-on-failure
+    - wget https://hep-fcc.github.io/fcc-tutorials/_downloads/377c138aa7fab03e92ec8acb44b30be7/dd4hep2root
+    - chmod u+x dd4hep2root
+    - ./dd4hep2root -c ../Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml \
+                       ../Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml
+                    -o fccee_lar.root
+    - pwd
+    - ls -al
