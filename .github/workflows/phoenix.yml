@@ -46,4 +46,3 @@ jobs:
           ninja -k0 install;'
     - name: List files
       run: 'ls -al'
-    - name: Create root
