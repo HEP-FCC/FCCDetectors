@@ -42,10 +42,11 @@ jobs:
     - name: Test
       run: |
         docker exec CI_container /bin/bash -c 'cd ./Package;\
-        source ${{ matrix.SETUP }};\
+        source /cvmfs/sw.hsf.org/key4hep/setup.sh;\
         cd build;\
         ninja -k0 && ctest --output-on-failure;'
   convert:
+    needs: build
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
