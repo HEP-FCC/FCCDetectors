@@ -2,13 +2,13 @@ name: phoenix
 
 on:
   workflow_run:
-    workflows: ["linux"]
-    branches: [main]
+    workflows: [linux]
     types: [completed]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     strategy:
       fail-fast: false
     steps:
