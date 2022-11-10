@@ -1,9 +1,13 @@
 name: phoenix
 
-on: [push]
+on:
+  workflow_run:
+    workflows: ["linux"]
+    branches: [main]
+    types: [completed]
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -45,13 +49,5 @@ jobs:
         source /cvmfs/sw.hsf.org/key4hep/setup.sh;\
         cd build;\
         ninja -k0 && ctest --output-on-failure;'
-  convert:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-    steps:
-    - uses: actions/checkout@v2
-    - uses: cvmfs-contrib/github-action-cvmfs@v2
     - name: List files
       run: 'ls -al'
