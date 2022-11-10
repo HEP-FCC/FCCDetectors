@@ -39,5 +39,9 @@ jobs:
           source /cvmfs/sw.hsf.org/key4hep/setup.sh;\
           cd build;\
           ninja -k0 install;'
+    - name: Generate root files
+      run: |
+        docker exec CI_container /bin/bash -c 'cd ./Package;\
+        ls -al;'
     - name: List files
       run: 'ls -al'
