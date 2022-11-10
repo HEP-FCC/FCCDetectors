@@ -9,6 +9,8 @@ generate-root:
             -DCMAKE_CXX_STANDARD=17 \
             -DCMAKE_CXX_FLAGS=" -fdiagnostics-color=always " \
             -G Ninja ..
+    - pwd
+    - ls -al
     - ninja -k0
     - ninja -k0 install
     - ninja -k0 && ctest --output-on-failure
@@ -17,5 +19,3 @@ generate-root:
     - ./dd4hep2root -c ../Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml \
                        ../Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml
                     -o fccee_lar.root
-    - pwd
-    - ls -al
