@@ -42,7 +42,7 @@ convert-gltf:
     - cd ../..
     - git clone https://github.com/kjvbrt/root2gltf.git
     - cd root2gltf
-#     - yum install -y libX11-devel mesa-libGL-devel
+    - yum install -y libX11-devel mesa-libGL-devel
     - node --version
     - npm --version
     - python3 -m venv venv
