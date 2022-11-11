@@ -49,5 +49,6 @@ convert-gltf:
     - python3 -m venv venv
     - source venv/bin/activate
     - npm ci
+    - npm install --save @types/yargs
     - node . ../FCCDetectors/build/fccee_lar.root
     - file fccee_lar.gltf
