@@ -26,6 +26,8 @@ generate-root:
     - cd ../..
     - git clone https://github.com/kjvbrt/root2gltf.git
     - cd root2gltf
+    - node --version
+    - npm --version
     - npm ci
     - node . ../FCCDetectors/build/fccee_lar.root
     - file fccee_lar.gltf
