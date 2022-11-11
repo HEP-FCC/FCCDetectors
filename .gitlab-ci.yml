@@ -29,8 +29,7 @@ generate-root:
     expire_in: 1 week
 
 convert:
-  tags:
-    - cs8
+  image: cs8
   dependencies:
     - generate-root
   script:
