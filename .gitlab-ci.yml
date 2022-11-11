@@ -42,6 +42,7 @@ convert-gltf:
     - cd ../..
     - git clone https://github.com/kjvbrt/root2gltf.git
     - cd root2gltf
+    - dnf group install -y "Development Tools"
     - yum install -y libX11-devel mesa-libGL-devel libXi-devel
     - node --version
     - npm --version
