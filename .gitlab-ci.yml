@@ -29,9 +29,9 @@ generate-root:
     expire_in: 1 week
 
 convert:
-  image: cs8
   dependencies:
     - generate-root
+  image: gitlab-registry.cern.ch/ci-tools/ci-worker:cs8
   script:
     - pwd
     - ls -al
