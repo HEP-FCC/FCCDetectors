@@ -41,6 +41,7 @@ convert-gltf:
     - ls -al ..
     - cat /etc/*release
     - cd ../..
+    - dnf -y groupinstall "Development Tools"
     - git clone https://github.com/kjvbrt/root2gltf.git
     - cd root2gltf
     # - dnf group install -y "Development Tools"
