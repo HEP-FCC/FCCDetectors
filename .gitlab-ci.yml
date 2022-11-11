@@ -24,7 +24,6 @@ generate-root:
         -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml
         ${FCCDETECTORS}/Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml
         -o fccee_lar.root
-    - file fccee_lar.root
   artifacts:
     paths:
       - build/fccee_lar.root
@@ -42,7 +41,7 @@ convert-gltf:
     - git clone https://github.com/kjvbrt/root2gltf.git
     - cd root2gltf
     - npm ci
-    - node . -c config_example.json ../FCCDetectors/build/fccee_lar.root
+    - node . -c config_example.json ../FCCDetectors/fccee_lar.root
     - file fccee_lar.gltf
 
 deploy-eos:
