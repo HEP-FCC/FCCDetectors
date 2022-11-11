@@ -23,3 +23,9 @@ generate-root:
         ../Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml
         -o fccee_lar.root
     - file fccee_lar.root
+    - cd ../..
+    - git clone https://github.com/kjvbrt/root2gltf.git
+    - cd root2gltf
+    - npm ci
+    - node . ../FCCDetectors/build/fccee_lar.root
+    - file fccee_lar.gltf
