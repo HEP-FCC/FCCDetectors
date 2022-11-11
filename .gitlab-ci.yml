@@ -1,7 +1,4 @@
 generate-root:
-  only:
-    refs:
-      - master
   tags:
     - cvmfs
   stage: .pre
