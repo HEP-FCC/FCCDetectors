@@ -28,20 +28,22 @@ generate-root:
       - build/fccee_lar.root
     expire_in: 1 week
 
-convert:
+convert-gltf:
   dependencies:
     - generate-root
   image: gitlab-registry.cern.ch/ci-tools/ci-worker:cs8
+  stage: convert
   script:
     - pwd
     - ls -al
+    - ls -al ..
     - cat /etc/*release
 #     - cd ../..
-#     - git clone https://github.com/kjvbrt/root2gltf.git
-#     - cd root2gltf
+    - git clone https://github.com/kjvbrt/root2gltf.git
+    - cd root2gltf
 #     - yum install -y libX11-devel mesa-libGL-devel
-#     - node --version
-#     - npm --version
-#     - npm ci
+    - node --version
+    - npm --version
+    - npm ci
 #     - node . ../FCCDetectors/build/fccee_lar.root
 #     - file fccee_lar.gltf
