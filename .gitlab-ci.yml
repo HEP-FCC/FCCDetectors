@@ -40,7 +40,7 @@ convert-gltf:
     - ls -al
     - ls -al ..
     - cat /etc/*release
-    - cd ../..
+    - cd ..
     - dnf -y groupinstall "Development Tools"
     - dnf -y module install nodejs:16
     - git clone https://github.com/kjvbrt/root2gltf.git
