@@ -1,4 +1,7 @@
 generate-root:
+  only:
+    refs:
+      - master
   tags:
     - cvmfs
   stage: .pre
@@ -14,10 +17,14 @@ generate-root:
     - ninja -k0
     - ninja -k0 install
     - ninja -k0 && ctest --output-on-failure
+    - export FCCDETECTORS=../install/share/FCCDetectors
+    - export LD_LIBRARY_PATH=../install/lib64:${LD_LIBRARY_PATH}
+    - export LD_LIBRARY_PATH=../install/lib:${LD_LIBRARY_PATH}
+    - export PYTHONPATH=../install/python:${PYTHONPATH}
     - >
         ../.github/scripts/dd4hep2root
-        -c ../Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml
-        ../Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml
+        -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml
+        ${FCCDETECTORS}/Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml
         -o fccee_lar.root
     - file fccee_lar.root
   artifacts:
