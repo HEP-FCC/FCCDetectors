@@ -8,7 +8,7 @@ generate-root:
     - cmake -DCMAKE_INSTALL_PREFIX=../install -DCMAKE_CXX_STANDARD=17 -DCMAKE_CXX_FLAGS=" -fdiagnostics-color=always " -G Ninja ..
     - pwd
     - ls -al
-    - lsb_release -a
+    - cat /etc/*release
     - ninja -k0
     - ninja -k0 install
     - ninja -k0 && ctest --output-on-failure
