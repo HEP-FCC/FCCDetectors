@@ -33,7 +33,6 @@ convert-gltf:
   dependencies:
     - generate-root
   stage: build
-  # image: gitlab-registry.cern.ch/ci-tools/ci-worker:cs8
   image: registry.cern.ch/docker.io/library/fedora:latest
   script:
     - pwd
@@ -41,7 +40,8 @@ convert-gltf:
     - ls -al ..
     - cat /etc/*release
     - cd ..
-    - dnf -y groupinstall "Development Tools"
+    # - dnf -y groupinstall "Development Tools"
+    - dnf -y install git
     - dnf -y module install nodejs:16
     - git clone https://github.com/kjvbrt/root2gltf.git
     - cd root2gltf
