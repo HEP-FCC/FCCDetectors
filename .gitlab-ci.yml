@@ -16,7 +16,7 @@ generate-root:
     - ninja -k0
     - ninja -k0 install
     - ninja -k0 && ctest --output-on-failure
-    - wget https://hep-fcc.github.io/fcc-tutorials/_downloads/377c138aa7fab03e92ec8acb44b30be7/dd4hep2root
+    - wget https://hep-fcc.github.io/fcc-tutorials/_downloads/ce621667e828b2cd41e8cce63bf54a27/dd4hep2root
     - chmod u+x dd4hep2root
     - >
         ./dd4hep2root -c ../Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml
