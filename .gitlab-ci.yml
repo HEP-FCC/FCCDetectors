@@ -26,7 +26,7 @@ generate-root:
         -o fccee_lar.root
   artifacts:
     paths:
-      - build/fccee_lar.root
+      - fccee_lar.root
     expire_in: 1 week
 
 convert-gltf:
