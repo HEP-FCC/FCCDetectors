@@ -45,7 +45,7 @@ convert-gltf:
 #     - yum install -y libX11-devel mesa-libGL-devel
     - node --version
     - npm --version
-    - python -m venv venv
+    - python3 -m venv venv
     - source venv/bin/activate
     - npm ci
     - node . ../FCCDetectors/build/fccee_lar.root
