@@ -5,12 +5,12 @@
 
 
   <info name="FCCee"
-        title="FCCee: Drift chamber"
+        title="FCCee: Simplified IDEA Drift chamber"
         author="nalipour"
         url="no"
         status="development"
         version="1.0">
-    <comment>A drift chamber for the FCCee-IDEA concept</comment>
+    <comment>A simplified implementation of the drift chamber for the FCCee-IDEA concept</comment>
   </info>
 
   <define>
@@ -19,12 +19,12 @@
   </define>
 
   <limits>
-    <limitset name="DriftChamber_limits">
+    <limitset name="SimplifiedDriftChamber_limits">
       <limit name="step_length_max" particles="*" value="2" unit="mm" />
     </limitset>
   </limits>
   <regions>
-    <region name="DriftChamberRegion"/>
+    <region name="SimplifiedDriftChamberRegion"/>
   </regions>
 
   <display>
@@ -36,14 +36,14 @@
 
   <!--  Definition of the readout segmentation/definition  -->
   <readouts>
-    <readout name="DriftChamberCollection">
-      <segmentation type="GridDriftChamber" inner_radius="innerRadius" cell_size="12*mm" detector_length="detectorLength" offset_phi="0" identifier_phi="phi"/>
+    <readout name="SimplifiedDriftChamberCollection">
+      <segmentation type="GridSimplifiedDriftChamber" inner_radius="innerRadius" cell_size="12*mm" detector_length="detectorLength" offset_phi="0" identifier_phi="phi"/>
       <id>${GlobalTrackerReadoutID_DCH}</id>
     </readout>
   </readouts>
 
   <detectors>
-    <detector id="DetID_DCH" name="CDCH" type="parametrised_DriftChamber" vis="GasVis" readout="DriftChamberCollection" sensitive="true" limits="DriftChamber_limits" region="DriftChamberRegion">
+    <detector id="DetID_DCH" name="CDCH" type="parametrised_SimplifiedDriftChamber" vis="GasVis" readout="SimplifiedDriftChamberCollection" sensitive="true" limits="SimplifiedDriftChamber_limits" region="SimplifiedDriftChamberRegion">
       <sensitive type="SimpleDriftChamber"/>
 
       <comment> Dimensions for the drift chamber </comment>
