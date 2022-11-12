@@ -1,5 +1,5 @@
-#ifndef DETSEGMENTATION_GRIDDRIFTCHAMBER_H
-#define DETSEGMENTATION_GRIDDRIFTCHAMBER_H
+#ifndef DETSEGMENTATION_GRIDSIMPLIFIEDDRIFTCHAMBER_H
+#define DETSEGMENTATION_GRIDSIMPLIFIEDDRIFTCHAMBER_H
 
 #include "DDSegmentation/Segmentation.h"
 
@@ -7,23 +7,23 @@
 #include <cmath>
 #include <iostream>
 
-/** GridDriftChamber Detector/DetSegmentation/DetSegmentation/GridDriftChamber.h GridDriftChamber.h
+/** GridSimplifiedDriftChamber Detector/DetSegmentation/DetSegmentation/GridSimplifiedDriftChamber.h GridSimplifiedDriftChamber.h
  *
- *  Segmentation for drift chamber.
+ *  Segmentation for the simplified IDEA drift chamber.
  *
  *  @author    nalipour
  */
 
 namespace dd4hep {
 namespace DDSegmentation {
-class GridDriftChamber : public Segmentation {
+class GridSimplifiedDriftChamber : public Segmentation {
 public:
   /// default constructor using an arbitrary type
-  GridDriftChamber(const std::string& aCellEncoding);
+  GridSimplifiedDriftChamber(const std::string& aCellEncoding);
   /// Default constructor used by derived classes passing an existing decoder
-  GridDriftChamber(const BitFieldCoder* decoder);
+  GridSimplifiedDriftChamber(const BitFieldCoder* decoder);
   /// destructor
-  virtual ~GridDriftChamber() = default;
+  virtual ~GridSimplifiedDriftChamber() = default;
 
   virtual Vector3D position(const CellID& aCellID) const;
   virtual CellID cellID(const Vector3D& aLocalPosition, const Vector3D& aGlobalPosition,
