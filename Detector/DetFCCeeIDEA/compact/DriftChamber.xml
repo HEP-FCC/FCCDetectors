@@ -1,0 +1,36 @@
+<lccdd>
+<!--
+    (c) Copyright 2021 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
+  <info name="CDCH" title="CDCH" author="CDCH" url="http://cern.ch/lhcb" status="development" version="$Id: $">
+    <comment>
+      Test Drift Chamber stack
+    </comment>
+  </info>
+
+  <includes>
+    <gdmlFile  ref="materials.xml"/>
+  </includes>
+
+
+  <detectors>
+    <detector id="555" name="CDCH" type="IDEA_CDCH_v1_0" parent="${CDCH:parent}" readout="CDCHHits" vis="CDCH">
+
+
+    </detector>
+  </detectors>
+
+  <readouts>
+    <readout name="CDCHHits">
+      <id>innmodule:8,</id>
+    </readout>
+  </readouts>
+
+</lccdd>
