@@ -1,3 +1,9 @@
+#
+# This deployment publishes latest versions of selected detectors in the
+# Phoenix@FCC web application.
+# Inspired by https://github.com/key4hep/EDM4hep/blob/master/.gitlab-ci.yml
+#
+
 generate-root:
   tags:
     - cvmfs
@@ -44,6 +50,11 @@ convert-gltf:
     - node . -c config_example.json ../FCCDetectors/fccee_lar.root
     - file fccee_lar.gltf
 
+# Variables of the deployment
+# CI_OUTPUT_DIR: ../root2gltf
+# EOS_ACCOUNT_USERNAME: key4hep
+# EOS_ACCOUNT_PASSWORD: xxxx
+# EOS_PATH: /eos/project-f/fccsw-web/www/phoenix/assets/geometry
 deploy-eos:
   dependencies:
     - convert-gltf
