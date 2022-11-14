@@ -26,12 +26,11 @@ generate-root:
     - export LD_LIBRARY_PATH=`pwd`/install/lib:${LD_LIBRARY_PATH}
     - export PYTHONPATH=`pwd`/install/python:${PYTHONPATH}
     - mkdir -p detectors
-    - cd detectors
     - >
         .github/scripts/dd4hep2root
         -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml
         ${FCCDETECTORS}/Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml
-        -o fccee_lar.root
+        -o detectors/fccee_lar.root
   artifacts:
     paths:
       - detectors/fccee_lar.root
