@@ -28,12 +28,21 @@ generate-root:
     - mkdir -p detectors
     - >
         .github/scripts/dd4hep2root
-        -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml
-        ${FCCDETECTORS}/Detector/DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml
-        -o detectors/fccee_lar.root
+        -c ${FCCDETECTORS}/Detector/DetFCCeeCLD/compact/FCCee_o2_v02/FCCee_o2_v02.xml
+        -o detectors/fccee_cld.root
+    - >
+        .github/scripts/dd4hep2root
+        -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA/compact/FCCee_DectMaster.xml
+        -o detectors/fccee_idea.root
+    - >
+        .github/scripts/dd4hep2root
+        -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectMaster.xml
+        -o detectors/fccee_nlq.root
   artifacts:
     paths:
-      - detectors/fccee_lar.root
+      - detectors/fccee_cld.root
+      - detectors/fccee_idea.root
+      - detectors/fccee_nlq.root
     expire_in: 1 week
 
 convert-gltf:
@@ -49,13 +58,22 @@ convert-gltf:
     - cd root2gltf
     - npm ci
     - >
-        node . -c config_example.json
-        -o ../FCCDetectors/detectors/fccee_lar.gltf
-        ../FCCDetectors/detectors/fccee_lar.root
-    - file detectors/fccee_lar.gltf
+        node . -c configs/config_fccee_cld.json
+        -o ../FCCDetectors/detectors/fccee_cld.gltf
+        ../FCCDetectors/detectors/fccee_cld.root
+    - >
+        node . -c configs/config_fccee_idea.json
+        -o ../FCCDetectors/detectors/fccee_idea.gltf
+        ../FCCDetectors/detectors/fccee_idea.root
+    - >
+        node . -c configs/config_fccee_nlq.json
+        -o ../FCCDetectors/detectors/fccee_nlq.gltf
+        ../FCCDetectors/detectors/fccee_nlq.root
   artifacts:
     paths:
-      - detectors/fccee_lar.gltf
+      - detectors/fccee_cld.gltf
+      - detectors/fccee_idea.gltf
+      - detectors/fccee_nlq.gltf
     expire_in: 1 week
 
 # Variables of the deployment
@@ -66,6 +84,7 @@ convert-gltf:
 # METHOD: rsync
 deploy-eos:
   dependencies:
+    - generate-root
     - convert-gltf
   stage: deploy
   image: gitlab-registry.cern.ch/ci-tools/ci-web-deployer:latest
