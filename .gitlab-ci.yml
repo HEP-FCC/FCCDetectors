@@ -25,6 +25,8 @@ generate-root:
     - export LD_LIBRARY_PATH=`pwd`/install/lib64:${LD_LIBRARY_PATH}
     - export LD_LIBRARY_PATH=`pwd`/install/lib:${LD_LIBRARY_PATH}
     - export PYTHONPATH=`pwd`/install/python:${PYTHONPATH}
+    - mkdir -p detectors
+    - cd detectors
     - >
         .github/scripts/dd4hep2root
         -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectEmptyMaster.xml
@@ -32,7 +34,7 @@ generate-root:
         -o fccee_lar.root
   artifacts:
     paths:
-      - fccee_lar.root
+      - detectors/fccee_lar.root
     expire_in: 1 week
 
 convert-gltf:
@@ -49,19 +51,20 @@ convert-gltf:
     - npm ci
     - >
         node . -c config_example.json
-        -o ../FCCDetectors/fccee_lar.gltf
-        ../FCCDetectors/fccee_lar.root
-    - file fccee_lar.gltf
+        -o ../FCCDetectors/detectors/fccee_lar.gltf
+        ../FCCDetectors/detectors/fccee_lar.root
+    - file detectors/fccee_lar.gltf
   artifacts:
     paths:
-      - fccee_lar.gltf
+      - detectors/fccee_lar.gltf
     expire_in: 1 week
 
 # Variables of the deployment
-# CI_OUTPUT_DIR: .
+# CI_OUTPUT_DIR: detectors/
 # EOS_ACCOUNT_USERNAME: key4hep
 # EOS_ACCOUNT_PASSWORD: xxxx
-# EOS_PATH: /eos/project-f/fccsw-web/www/phoenix/assets/geometry
+# EOS_PATH: /eos/project-f/fccsw-web/www/detectors/
+# METHOD: rsync
 deploy-eos:
   dependencies:
     - convert-gltf
