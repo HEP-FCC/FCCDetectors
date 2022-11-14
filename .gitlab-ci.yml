@@ -49,6 +49,10 @@ convert-gltf:
     - npm ci
     - node . -c config_example.json ../FCCDetectors/fccee_lar.root
     - file fccee_lar.gltf
+  artifacts:
+    paths:
+      - ../root2gltf/fccee_lar.gltf
+    expire_in: 1 week
 
 # Variables of the deployment
 # CI_OUTPUT_DIR: ../root2gltf
