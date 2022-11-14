@@ -47,15 +47,18 @@ convert-gltf:
     - git clone https://github.com/kjvbrt/root2gltf.git
     - cd root2gltf
     - npm ci
-    - node . -c config_example.json ../FCCDetectors/fccee_lar.root
+    - >
+        node . -c config_example.json
+        -o ../FCCDetectors/fccee_lar.gltf
+        ../FCCDetectors/fccee_lar.root
     - file fccee_lar.gltf
   artifacts:
     paths:
-      - ../root2gltf/fccee_lar.gltf
+      - fccee_lar.gltf
     expire_in: 1 week
 
 # Variables of the deployment
-# CI_OUTPUT_DIR: ../root2gltf
+# CI_OUTPUT_DIR: .
 # EOS_ACCOUNT_USERNAME: key4hep
 # EOS_ACCOUNT_PASSWORD: xxxx
 # EOS_PATH: /eos/project-f/fccsw-web/www/phoenix/assets/geometry
