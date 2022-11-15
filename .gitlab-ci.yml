@@ -71,6 +71,9 @@ convert-gltf:
 # EOS_PATH: /eos/project-f/fccsw-web/www/detectors/
 # METHOD: rsync
 deploy-eos:
+  only:
+    refs:
+      - main
   dependencies:
     - generate-root
     - convert-gltf
