@@ -21,33 +21,14 @@ generate-root:
     - ninja -k0 install
     - ninja -k0 && ctest --output-on-failure
     - cd ..
-    - export FCCDETECTORS=`pwd`/install/share/FCCDetectors
-    - export LD_LIBRARY_PATH=`pwd`/install/lib64:${LD_LIBRARY_PATH}
-    - export LD_LIBRARY_PATH=`pwd`/install/lib:${LD_LIBRARY_PATH}
-    - export PYTHONPATH=`pwd`/install/python:${PYTHONPATH}
     - mkdir -p detectors
-    - >
-        .github/scripts/dd4hep2root
-        -c ${FCCDETECTORS}/Detector/DetFCCeeCLD/compact/FCCee_o2_v02/FCCee_o2_v02.xml
-        -o detectors/fccee_cld.root
-    - >
-        .github/scripts/dd4hep2root
-        -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA/compact/FCCee_DectMaster.xml
-        -o detectors/fccee_idea.root
-    - >
-        .github/scripts/dd4hep2root
-        -c ${FCCDETECTORS}/Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectMaster.xml
-        -o detectors/fccee_nlq.root
-    - >
-        .github/scripts/dd4hep2root
-        -c ${FCCDETECTORS}/Detector/DetFCChhBaseline1/compact/FCChh_DectMaster.xml
-        -o detectors/fcchh_baseline.root
+    - mv fccee_cld.root detectors/
+    - mv fccee_idea.root detectors/
+    - mv fccee_nlq.root detectors/
+    - mv fcchh_baseline.root detectors/
   artifacts:
     paths:
-      - detectors/fccee_cld.root
-      - detectors/fccee_idea.root
-      - detectors/fccee_nlq.root
-      - detectors/fcchh_baseline.root
+      - detectors/*root
     expire_in: 1 week
 
 convert-gltf:
@@ -80,10 +61,7 @@ convert-gltf:
         ../FCCDetectors/detectors/fcchh_baseline.root
   artifacts:
     paths:
-      - detectors/fccee_cld.gltf
-      - detectors/fccee_idea.gltf
-      - detectors/fccee_nlq.gltf
-      - detectors/fcchh_baseline.gltf
+      - detectors/*.gltf
     expire_in: 1 week
 
 # Variables of the deployment
