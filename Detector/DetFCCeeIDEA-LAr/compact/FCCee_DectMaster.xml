@@ -35,7 +35,7 @@
   <include ref="../../DetFCCeeIDEA/compact/BeamInstrumentation.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/LumiCal.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/HOMAbsorber.xml"/>
-  <include ref="../../DetFCCeeCLD/compact/Vertex.xml"/>
+  <include ref="../../DetFCCeeCLD/compact/FCCee_o2_v02/Vertex.xml"/>
   <include ref="../../DetFCCeeIDEA/compact/SimplifiedDriftChamber.xml"/>
   <include ref="../../DetFCCeeECalInclined/compact/FCCee_ECalBarrel.xml" />
   <include ref="../../DetFCCeeHCalTile/compact/FCCee_HCalBarrel_TileCal.xml" />
