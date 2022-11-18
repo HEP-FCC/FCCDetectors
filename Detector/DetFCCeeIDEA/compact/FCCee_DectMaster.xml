@@ -35,7 +35,7 @@
   <include ref="LumiCal.xml"/>
   <include ref="HOMAbsorber.xml"/>
   <include ref="Vertex.xml"/>
-  <include ref="SimplifiedDriftChamber.xml"/>
+  <include ref="DriftChamber.xml"/>
   <!--include ref="Calorimeter.xml"/-->
 
 </lccdd>

@@ -16,7 +16,8 @@
   </info>
 
   <includes>
-    <gdmlFile  ref="materials.xml"/>
+    <gdmlFile  ref="DriftChambers_materials.xml"/>
+    <gdmlFile  ref="DriftChambers_parameters.xml"/>
   </includes>
 
 
