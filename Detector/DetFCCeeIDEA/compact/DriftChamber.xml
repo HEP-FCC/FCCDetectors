@@ -23,7 +23,7 @@
 -->
 
   <detectors>
-    <detector id="555" name="CDCH" type="IDEA_CDCH_v1_0" parent="${CDCH:parent}" readout="CDCHHits" vis="CDCH">
+    <detector id="555" name="CDCH" type="IDEA_CDCH_v1_0" readout="CDCHHits" vis="CDCH">
 
 
     </detector>
