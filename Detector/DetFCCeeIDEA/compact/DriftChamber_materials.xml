@@ -130,7 +130,7 @@
       <fraction n="1.36999949310019e-06" ref="He30x5633439aa020"/>
       <fraction n="0.999998630000507" ref="He40x5633439aa0c0"/>
     </element>
-    <material name="GasHe_90Isob_100x56334399cc50" state="gas">
+    <material name="GasHe_90Isob_10" state="gas">
       <T unit="K" value="293.15"/>
       <MEE unit="eV" value="48.8432249317198"/>
       <D unit="g/cm3" value="0.0003984"/>
@@ -301,7 +301,7 @@
       <fraction n="0.055494369081123" ref="H0x5633439b0600"/>
       <fraction n="0.18876026071544" ref="O0x5633439b8f90"/>
     </material>
-    <material Z="13" name="G4_Al0x56334ca04990" state="solid">
+    <material Z="13" name="G4_Al" state="solid">
       <T unit="K" value="293.15"/>
       <MEE unit="eV" value="166"/>
       <D unit="g/cm3" value="2.699"/>
@@ -323,7 +323,7 @@
       <fraction n="0.240178526067194" ref="C0x5633439b0310"/>
       <fraction n="0.759821473932806" ref="F0x5633439c8db0"/>
     </material>
-    <material Z="79" name="G4_Au0x563354391480" state="solid">
+    <material Z="79" name="G4_Au" state="solid">
       <T unit="K" value="293.15"/>
       <MEE unit="eV" value="790"/>
       <D unit="g/cm3" value="19.32"/>
@@ -351,7 +351,7 @@
       <fraction n="0.3064" ref="W1840x563354404140"/>
       <fraction n="0.2843" ref="W1860x563354404190"/>
     </element>
-    <material name="G4_W0x563354403ed0" state="solid">
+    <material name="G4_W" state="solid">
       <T unit="K" value="293.15"/>
       <MEE unit="eV" value="727"/>
       <D unit="g/cm3" value="19.3"/>
