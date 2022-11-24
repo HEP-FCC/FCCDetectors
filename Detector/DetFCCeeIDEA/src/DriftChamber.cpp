@@ -46,7 +46,7 @@ namespace {
     CDCHBuild( dd4hep::Detector& description, xml_elt_t e, dd4hep::SensitiveDetector sens );
 
     double diff_of_squares(double a, double b);
-    void PlaceWires( struct wire &w, dd4hep::Volume WireWrap, int copyNunOffset);
+    void PlaceWires( struct wire &w, double outwrap, int copyNunOffset);
     void build_layer(DetElement parent, Volume parentVol);
 //    void build_cell();
 //    void build_beamplug();
@@ -69,7 +69,7 @@ namespace {
   }
 
 
-  void CDCHBuild::PlaceWires( struct wire &w, outwrap, int copyNunOffset=0) {
+  void CDCHBuild::PlaceWires( struct wire &w, double outwrap, int copyNunOffset=0) {
 
     dd4hep::RotationZYX rot( 0., 0., w.stereo );
     dd4hep::RotationX     rot_stereo( w.stereo );
@@ -81,6 +81,7 @@ namespace {
     dd4hep::Tube WrapTube(w.thickness, w.thickness+0.5*outwrap, halflength);
     dd4hep::Volume lvWireWrapVol("lvWireWrap", WrapTube, description.material( "G4_Au") ));
 
+    registerVolume(lvWireWrapVol.name(), lvWireWrapVol);
 
     for (int n=0; n<w.num; n++) {
         dd4hep::RotationZ iRot(w.thetaoffset + w.theta*n);
@@ -250,12 +251,12 @@ namespace {
         lvGwireVol.back().setVisAttributes( description, wirecol );
 
         w.volume = lvGwireVol.back();
-        CDCHBuild::PlaceWires(w, lvWrapVol, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, 0);
 
         w.radius = inGuardRad+inGWradii+extShiftFW;
         w.thetaoffset = ringangle+theta_ring;
         w.stereo = -1.0*epsilonInGwRing;
-        CDCHBuild::PlaceWires(w, lvWrapVol, nInGWire/2);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, nInGWire/2);
 
 
         drop = radius_ring_0*dropFactor;
@@ -296,7 +297,7 @@ namespace {
         lvFwireVol.back().setVisAttributes( description, wirecol );
 
         w.volume = lvFwireVol.back();
-        CDCHBuild::PlaceWires(w, lvWrapVol, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, 0);
 
 	radius_ring_0+=FWradii;
 
@@ -395,7 +396,7 @@ namespace {
         //------------------------------------------------------------------------
 
 	w.volume = lvFwireVol.back();
-        CDCHBuild::PlaceWires(w, lvWrapVol, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, 0);
 
         //------------------------------------------------------------------------
         // Next, fill the geometry parameters of the central layer.
@@ -460,7 +461,7 @@ namespace {
         //------------------------------------------------------------------------
 
         w.volume = lvSwireVol.back();
-        CDCHBuild::PlaceWires(w, lvWrapVol, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, 0);
 
         //------------------------------------------------------------------------
         // Tune the radius and epsilon of the central field wires
@@ -487,7 +488,7 @@ namespace {
         w.halflength = zlength;
         w.volume = lvFwireVol.back();
 
-        CDCHBuild::PlaceWires(w, lvWrapVol, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, 0);
 
         //------------------------------------------------------------------------
         // Next, fill the geometry parameters of the upper layer.
@@ -534,7 +535,7 @@ namespace {
         w.halflength = zlength;
         w.volume = lvFwireVol.back();
 
-        CDCHBuild::PlaceWires(w, lvWrapVol, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, 0);
 
         //------------------------------------------------------------------------
         // Scale the delta radius of the ring for next iteration
@@ -579,7 +580,7 @@ namespace {
         lvFwireVol.back().setVisAttributes( description, wirecol );
 
         w.volume = lvFwireVol.back();
-        CDCHBuild::PlaceWires(w, lvWrapVol, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, 0);
  
 
         //------------------------------------------------------------------------
@@ -618,12 +619,12 @@ namespace {
         lvGwireVol.back().setVisAttributes( description, wirecol );
 
         w.volume = lvGwireVol.back();
-        CDCHBuild::PlaceWires(w, lvWrapVol, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, 0);
 
         w.radius = outGuardRad+inGWradii+extShiftFW;
         w.thetaoffset = ringangle+theta_ring;
         w.stereo = -1.0*epsilonOutGwRing;
-        CDCHBuild::PlaceWires(w, lvWrapVol, nOutGWire/2);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, nOutGWire/2);
 
       }
 
