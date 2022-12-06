@@ -11,6 +11,15 @@
     </comment>
   </info>
 
+  <materials>
+    <material name="LKr">
+      <!--<D value="1.396" unit="g/cm3" />-->
+      <D value="2.416" unit="g/cm3"/>
+      <composite n="1" ref="Kr"/>
+    </material>
+  </materials>
+
+
   <define>
     <!-- Inclination angle of the lead plates -->
     <constant name="InclinationAngle" value="50*degree"/>
@@ -36,7 +45,15 @@
     <!-- thickness of active volume between two absorber plates at EMBarrel_rmin, measuring perpendicular to the readout plate -->
     <constant name="LAr_thickness" value="LArGapThickness"/>
     <!-- passive layer consists of lead in the middle and steel on the outside, glued -->
-    <constant name="Pb_thickness" value="1.8*mm"/>
+    <constant name="Pb_thickness" value="1.80*mm"/>
+    <constant name="planeLength" value="-EMBarrel_rmin*cos(InclinationAngle) + sqrt(EMBarrel_rmax*EMBarrel_rmax - EMBarrel_rmin*EMBarrel_rmin*sin(InclinationAngle)*sin(InclinationAngle))"/>
+    <constant name="phi" value="asin(planeLength / EMBarrel_rmax * sin(InclinationAngle))"/>
+    <!-- use a different value for Pb_thickness_max when employing trapezoidal planes -->
+    <!-- approximate constant sampling fraction: make the absorber grow linearly with the radius,
+         taking into account the angular projection effect -->
+    <!--<constant name="Pb_thickness_max" value="1.3 * Pb_thickness * EMBarrel_rmax/EMBarrel_rmin *
+    cos(InclinationAngle - phi) / cos(InclinationAngle)" />-->
+    <constant name="Pb_thickness_max" value="Pb_thickness"/>
     <!-- total amount of steel in one passive plate: it is divided for the outside layer on top and bottom -->
     <constant name="Steel_thickness" value="0.1*mm"/>
     <!-- total amount of glue in one passive plate: it is divided for the outside layer on top and bottom -->
@@ -68,18 +85,19 @@
 
   <detectors>
     <detector id="BarECal_id" name="ECalBarrel" readout="ECalBarrelEta" type="EmCaloBarrelInclined">
+      <type_flags type=" DetType_CALORIMETER + DetType_ELECTROMAGNETIC + DetType_BARREL"/>
       <sensitive type="SimpleCalorimeterSD"/>
-      <dimensions dz="BarCryoECal_dz" rmax="BarCryoECal_rmax" rmin="BarCryoECal_rmin" vis="ecal_envelope"/>
+      <dimensions rmin="BarCryoECal_rmin" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz" vis="ecal_envelope"/>
       <cryostat name="ECAL_Cryo">
         <material name="Aluminum"/>
-	      <dimensions dz="BarCryoECal_dz" rmax1="BarCryoECal_rmax-CryoThicknessBack" rmax2="BarCryoECal_rmax" rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoThicknessFront"/>
+	      <dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoThicknessFront" rmax1="BarCryoECal_rmax-CryoThicknessBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
 	      <front sensitive="false"/> <!-- inner wall of the cryostat -->
 	      <side sensitive="false"/> <!-- both sides of the cryostat -->
 	      <back sensitive="false"/> <!-- outer wall of the cryostat -->
       </cryostat>
       <calorimeter name="EM_barrel">
 	<!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
-	      <dimensions dz="EMBarrel_dz" offset="-InclinationAngle" rmax="EMBarrel_rmax" rmin="EMBarrel_rmin"/>
+	      <dimensions rmin="EMBarrel_rmin" rmax="EMBarrel_rmax" dz="EMBarrel_dz" offset="-InclinationAngle"/>
 	      <active thickness="LAr_thickness">
           <material name="LAr"/>
 	  <!-- overlap offset is a specific feature of the construction; do not change! -->
@@ -88,22 +106,25 @@
         </active>
         <passive>
           <rotation angle="InclinationAngle"/>  <!-- inclination angle -->
-	       <inner sensitive="true" thickness="Pb_thickness">
+	       <inner thickness="Pb_thickness" sensitive="true">
             <material name="Lead"/>
           </inner>
-	       <glue sensitive="true" thickness="Glue_thickness">
+	       <innerMax thickness="Pb_thickness_max" sensitive="true">
+            <material name="Lead"/>
+          </innerMax>
+	       <glue thickness="Glue_thickness" sensitive="true">
             <material name="lArCaloGlue"/>
           </glue>
-	       <outer sensitive="true" thickness="Steel_thickness">
+	       <outer thickness="Steel_thickness" sensitive="true">
             <material name="lArCaloSteel"/>
           </outer>
         </passive>
-        <readout sensitive="true" thickness="readout_thickness">
+        <readout thickness="readout_thickness" sensitive="true">
           <material name="PCB"/>
         </readout>
         <layers> <!-- pcb electrode longitudinal segmentation in the radial direction -->
-	       <layer repeat="1" thickness="1.5*cm"/>
-	       <layer repeat="11" thickness="3.5*cm"/>
+	       <layer thickness="1.5*cm" repeat="1"/>
+	       <layer thickness="3.5*cm" repeat="11"/>
         </layers>
       </calorimeter>
     </detector>

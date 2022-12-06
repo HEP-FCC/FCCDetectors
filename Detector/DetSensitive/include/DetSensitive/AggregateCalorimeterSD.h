@@ -3,7 +3,7 @@
 
 
 // DD4hep
-#include "DDG4/Geant4Hits.h"
+#include "DD4hep/Segmentations.h"
 
 // FCCSW
 #include "DetCommon/Geant4CaloHit.h"
