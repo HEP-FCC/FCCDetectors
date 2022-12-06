@@ -29,17 +29,29 @@
   </define>
 
   <include ref="./FCCee_DectDimensions.xml" />
-
   <!--
   <include ref="../../DetFCCeeCommon/compact/Beampipe.xml"/>
   <include ref="../../DetFCCeeCommon/compact/BeamInstrumentation.xml"/>
   <include ref="../../DetFCCeeCommon/compact/LumiCal.xml"/>
   <include ref="../../DetFCCeeCommon/compact/HOMAbsorber.xml"/> 
   -->
+
   <include ref="Vertex.xml"/>
 
   <!--
   <include ref="DriftChamber.xml"/>
   <include ref="Calorimeter.xml"/>
   -->
+
+  <plugins>
+    <plugin name="DD4hepVolumeManager"/>
+    <plugin name="InstallSurfaceManager"/>
+
+      <!-- To be added? -->
+      <!-- <plugin name="lcgeo_LinearSortingPolicy"> -->
+      <!-- CONTENT -->
+      <!-- </plugin> -->
+
+  </plugins>
+
 </lccdd>

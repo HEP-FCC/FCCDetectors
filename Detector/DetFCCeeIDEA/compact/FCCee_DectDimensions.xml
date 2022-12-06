@@ -15,7 +15,7 @@
 
 
   <define>
-    <constant name="world_side" value="6100*mm"/>
+    <constant name="world_side" value="6100*mm"/>           <!-- Used in LumiCal and HOMAbsorber, != world_size -->
     <constant name="CrossingAngle" value="0.030*rad"/>  
 
     <constant name="GlobalTrackerReadoutID_DCH" type="string" value="system:1,layer:16,phi:16"/>
@@ -28,10 +28,10 @@
     
     <constant name="DetID_VXD_Barrel"       value=" 1"/>
     <constant name="DetID_VXD_Endcap"       value=" 2"/>
-    <constant name="DetID_DCH"       value=" 3"/>
-    <constant name="DetID_Calo_Barrel"       value=" 4"/>
-    <constant name="DetID_Calo_Endcap"       value=" 5"/>
-    <constant name="DetID_Calo_Endcap_2"       value=" 6"/>
+    <constant name="DetID_DCH"              value=" 3"/>
+    <constant name="DetID_Calo_Barrel"      value=" 4"/>
+    <constant name="DetID_Calo_Endcap"      value=" 5"/>
+    <constant name="DetID_Calo_Endcap_2"    value=" 6"/>
 
     <constant name="DetID_HCAL_Barrel"      value=" 10"/>
     <constant name="DetID_HCAL_Endcap"      value=" 11"/>
@@ -62,11 +62,6 @@
     <constant name="SideFillerShieldWidth"  value="7*mm"/>
     <constant name="TopFillerShieldWidth"  value="8*mm"/>
     <constant name="BeamPipe_end" value="12500*mm"/>
-    
-    
-    <constant name="size_x" value="60*mm"/>       
-    <constant name="size_y" value="12*mm"/>         
-    <constant name="size_z" value="50*mm"/>   
     
     <constant name="env_safety" value="0.1*mm"/>
 
@@ -187,8 +182,6 @@
     <constant name="CollimatorInFrontOfQD0_dz" value="20*cm"/>   
     <constant name="CollimatorInFrontOfQD0_radius" value="10*mm"/>
     <constant name="CollimatorInFrontOfQD0_dr" value="16*mm"/>
-    
-    <constant name="GlobalTrackerReadoutID" type="string" value="system:5,side:-2,layer:6,module:11,sensor:8"/>
   </define>
   
   
