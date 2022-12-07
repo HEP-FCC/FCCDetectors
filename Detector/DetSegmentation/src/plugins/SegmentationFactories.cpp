@@ -23,6 +23,6 @@ DECLARE_SEGMENTATION(FCCSWGridPhiEta, create_segmentation<dd4hep::DDSegmentation
 #include "DetSegmentation/GridRPhiEta.h"
 DECLARE_SEGMENTATION(GridRPhiEta, create_segmentation<dd4hep::DDSegmentation::GridRPhiEta>)
 
-#include "DetSegmentation/GridDriftChamber.h"
-DECLARE_SEGMENTATION(GridDriftChamber, create_segmentation<dd4hep::DDSegmentation::GridDriftChamber>)
+#include "DetSegmentation/GridSimplifiedDriftChamber.h"
+DECLARE_SEGMENTATION(GridSimplifiedDriftChamber, create_segmentation<dd4hep::DDSegmentation::GridSimplifiedDriftChamber>)
 

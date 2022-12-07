@@ -39,6 +39,9 @@ endforeach()
   set_property(TEST ${_testname} APPEND PROPERTY ENVIRONMENT "DD4hepINSTALL=${ddcore_loc}/../")
 endfunction()
 
+# Setting RPATH ------------------------------------------------
+set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
 # Subdirectories -----------------------------------------------
 add_subdirectory(Detector)
 

@@ -1,14 +1,14 @@
 #include "DD4hep/DetFactoryHelper.h"
 #include "DD4hep/Printout.h"
 #include "DDSegmentation/Segmentation.h"
-#include "DetSegmentation/GridDriftChamber.h"
+#include "DetSegmentation/GridSimplifiedDriftChamber.h"
 #include "XML/Utilities.h"
 #include "XML/XMLElements.h"
 
 namespace det {
 
-static dd4hep::Ref_t createParamDriftChamber(dd4hep::Detector& theDetector, xml_h e,
-                                             dd4hep::SensitiveDetector aSensDet) {
+static dd4hep::Ref_t createParamSimplifiedDriftChamber(dd4hep::Detector& theDetector, xml_h e,
+                                                       dd4hep::SensitiveDetector aSensDet) {
   // ------- Lambda functions ---- //
   auto delta_a_func = [](auto x, auto y) { return 2 * std::sqrt((x + y) * (x - y)); };
   auto epsilon_func = [](auto delta_a, auto L) {
@@ -40,7 +40,7 @@ static dd4hep::Ref_t createParamDriftChamber(dd4hep::Detector& theDetector, xml_
   dd4hep::Segmentation geomseg = readout.segmentation();
   dd4hep::Segmentation* _geoSeg = &geomseg;
 
-  auto DCHseg = dynamic_cast<dd4hep::DDSegmentation::GridDriftChamber*>(_geoSeg->segmentation());
+  auto DCHseg = dynamic_cast<dd4hep::DDSegmentation::GridSimplifiedDriftChamber*>(_geoSeg->segmentation());
 
   dd4hep::Tube envelopeVol(detectorDim.rmin(), detectorDim.rmax(), detectorDim.dz());
   dd4hep::Volume envelopeVolume;
@@ -103,4 +103,4 @@ static dd4hep::Ref_t createParamDriftChamber(dd4hep::Detector& theDetector, xml_
 }
 }
 
-DECLARE_DETELEMENT(parametrised_DriftChamber, det::createParamDriftChamber)
+DECLARE_DETELEMENT(parametrised_SimplifiedDriftChamber, det::createParamSimplifiedDriftChamber)
