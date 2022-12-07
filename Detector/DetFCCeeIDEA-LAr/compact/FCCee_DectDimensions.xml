@@ -91,7 +91,7 @@
     <!-- LAr ECAL Calo Barrel -->
     <constant name="BarECal_id" value="DetID_ECAL_Barrel"/>
     <constant name="BarECal_rmin" value="2100*mm"/>
-    <constant name="BarECal_rmax" value="2800*mm"/>
+    <constant name="BarECal_rmax" value="2770*mm"/>
     <constant name="BarECal_dz" value="3100*mm"/>
 
     <!-- LAr ECAL Endcaps -->
@@ -102,7 +102,7 @@
 
     <!-- HCAL Barrel -->
     <constant name="BarHCal_id" value="DetID_HCAL_Barrel"/>
-    <constant name="BarHCal_rmin" value="2850*mm"/>
+    <constant name="BarHCal_rmin" value="2800*mm"/>
     <constant name="BarHCal_rmax" value="4500*mm"/>
     <constant name="BarHCal_dz" value="2800*mm"/>
 
