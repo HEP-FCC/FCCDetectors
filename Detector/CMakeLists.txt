@@ -19,7 +19,11 @@ add_subdirectory(DetFCCeeCommon)
 add_subdirectory(DetFCCeeHCalTile)
 add_subdirectory(DetFCCeeIDEA)
 
+
 add_subdirectory(DRsegmentation)
 add_subdirectory(DRcomponents)
 add_subdirectory(DRcalo)
 add_subdirectory(DRsensitive)
+
+add_subdirectory(DetFCCeeCalDiscs)
+
