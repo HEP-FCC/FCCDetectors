@@ -27,5 +27,3 @@ install(TARGETS ddDRcalo
 )
 
 install(DIRECTORY compact DESTINATION ${CMAKE_INSTALL_DATADIR})
-
-dd4hep_configure_scripts( ddDRcalo DEFAULT_SETUP WITH_TESTS )
