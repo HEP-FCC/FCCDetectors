@@ -32,6 +32,7 @@
     <constant name="DetID_Calo_Barrel"      value=" 4"/>
     <constant name="DetID_Calo_Endcap"      value=" 5"/>
     <constant name="DetID_Calo_Endcap_2"    value=" 6"/>
+    <constant name="DetID_VXD_OuterBarrel"  value=" 7"/>
 
     <constant name="DetID_HCAL_Barrel"      value=" 10"/>
     <constant name="DetID_HCAL_Endcap"      value=" 11"/>

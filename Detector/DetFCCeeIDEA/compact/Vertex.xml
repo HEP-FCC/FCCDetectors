@@ -45,99 +45,131 @@
     <define>
 
         <!-- Sensor characteristics -->
-        <!-- Let's take the ARCADIA chip! -->
-        <constant name="inner_z" value="1.6*cm"/> <!-- Chip length, use modified ARCADIA with length of 1.6cm instead of 2.56cm-->       
-        <constant name="inner_rphi_sensitive" value="6.4*mm"/> <!-- Chip length: Sensitive-->
-        <constant name="inner_rphi_periphery" value="2*mm"/> <!-- Chip length: Periphery-->
-        <constant name="inner_rphi" value="inner_rphi_sensitive+inner_rphi_periphery"/> <!-- Chip length: Sensitive-->
 
-        <!-- Module with two ARCADIA chips -->
-        <constant name="inner_dual_z" value="inner_z*2"/> 
-        <constant name="inner_dual_rphi_sensitive" value="inner_rphi_sensitive"/> 
-        <constant name="inner_dual_rphi_periphery" value="inner_rphi_periphery"/>
-        <constant name="inner_dual_rphi" value="inner_rphi"/>
+        <!-- Inner barrel -->
+            <!-- Let's take the ARCADIA chip! -->
+            <constant name="inner_z" value="1.6*cm"/> <!-- Chip length, use modified ARCADIA with length of 1.6cm instead of 2.56cm-->       
+            <constant name="inner_rphi_sensitive" value="6.4*mm"/> <!-- Chip length: Sensitive-->
+            <constant name="inner_rphi_periphery" value="2*mm"/> <!-- Chip length: Periphery-->
+            <constant name="inner_rphi" value="inner_rphi_sensitive+inner_rphi_periphery"/> <!-- Chip length: Sensitive-->
+    
+            <!-- Module with two ARCADIA chips -->
+            <constant name="inner_mod_z" value="inner_z*2"/> 
+            <constant name="inner_mod_rphi_sensitive" value="inner_rphi_sensitive"/> 
+            <constant name="inner_mod_rphi_periphery" value="inner_rphi_periphery"/>
+            <constant name="inner_mod_rphi" value="inner_rphi"/>
 
-        <constant name="VertexBarrel_Layer1_nModules" value="6"/>
-        <constant name="VertexBarrel_Layer2_nModules" value="10"/>
-        <constant name="VertexBarrel_Layer3_nModules" value="16"/>
-
-        <constant name="VertexBarrel_dual_z_spacing" value="0.2*mm"/>
-
-        <constant name="VertexBarrel_z1" value="(VertexBarrel_Layer1_nModules*inner_dual_z+(VertexBarrel_Layer1_nModules-1)*VertexBarrel_dual_z_spacing)/2."/>
-        <constant name="VertexBarrel_z2" value="(VertexBarrel_Layer2_nModules*inner_dual_z+(VertexBarrel_Layer2_nModules-1)*VertexBarrel_dual_z_spacing)/2."/>
-        <constant name="VertexBarrel_z3" value="(VertexBarrel_Layer3_nModules*inner_dual_z+(VertexBarrel_Layer3_nModules-1)*VertexBarrel_dual_z_spacing)/2."/>        
-    	<constant name="VertexBarrel_r1" value="1.2*cm"/> 
-        <constant name="VertexBarrel_r2" value="2.0*cm"/>
-        <constant name="VertexBarrel_r3" value="3.2*cm"/>
-
-        <constant name="VertexBarrel_Sensitive_Thickness"   value="5.000000000e-02*mm"/>
-    	<constant name="VertexBarrel_Support_Thickness"     value="23.500000000e-02*mm"/> <!-- +50% more material budget as in CLIC VTX -->
-        <constant name="VertexEndcap_Sensitive_Thickness"   value="5.000000000e-02*mm"/>
-        <constant name="VertexEndcap_Support_Thickness"     value="5.0*mm"/>
-
-        <constant name="VertexBarrel_Layer1_rphi_sensitive" value="inner_dual_rphi_sensitive"/> 
-        <constant name="VertexBarrel_Layer2_rphi_sensitive" value="inner_dual_rphi_sensitive"/>
-        <constant name="VertexBarrel_Layer3_rphi_sensitive" value="inner_dual_rphi_sensitive"/>
-
-        <constant name="VertexBarrel_Layer1_rphi_periphery" value="inner_dual_rphi_periphery"/>
-        <constant name="VertexBarrel_Layer2_rphi_periphery" value="inner_dual_rphi_periphery"/>
-        <constant name="VertexBarrel_Layer3_rphi_periphery" value="inner_dual_rphi_periphery"/>
-
-        <constant name="VertexBarrel_Layer1_rphi" value="inner_dual_rphi"/>
-        <constant name="VertexBarrel_Layer2_rphi" value="inner_dual_rphi"/>
-        <constant name="VertexBarrel_Layer3_rphi" value="inner_dual_rphi"/>
-
-        <constant name="VertexBarrel_Layer3_overlap" value="0.5*mm"/>        
-        <constant name="VertexBarrel_Layer3_offset_r" value="0.5*mm"/>
+        <!-- Outer barrel -->
+            <!-- Outer vertex sensor (ATLASPix3-like) -->
+            <constant name="outer_z_sensitive" value="19.8*mm"/> <!-- Chip length in z: Sensitive -->
+            <constant name="outer_z_periphery" value="0.4*mm"/> <!-- Chip length in z: Periphery -->
+            <constant name="outer_z" value="outer_z_sensitive+outer_z_periphery"/> <!-- Chip length in z: Total -->
+            <constant name="outer_rphi_sensitive" value="18.6*mm"/> <!-- Chip length in r-phi: Sensitive-->
+            <constant name="outer_rphi_periphery" value="2.4*mm"/> <!-- Chip length in r-phi: Periphery-->
+            <constant name="outer_rphi" value="outer_rphi_sensitive+outer_rphi_periphery"/> <!-- Chip length in r-phi: Total -->
+    
+            <!-- Module with four ATLASPix3-like chips -->
+            <constant name="outer_mod_z_sensitive" value="outer_z_sensitive*2"/>
+            <constant name="outer_mod_z_periphery" value="outer_z_periphery*2"/>
+            <constant name="outer_mod_z" value="outer_mod_z_sensitive+outer_mod_z_periphery"/>
+    
+            <constant name="outer_mod_rphi_sensitive" value="outer_rphi_sensitive*2"/>
+            <constant name="outer_mod_rphi_periphery" value="outer_rphi_periphery*2"/>
+            <constant name="outer_mod_rphi" value="outer_mod_rphi_sensitive+outer_mod_rphi_periphery"/>
         
-        <constant name="VertexBarrel_Layer1_offset" value="2.50*mm"/>
-        <constant name="VertexBarrel_Layer2_offset" value="2.50*mm"/>
-        <constant name="VertexBarrel_Layer3_offset" value="3.00*mm"/>
+        <!-- Vertex barrel -->
+            <constant name="VertexBarrel_Layer1_nModules" value="6"/>
+            <constant name="VertexBarrel_Layer2_nModules" value="10"/>
+            <constant name="VertexBarrel_Layer3_nModules" value="16"/>
+    
+            <constant name="VertexBarrel_mod_z_spacing" value="0.2*mm"/>
+    
+            <constant name="VertexBarrel_z1" value="(VertexBarrel_Layer1_nModules*inner_mod_z+(VertexBarrel_Layer1_nModules-1)*VertexBarrel_mod_z_spacing)/2."/>
+            <constant name="VertexBarrel_z2" value="(VertexBarrel_Layer2_nModules*inner_mod_z+(VertexBarrel_Layer2_nModules-1)*VertexBarrel_mod_z_spacing)/2."/>
+            <constant name="VertexBarrel_z3" value="(VertexBarrel_Layer3_nModules*inner_mod_z+(VertexBarrel_Layer3_nModules-1)*VertexBarrel_mod_z_spacing)/2."/>        
+        	<constant name="VertexBarrel_r1" value="1.2*cm"/> 
+            <constant name="VertexBarrel_r2" value="2.0*cm"/>
+            <constant name="VertexBarrel_r3" value="3.2*cm"/>
+    
+            <constant name="VertexBarrel_Sensitive_Thickness"   value="5.000000000e-02*mm"/>
+        	<constant name="VertexBarrel_Support_Thickness"     value="23.500000000e-02*mm"/> <!-- +50% more material budget as in CLIC VTX -->
+    
+            <constant name="VertexBarrel_Layer1_rphi_sensitive" value="inner_mod_rphi_sensitive"/> 
+            <constant name="VertexBarrel_Layer2_rphi_sensitive" value="inner_mod_rphi_sensitive"/>
+            <constant name="VertexBarrel_Layer3_rphi_sensitive" value="inner_mod_rphi_sensitive"/>
+    
+            <constant name="VertexBarrel_Layer1_rphi_periphery" value="inner_mod_rphi_periphery"/>
+            <constant name="VertexBarrel_Layer2_rphi_periphery" value="inner_mod_rphi_periphery"/>
+            <constant name="VertexBarrel_Layer3_rphi_periphery" value="inner_mod_rphi_periphery"/>
+    
+            <constant name="VertexBarrel_Layer1_rphi" value="inner_mod_rphi"/>
+            <constant name="VertexBarrel_Layer2_rphi" value="inner_mod_rphi"/>
+            <constant name="VertexBarrel_Layer3_rphi" value="inner_mod_rphi"/>
+    
+            <constant name="VertexBarrel_Layer3_overlap" value="0.5*mm"/>        
+            <constant name="VertexBarrel_Layer3_offset_r" value="0.5*mm"/>
+            
+            <constant name="VertexBarrel_Layer1_offset" value="2.50*mm"/>
+            <constant name="VertexBarrel_Layer2_offset" value="2.50*mm"/>
+            <constant name="VertexBarrel_Layer3_offset" value="3.00*mm"/>
+            
+            <constant name="VertexBarrel_Layer1_Staves" value="14"/>
+            <constant name="VertexBarrel_Layer2_Staves" value="22"/>
+            <constant name="VertexBarrel_Layer3_Staves" value="15"/>
         
-        <constant name="VertexBarrel_Layer1_Staves" value="14"/>
-        <constant name="VertexBarrel_Layer2_Staves" value="22"/>
-        <constant name="VertexBarrel_Layer3_Staves" value="15"/>
-        
-        <constant name="VertexEndcap_rmax1" value="247.644*mm"/>
-        <constant name="VertexEndcap_rmax2" value="289.595*mm"/>
-        <constant name="VertexEndcap_rmax3" value="289.595*mm"/>        
-        <constant name="VertexEndcap_z1" value="185*mm"/>
-        <constant name="VertexEndcap_z2" value="620*mm"/>
-        <constant name="VertexEndcap_z3" value="860*mm"/>
-        <constant name="VertexEndcapModules" value="8"/>
-	    <constant name="VertexEndcap_rmin1" value="36.561*mm"/>
-        <constant name="VertexEndcap_rmin2" value="76.195*mm"/>
-        <constant name="VertexEndcap_rmin3" value="105.895*mm"/>
-        <constant name="VertexEndcapModuleThickness" value="1.22*mm"/>
-        <constant name="VertexEndcapOverlap" value="0*mm"/>
+        <!-- Vertex endcap -->
+            <constant name="VertexEndcap_rmax1" value="247.644*mm"/>
+            <constant name="VertexEndcap_rmax2" value="289.595*mm"/>
+            <constant name="VertexEndcap_rmax3" value="289.595*mm"/>        
+            <constant name="VertexEndcap_z1" value="185*mm"/>
+            <constant name="VertexEndcap_z2" value="620*mm"/>
+            <constant name="VertexEndcap_z3" value="860*mm"/>
+            <constant name="VertexEndcapModules" value="8"/>
+    	    <constant name="VertexEndcap_rmin1" value="36.561*mm"/>
+            <constant name="VertexEndcap_rmin2" value="76.195*mm"/>
+            <constant name="VertexEndcap_rmin3" value="105.895*mm"/>
+            <constant name="VertexEndcapModuleThickness" value="1.22*mm"/>
+            <constant name="VertexEndcapOverlap" value="0*mm"/>
+    
+            <constant name="VertexEndcap_Sensitive_Thickness"   value="5.000000000e-02*mm"/>
+            <constant name="VertexEndcap_Support_Thickness"     value="5.0*mm"/>
 
-        <!-- Outer vertex sensor (ATLASPix3-like) -->
-        <constant name="outer_z_sensitive" value="19.8*mm"/> <!-- Chip length in z: Sensitive -->
-        <constant name="outer_z_periphery" value="0.4*mm"/> <!-- Chip length in z: Periphery -->
-        <constant name="outer_z" value="outer_z_sensitive+outer_z_periphery"/> <!-- Chip length in z: Total -->
-        <constant name="outer_rphi_sensitive" value="18.6*mm"/> <!-- Chip length in r-phi: Sensitive-->
-        <constant name="outer_rphi_periphery" value="2.4*mm"/> <!-- Chip length in r-phi: Periphery-->
-        <constant name="outer_rphi" value="outer_rphi_sensitive+outer_rphi_periphery"/> <!-- Chip length in r-phi: Total -->    
+        <!-- Vertex outer barrel -->
+            <constant name="VertexOuterBarrel_nModules" value="16"/>
+            <constant name="VertexOuterBarrel_mod_z_spacing" value="0.2*mm"/>
+            <constant name="VertexOuterBarrel_mod_rphi_spacing" value="0.2*mm"/>
+    
+            <constant name="VertexOuterBarrel_z" value="(VertexOuterBarrel_nModules*outer_mod_z+(VertexOuterBarrel_nModules-1)*VertexOuterBarrel_mod_z_spacing)/2."/>
+            <constant name="VertexOuterBarrel_r1" value="285*mm"/>
+            <constant name="VertexOuterBarrel_r2" value="315*mm"/>
+    
+            <constant name="VertexOuterBarrel_Sensitive_Thickness"   value="5.000000000e-02*mm"/>
+            <constant name="VertexOuterBarrel_Support_Thickness"     value="23.500000000e-02*mm"/>
+    
+            <constant name="VertexOuterBarrel_rphi_sensitive" value="outer_mod_rphi_sensitive"/>
+    
+            <constant name="VertexOuterBarrel_rphi_periphery" value="outer_mod_rphi_periphery"/>
+    
+            <constant name="VertexOuterBarrel_rphi" value="outer_rphi_sensitive+outer_rphi_periphery"/>
+    
+            <constant name="VertexOuterBarrel_offset" value="0*mm"/>
+            <constant name="VertexOuterBarrel_tilt" value="0.005833"/> <!-- 2.1 degree tilt of staves -->      
+    
+            <constant name="VertexOuterBarrel_Staves" value="48"/>
 
-        <!-- Module with four ATLASPix3-like chips -->
-        <constant name="outer_quad_z_spacing" value="0.2*mm"/>
-        <constant name="outer_quad_rphi_spacing" value="0.2*mm"/>
-
-        <constant name="outer_quad_z" value="inner_z*2+outer_quad_z_spacing"/>
-        <constant name="outer_quad_rphi_sensitive" value="inner_rphi_sensitive"/>
-        <constant name="outer_quad_rphi_periphery" value="inner_rphi_periphery"/>
-        <constant name="outer_quad_rphi" value="inner_rphi"/>
 
         <!-- Flex for vertex readout, assume 100 µm total thickness, with two 18 µm copper layers and the rest kapton-->
-        <constant name="flex_width" value="3.0*mm"/>
-        <constant name="flex_offset" value="0.0*mm"/>
-        <constant name="FlexCopperThickness" value="0.036*mm"/>
-        <constant name="FlexKaptonThickness" value="0.064*mm"/>
+            <constant name="inner_flex_width" value="3.0*mm"/>
+            <constant name="flex_offset" value="0.0*mm"/>
+            <constant name="FlexCopperThickness" value="0.036*mm"/>
+            <constant name="FlexKaptonThickness" value="0.064*mm"/>
 
         <!-- Flex for vertex endcap readout, scaled up from above to get to a total of 688 µm -->
-        <constant name="FlexCopperThicknessEndcap" value="0.24768*mm"/>
-        <constant name="FlexKaptonThicknessEndcap" value="0.44032*mm"/>
-        
+            <constant name="FlexCopperThicknessEndcap" value="0.24768*mm"/>
+            <constant name="FlexKaptonThicknessEndcap" value="0.44032*mm"/>
+
+        <!-- Flex for outer barrel vertex -->
+            <constant name="outer_flex_width" value="0.6688*mm"/>
     </define>        
     <!-- Central beam pipe proxy (simple tube) -->
 
@@ -152,6 +184,113 @@
         </readout>
     </readouts>
 
+    <!-- Vertex inner barrel -->
+    <detectors>
+        <detector name="VertexBarrel" type="VertexBarrel_o1_v01" vis="VXDVis" id="DetID_VXD_Barrel" readout="VertexBarrelCollection"  region="VertexBarrelRegion">
+
+            <type_flags type=" DetType_TRACKER + DetType_PIXEL + DetType_VERTEX + DetType_BARREL"/>
+
+            <layer nLadders="VertexBarrel_Layer1_Staves" phi0="0" id="0">
+                <!-- First comes the support structure -->
+                <ladder    distance="VertexBarrel_r1" thickness="VertexBarrel_Support_Thickness" width="VertexBarrel_Layer1_rphi" length="VertexBarrel_z1" offset="VertexBarrel_Layer1_offset"    material="CarbonFiber"  vis="CarbonFiberVis"/>
+
+                <!-- Then the sensor -->
+                <sensitive distance="VertexBarrel_r1+VertexBarrel_Support_Thickness" thickness="VertexBarrel_Sensitive_Thickness" width="VertexBarrel_Layer1_rphi_sensitive" length="VertexBarrel_z1" offset="VertexBarrel_Layer1_offset-VertexBarrel_Layer1_rphi_periphery/2" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexBarrel_Layer1_nModules" dz="VertexBarrel_mod_z_spacing" z_length="inner_mod_z"/>
+
+                <!-- with its passive periphery -->
+                <module_envelope width="VertexBarrel_Layer1_rphi_periphery" length="0.0*mm" type="1" vis="SiVertexPeripheryVis"/>
+
+                <!-- Then the flex -->
+                <module_component type="1" thickness="FlexKaptonThickness" width="inner_flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
+            </layer>
+
+
+            <layer nLadders="VertexBarrel_Layer2_Staves" phi0="0" id="1">
+                <!-- First comes the support structure -->
+                <ladder    distance="VertexBarrel_r2" thickness="VertexBarrel_Support_Thickness" width="VertexBarrel_Layer2_rphi" length="VertexBarrel_z2" offset="VertexBarrel_Layer2_offset"    material="CarbonFiber"  vis="CarbonFiberVis"/>
+
+                <!-- Then the sensor -->
+                <sensitive distance="VertexBarrel_r2+VertexBarrel_Support_Thickness" thickness="VertexBarrel_Sensitive_Thickness" width="VertexBarrel_Layer2_rphi_sensitive" length="VertexBarrel_z2" offset="VertexBarrel_Layer2_offset-VertexBarrel_Layer2_rphi_periphery/2" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexBarrel_Layer2_nModules" dz="VertexBarrel_mod_z_spacing" z_length="inner_mod_z"/>
+
+                <!-- with its passive periphery -->
+                <module_envelope width="VertexBarrel_Layer2_rphi_periphery" length="0.0*mm" type="1" vis="SiVertexPeripheryVis"/>
+
+                <!-- Then the flex -->
+                <module_component type="1" thickness="FlexKaptonThickness" width="inner_flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
+            </layer>
+
+
+            <layer nLadders="VertexBarrel_Layer3_Staves" phi0="0" id="2">
+                <!-- No support structure for layer 3 yet! TO BE DONE -->
+                <ladder    distance="VertexBarrel_r3" thickness="VertexBarrel_Support_Thickness" width="VertexBarrel_Layer3_rphi" length="VertexBarrel_z3" offset="VertexBarrel_Layer3_offset+VertexBarrel_Layer3_rphi/2"    material="CarbonFiber"  vis="CarbonFiberVis"/>
+
+                <!-- Then the sensor (normal direction) -->
+                <sensitive distance="VertexBarrel_r3+VertexBarrel_Support_Thickness" thickness="VertexBarrel_Sensitive_Thickness" width="VertexBarrel_Layer3_rphi_sensitive" length="VertexBarrel_z3" offset="VertexBarrel_Layer3_offset+VertexBarrel_Layer3_rphi_sensitive/2" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexBarrel_Layer3_nModules" dz="VertexBarrel_mod_z_spacing" z_length="inner_mod_z"/>
+
+                <!-- with its passive periphery -->
+                <module_envelope width="VertexBarrel_Layer2_rphi_periphery" length="0.0*mm" type="1" vis="SiVertexPeripheryVis"/>
+
+                <!-- Then the flex -->
+                <module_component type="1" thickness="FlexKaptonThickness" width="inner_flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
+            </layer>
+
+            <layer nLadders="VertexBarrel_Layer3_Staves" phi0="0" id="3">
+                <!-- No support structure for layer 3 yet! TO BE DONE -->
+                <ladder    distance="VertexBarrel_r3+VertexBarrel_Layer3_offset_r" thickness="VertexBarrel_Support_Thickness" width="VertexBarrel_Layer3_rphi" length="VertexBarrel_z3" offset="VertexBarrel_Layer3_offset+VertexBarrel_Layer3_overlap-VertexBarrel_Layer3_rphi/2"    material="CarbonFiber"  vis="CarbonFiberVis"/>
+
+                <!-- Then the sensor (inverted direction) -->
+                <sensitive distance="VertexBarrel_r3+VertexBarrel_Support_Thickness+VertexBarrel_Layer3_offset_r" thickness="VertexBarrel_Sensitive_Thickness" width="VertexBarrel_Layer3_rphi_sensitive" length="VertexBarrel_z3" offset="VertexBarrel_Layer3_offset+VertexBarrel_Layer3_overlap-VertexBarrel_Layer3_rphi_sensitive/2" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexBarrel_Layer3_nModules" dz="VertexBarrel_mod_z_spacing" z_length="inner_mod_z"/>
+
+                <!-- with its passive periphery -->
+                <module_envelope width="VertexBarrel_Layer2_rphi_periphery" length="0.0*mm" type="-1" vis="SiVertexPeripheryVis"/>
+
+                <!-- Then the flex -->
+                <module_component type="1" thickness="FlexKaptonThickness" width="inner_flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
+            </layer>
+        </detector>
+    </detectors>
+
+
+    <!-- Vertex outer barrel -->
+    <detectors>
+        <detector name="VertexOuterBarrel" type="VertexBarrel_o1_v01" vis="VXDVis" id="DetID_VXD_OuterBarrel" readout="VertexBarrelCollection"  region="VertexBarrelRegion">
+
+            <!-- Order of layers: 688 um power-bus stave flex, 50 um silicon sensor, 20 um carbon fleece grafite, 120 um carbon fiber, 25 um carbon paper-grafite, 20 um carbon fleece grafite -->
+            <!-- Module width: 42.2 mm -->
+            <type_flags type=" DetType_TRACKER + DetType_PIXEL + DetType_VERTEX + DetType_BARREL"/>
+
+            <layer nLadders="VertexOuterBarrel_Staves" phi0="0" id="0">
+                <!-- First comes the support structure -->
+                <ladder    distance="VertexOuterBarrel_r1" thickness="VertexOuterBarrel_Support_Thickness" width="VertexOuterBarrel_rphi" length="VertexOuterBarrel_z" offset="VertexOuterBarrel_offset"    material="CarbonFiber"  vis="CarbonFiberVis" />
+
+                <!-- Then the sensor, not implemented separate passive periphery -->
+                <sensitive distance="VertexOuterBarrel_r1+VertexOuterBarrel_Support_Thickness" thickness="VertexOuterBarrel_Sensitive_Thickness" width="outer_mod_rphi" length="VertexOuterBarrel_z" offset="VertexOuterBarrel_offset" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexOuterBarrel_nModules" dz="outer_mod_z_spacing" z_length="outer_mod_z"/>
+
+                <!-- with its passive periphery -->
+                <module_envelope width="VertexOuterBarrel_rphi_periphery" length="0.0*mm" type="-1" vis="SiVertexPeripheryVis"/>
+
+                <!-- Then the flex -->
+                <module_component type="1" thickness="FlexKaptonThickness" width="outer_flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
+            </layer>
+
+            <layer nLadders="VertexOuterBarrel_Staves" phi0="0" id="1">
+                <!-- First comes the support structure -->
+                <ladder    distance="VertexOuterBarrel_r2" thickness="VertexOuterBarrel_Support_Thickness" width="VertexOuterBarrel_rphi" length="VertexOuterBarrel_z" offset="VertexOuterBarrel_offset"    material="CarbonFiber"  vis="CarbonFiberVis" />
+
+                <!-- Then the sensor, not implemented separate passive periphery -->
+                <sensitive distance="VertexOuterBarrel_r2+VertexOuterBarrel_Support_Thickness" thickness="VertexOuterBarrel_Sensitive_Thickness" width="outer_mod_rphi" length="VertexOuterBarrel_z" offset="VertexOuterBarrel_offset" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexOuterBarrel_nModules" dz="outer_mod_z_spacing" z_length="outer_mod_z"/>
+
+                <!-- with its passive periphery -->
+                <module_envelope width="VertexOuterBarrel_rphi_periphery" length="0.0*mm" type="-1" vis="SiVertexPeripheryVis"/>
+
+                <!-- Then the flex -->
+                <module_component type="1" thickness="FlexKaptonThickness" width="outer_flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
+            </layer>
+        </detector>
+    </detectors>
+
+
+    <!-- Vertex endcap -->
     <detectors>
         <detector id="DetID_VXD_Endcap" name="VertexEndcap" type="VertexEndcap_o1_v06" readout="VertexEndcapCollection" reflect="true" region="VertexEndcapRegion">
             <envelope vis="VXDVis">
@@ -163,25 +302,25 @@
         <type_flags type=" DetType_TRACKER + DetType_PIXEL + DetType_VERTEX + DetType_ENDCAP"/>
             <module name="SiVertexEndcapModule1" vis="SiVertexModuleVis">
                 <trd x1="VertexEndcap_rmin1 * tan(pi/(VertexEndcapModules))+VertexEndcapOverlap*sin(pi/VertexEndcapModules)" x2="VertexEndcap_rmax1 * tan(pi/(VertexEndcapModules))+VertexEndcapOverlap*sin(pi/VertexEndcapModules)" z="(VertexEndcap_rmax1 - VertexEndcap_rmin1) / 2" />
-                <!--                <module_component thickness="FlexKaptonThicknessEndcap/2.0"  material="Kapton" vis="SiVertexCableVis"/>
-                <module_component thickness="FlexCopperThicknessEndcap/2.0"  material="Copper" vis="SiVertexCableVis"/> -->
-                <module_component thickness="VertexEndcap_Support_Thickness/2.0"  material="CarbonFiber" vis="CarbonFiberVis"/>
+                <module_component thickness="FlexKaptonThicknessEndcap/2.0"  material="Kapton" vis="SiVertexCableVis"/>
+                <module_component thickness="FlexCopperThicknessEndcap/2.0"  material="Copper" vis="SiVertexCableVis"/>
+                <module_component thickness="VertexEndcap_Support_Thickness/2.0"  material="CarbonFiber" vis="SiVertexPassiveVis"/>
                 <module_component thickness="VertexEndcap_Sensitive_Thickness/2.0"  material="Silicon" sensitive="true" vis="SiVertexSensitiveVis"/>
             </module>
 
             <module name="SiVertexEndcapModule2" vis="SiVertexModuleVis">
                 <trd x1="VertexEndcap_rmin2 * tan(pi/(VertexEndcapModules))+VertexEndcapOverlap*sin(pi/VertexEndcapModules)" x2="VertexEndcap_rmax2 * tan(pi/(VertexEndcapModules))+VertexEndcapOverlap*sin(pi/VertexEndcapModules)" z="(VertexEndcap_rmax2 - VertexEndcap_rmin2) / 2" />
-                <!--                <module_component thickness="FlexKaptonThicknessEndcap/2.0"  material="Kapton" vis="SiVertexCableVis"/>
-                <module_component thickness="FlexCopperThicknessEndcap/2.0"  material="Copper" vis="SiVertexCableVis"/> -->
-                <module_component thickness="VertexEndcap_Support_Thickness/2.0"  material="CarbonFiber" vis="CarbonFiberVis"/>
+                <module_component thickness="FlexKaptonThicknessEndcap/2.0"  material="Kapton" vis="SiVertexCableVis"/>
+                <module_component thickness="FlexCopperThicknessEndcap/2.0"  material="Copper" vis="SiVertexCableVis"/>
+                <module_component thickness="VertexEndcap_Support_Thickness/2.0"  material="CarbonFiber" vis="SiVertexPassiveVis"/>
                 <module_component thickness="VertexEndcap_Sensitive_Thickness/2.0"  material="Silicon" sensitive="true" vis="SiVertexSensitiveVis"/>
             </module>
 
             <module name="SiVertexEndcapModule3" vis="SiVertexModuleVis">
                 <trd x1="VertexEndcap_rmin3 * tan(pi/(VertexEndcapModules))+VertexEndcapOverlap*sin(pi/VertexEndcapModules)" x2="VertexEndcap_rmax3 * tan(pi/(VertexEndcapModules))+VertexEndcapOverlap*sin(pi/VertexEndcapModules)" z="(VertexEndcap_rmax3 - VertexEndcap_rmin3) / 2" />
-                <!--                <module_component thickness="FlexKaptonThicknessEndcap/2.0"  material="Kapton" vis="SiVertexCableVis"/>
-                <module_component thickness="FlexCopperThicknessEndcap/2.0"  material="Copper" vis="SiVertexCableVis"/> -->
-                <module_component thickness="VertexEndcap_Support_Thickness/2.0"  material="CarbonFiber" vis="CarbonFiberVis"/>
+                <module_component thickness="FlexKaptonThicknessEndcap/2.0"  material="Kapton" vis="SiVertexCableVis"/>
+                <module_component thickness="FlexCopperThicknessEndcap/2.0"  material="Copper" vis="SiVertexCableVis"/>
+                <module_component thickness="VertexEndcap_Support_Thickness/2.0"  material="CarbonFiber" vis="SiVertexPassiveVis"/>
                 <module_component thickness="VertexEndcap_Sensitive_Thickness/2.0"  material="Silicon" sensitive="true" vis="SiVertexSensitiveVis"/>
             </module>
 
@@ -197,71 +336,6 @@
         </detector>
     </detectors>
 
-    <detectors>
-        <detector name="VertexBarrel" type="ZPlanarTracker" vis="VXDVis" id="DetID_VXD_Barrel" readout="VertexBarrelCollection"  region="VertexBarrelRegion">
-
-            <type_flags type=" DetType_TRACKER + DetType_PIXEL + DetType_VERTEX + DetType_BARREL"/>
-
-            <layer nLadders="VertexBarrel_Layer1_Staves" phi0="0" id="0">
-                <!-- First comes the support structure -->
-                <ladder    distance="VertexBarrel_r1" thickness="VertexBarrel_Support_Thickness" width="VertexBarrel_Layer1_rphi" length="VertexBarrel_z1" offset="VertexBarrel_Layer1_offset"    material="CarbonFiber"  vis="CarbonFiberVis" />
-
-                <!-- Then the sensor -->
-                <sensitive distance="VertexBarrel_r1+VertexBarrel_Support_Thickness" thickness="VertexBarrel_Sensitive_Thickness" width="VertexBarrel_Layer1_rphi_sensitive" length="VertexBarrel_z1" offset="VertexBarrel_Layer1_offset-VertexBarrel_Layer1_rphi_periphery/2" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexBarrel_Layer1_nModules" dz="VertexBarrel_dual_z_spacing" z_length="inner_dual_z"/>
-
-                <!-- with its passive periphery -->
-                <module_envelope width="VertexBarrel_Layer2_rphi_periphery" length="0.0*mm" type="1" vis="SiVertexPeripheryVis"/>
-
-                <!-- Then the flex -->
-                <module_component type="1" thickness="FlexKaptonThickness" width="flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
-            </layer>
-
-
-            <layer nLadders="VertexBarrel_Layer2_Staves" phi0="0" id="1">
-                <!-- First comes the support structure -->
-                <ladder    distance="VertexBarrel_r2" thickness="VertexBarrel_Support_Thickness" width="VertexBarrel_Layer2_rphi" length="VertexBarrel_z2" offset="VertexBarrel_Layer2_offset"    material="CarbonFiber"  vis="CarbonFiberVis"/>
-
-                <!-- Then the sensor -->
-                <sensitive distance="VertexBarrel_r2+VertexBarrel_Support_Thickness" thickness="VertexBarrel_Sensitive_Thickness" width="VertexBarrel_Layer2_rphi_sensitive" length="VertexBarrel_z2" offset="VertexBarrel_Layer2_offset-VertexBarrel_Layer2_rphi_periphery/2" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexBarrel_Layer2_nModules" dz="VertexBarrel_dual_z_spacing" z_length="inner_dual_z"/>
-
-                <!-- with its passive periphery -->
-                <module_envelope width="VertexBarrel_Layer2_rphi_periphery" length="0.0*mm" type="1" vis="SiVertexPeripheryVis"/>
-
-                <!-- Then the flex -->
-                <module_component type="1" thickness="FlexKaptonThickness" width="flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
-            </layer>
-
-
-            <layer nLadders="VertexBarrel_Layer3_Staves" phi0="0" id="2">
-                <!-- No support structure for layer 3 yet! TO BE DONE -->
-                <ladder    distance="VertexBarrel_r3" thickness="VertexBarrel_Support_Thickness" width="VertexBarrel_Layer3_rphi" length="VertexBarrel_z3" offset="VertexBarrel_Layer3_offset+VertexBarrel_Layer3_rphi/2"    material="CarbonFiber"  vis="CarbonFiberVis"/>
-
-                <!-- Then the sensor (normal direction) -->
-                <sensitive distance="VertexBarrel_r3+VertexBarrel_Support_Thickness" thickness="VertexBarrel_Sensitive_Thickness" width="VertexBarrel_Layer3_rphi_sensitive" length="VertexBarrel_z3" offset="VertexBarrel_Layer3_offset+VertexBarrel_Layer3_rphi_sensitive/2" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexBarrel_Layer3_nModules" dz="VertexBarrel_dual_z_spacing" z_length="inner_dual_z"/>
-
-                <!-- with its passive periphery -->
-                <module_envelope width="VertexBarrel_Layer2_rphi_periphery" length="0.0*mm" type="1" vis="SiVertexPeripheryVis"/>
-
-                <!-- Then the flex -->
-                <module_component type="1" thickness="FlexKaptonThickness" width="flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
-            </layer>
-
-            <layer nLadders="VertexBarrel_Layer3_Staves" phi0="0" id="3">
-                <!-- No support structure for layer 3 yet! TO BE DONE -->
-                <ladder    distance="VertexBarrel_r3+VertexBarrel_Layer3_offset_r" thickness="VertexBarrel_Support_Thickness" width="VertexBarrel_Layer3_rphi" length="VertexBarrel_z3" offset="VertexBarrel_Layer3_offset+VertexBarrel_Layer3_overlap-VertexBarrel_Layer3_rphi/2"    material="CarbonFiber"  vis="CarbonFiberVis"/>
-
-                <!-- Then the sensor (inverted direction) -->
-                <sensitive distance="VertexBarrel_r3+VertexBarrel_Support_Thickness+VertexBarrel_Layer3_offset_r" thickness="VertexBarrel_Sensitive_Thickness" width="VertexBarrel_Layer3_rphi_sensitive" length="VertexBarrel_z3" offset="VertexBarrel_Layer3_offset+VertexBarrel_Layer3_overlap-VertexBarrel_Layer3_rphi_sensitive/2" material="Silicon" vis="SiVertexSensitiveVis" nModules="VertexBarrel_Layer3_nModules" dz="VertexBarrel_dual_z_spacing" z_length="inner_dual_z"/>
-
-                <!-- with its passive periphery -->
-                <module_envelope width="VertexBarrel_Layer2_rphi_periphery" length="0.0*mm" type="-1" vis="SiVertexPeripheryVis"/>
-
-                <!-- Then the flex -->
-                <module_component type="1" thickness="FlexKaptonThickness" width="flex_width" offset="0.0*cm" material="Kapton" vis="SiVertexCableVis"/>
-            </layer>
-        </detector>
-    </detectors>
-
 <!--        
         <detector>
             <detector name="VertexVerticalCable" type="TrackerEndcapSupport_o1_v01" reflect="true"  region="VertexEndcapRegion">
@@ -273,7 +347,6 @@
     	    </layer>
         </detector>
 -->
-
     <plugins>
         <plugin name="DD4hep_GenericSurfaceInstallerPlugin">
             <argument value="VertexEndcap"/> 
@@ -283,7 +356,6 @@
             <argument value="n_y=1."/>
         </plugin>
     </plugins>
-
 
 
     
