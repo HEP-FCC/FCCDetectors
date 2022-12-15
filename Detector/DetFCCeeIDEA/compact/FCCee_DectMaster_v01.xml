@@ -19,6 +19,8 @@
   <includes>
     <gdmlFile  ref="../../DetCommon/compact/elements.xml"/>
     <gdmlFile  ref="../../DetCommon/compact/materials.xml"/>
+    <gdmlFile  ref="DriftChamber_materials.xml"/>
+    <gdmlFile  ref="DriftChamber_parameters.xml"/>
   </includes>
 
   <define>
@@ -29,24 +31,13 @@
   </define>
 
   <include ref="./FCCee_DectDimensions.xml" />
-  <include ref="../../DetFCCeeCommon/compact/Beampipe.xml"/>
-  <include ref="../../DetFCCeeCommon/compact/BeamInstrumentation.xml"/>
-  <include ref="../../DetFCCeeCommon/compact/LumiCal.xml"/>
-  <include ref="../../DetFCCeeCommon/compact/HOMAbsorber.xml"/> 
 
-  <include ref="Vertex.xml"/>
-
-  <plugins>
-    <plugin name="DD4hepVolumeManager"/>
-    <plugin name="InstallSurfaceManager"/>
-
-    <!-- To be added? -->
-    <!-- <plugin name="lcgeo_LinearSortingPolicy"> -->
-    <!-- CONTENT -->
-    <!-- </plugin> -->
-
-  </plugins>
-  <include ref="SimplifiedDriftChamber.xml"/>
+  <include ref="Beampipe.xml"/>
+  <include ref="BeamInstrumentation.xml"/>
+  <include ref="LumiCal.xml"/>
+  <include ref="HOMAbsorber.xml"/>
+  <include ref="../../DetFCCeeCLD/compact/FCCee_o2_v02/Vertex.xml"/>
+  <include ref="DriftChamber.xml"/>
   <!--include ref="Calorimeter.xml"/-->
 
 </lccdd>

@@ -18,4 +18,4 @@ add_subdirectory(DetFCCeeCLD)
 add_subdirectory(DetFCCeeCommon)
 add_subdirectory(DetFCCeeHCalTile)
 add_subdirectory(DetFCCeeIDEA)
-
+add_subdirectory(DetFCCeeCalDiscs)

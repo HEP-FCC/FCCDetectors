@@ -1,9 +1,83 @@
-# the git version on centos7 is too old for fetch
-variables:
-  GIT_STRATEGY: clone
+#
+# This deployment publishes latest versions of selected detectors to the FCCSW
+# website, mainly to be consumed by Phoenix@FCC web application.
+# Inspired by https://github.com/key4hep/EDM4hep/blob/master/.gitlab-ci.yml
+#
 
-build-all:
+generate-root:
+  tags:
+    - cvmfs
+  stage: .pre
   script:
-  - source init.sh
-  - mkdir build; cd build; cmake ..; make -j `getconf _NPROCESSORS_ONLN` 
-  - ctest -j `getconf _NPROCESSORS_ONLN`
+    - source /cvmfs/sw.hsf.org/key4hep/setup.sh
+    - mkdir -p build install
+    - cd build
+    - >
+        cmake -DCMAKE_INSTALL_PREFIX=../install
+        -DCMAKE_CXX_STANDARD=17
+        -DCMAKE_CXX_FLAGS=" -fdiagnostics-color=always "
+        -G Ninja ..
+    - ninja -k0
+    - ninja -k0 install
+    - ninja -k0 && ctest --output-on-failure
+    - cd ..
+    - mkdir -p detectors
+    - mv fccee_cld.root detectors/
+    - mv fccee_idea.root detectors/
+    - mv fccee_nlq.root detectors/
+    - mv fcchh_baseline.root detectors/
+  artifacts:
+    paths:
+      - detectors/*root
+    expire_in: 1 week
+
+convert-gltf:
+  dependencies:
+    - generate-root
+  stage: build
+  image: registry.cern.ch/docker.io/library/fedora:latest
+  script:
+    - cd ..
+    - dnf -y groupinstall "Development Tools"
+    - dnf -y module install nodejs:16
+    - git clone https://github.com/kjvbrt/root2gltf.git
+    - cd root2gltf
+    - npm ci
+    - >
+        node . -c configs/config_fccee_cld.json
+        -o ../FCCDetectors/detectors/fccee_cld.gltf
+        ../FCCDetectors/detectors/fccee_cld.root
+    - >
+        node . -c configs/config_fccee_idea.json
+        -o ../FCCDetectors/detectors/fccee_idea.gltf
+        ../FCCDetectors/detectors/fccee_idea.root
+    - >
+        node . -c configs/config_fccee_nlq.json
+        -o ../FCCDetectors/detectors/fccee_nlq.gltf
+        ../FCCDetectors/detectors/fccee_nlq.root
+    - >
+        node . -c configs/config_fcchh_baseline.json
+        -o ../FCCDetectors/detectors/fcchh_baseline.gltf
+        ../FCCDetectors/detectors/fcchh_baseline.root
+  artifacts:
+    paths:
+      - detectors/*.gltf
+    expire_in: 1 week
+
+# Variables of the deployment
+# CI_OUTPUT_DIR: detectors/
+# EOS_ACCOUNT_USERNAME: key4hep
+# EOS_ACCOUNT_PASSWORD: xxxx
+# EOS_PATH: /eos/project-f/fccsw-web/www/detectors/
+# METHOD: rsync
+deploy-eos:
+  only:
+    refs:
+      - main
+  dependencies:
+    - generate-root
+    - convert-gltf
+  stage: deploy
+  image: gitlab-registry.cern.ch/ci-tools/ci-web-deployer:latest
+  script:
+    - deploy-eos
