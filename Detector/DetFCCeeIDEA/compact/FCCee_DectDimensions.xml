@@ -85,6 +85,10 @@
     <constant name="OuterTracker_inner_radius" value="696*mm"/>
     <constant name="OuterTracker_outer_radius" value="2145*mm"/>  <!-- to avoid overlap with CaloFace, but it has to be large enough to accommodate OT-->
     <constant name="OuterTracker_half_length" value="2300*mm"/>
+
+    <constant name="DCH_inner_radius" value="345*mm"/>
+    <constant name="DCH_outer_radius" value="2100*mm"/>
+    <constant name="DCH_half_length" value="2250*mm"/>
     
     <constant name="ECalBarrel_inner_radius" value="2150*mm"/>
     <constant name="ECalBarrel_outer_radius" value="2352*mm"/>

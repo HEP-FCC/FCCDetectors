@@ -1,8 +1,8 @@
-#ifndef DD4HEP_DDCORE_GRIDDRIFTCHAMBER_H
-#define DD4HEP_DDCORE_GRIDDRIFTCHAMBER_H 1
+#ifndef DD4HEP_DDCORE_GRIDSIMPLIFIEDDRIFTCHAMBER_H
+#define DD4HEP_DDCORE_GRIDSIMPLIFIEDDRIFTCHAMBER_H 1
 
 // FCCSW
-#include "DetSegmentation/GridDriftChamber.h"
+#include "DetSegmentation/GridSimplifiedDriftChamber.h"
 
 // DD4hep
 #include "DD4hep/Segmentations.h"
@@ -23,29 +23,29 @@ template <typename T>
 class SegmentationWrapper;
 
 /// We need some abbreviation to make the code more readable.
-typedef Handle<SegmentationWrapper<DDSegmentation::GridDriftChamber>> GridDriftChamberHandle;
+typedef Handle<SegmentationWrapper<DDSegmentation::GridSimplifiedDriftChamber>> GridSimplifiedDriftChamberHandle;
 
-class GridDriftChamber : public GridDriftChamberHandle {
+class GridSimplifiedDriftChamber : public GridSimplifiedDriftChamberHandle {
 public:
   /// Defintiion of the basic handled object
-  typedef GridDriftChamberHandle::Object object;
+  typedef GridSimplifiedDriftChamberHandle::Object object;
 
 public:
   /// Default constructor
-  GridDriftChamber() = default;
+  GridSimplifiedDriftChamber() = default;
   /// Copy constructor
-  GridDriftChamber(const GridDriftChamber& e) = default;
+  GridSimplifiedDriftChamber(const GridSimplifiedDriftChamber& e) = default;
   /// Copy Constructor from segmentation base object
-  GridDriftChamber(const Segmentation& e) : Handle<Object>(e) {}
+  GridSimplifiedDriftChamber(const Segmentation& e) : Handle<Object>(e) {}
   /// Copy constructor from handle
-  GridDriftChamber(const Handle<Object>& e) : Handle<Object>(e) {}
+  GridSimplifiedDriftChamber(const Handle<Object>& e) : Handle<Object>(e) {}
   /// Copy constructor from other polymorph/equivalent handle
   template <typename Q>
-  GridDriftChamber(const Handle<Q>& e) : Handle<Object>(e) {}
+  GridSimplifiedDriftChamber(const Handle<Q>& e) : Handle<Object>(e) {}
   /// Assignment operator
-  GridDriftChamber& operator=(const GridDriftChamber& seg) = default;
+  GridSimplifiedDriftChamber& operator=(const GridSimplifiedDriftChamber& seg) = default;
   /// Equality operator
-  bool operator==(const GridDriftChamber& seg) const { return m_element == seg.m_element; }
+  bool operator==(const GridSimplifiedDriftChamber& seg) const { return m_element == seg.m_element; }
   /// determine the position based on the cell ID
   inline Position position(const CellID& id) const { return Position(access()->implementation->position(id)); }
 
@@ -92,4 +92,4 @@ public:
 };
 
 } /* End namespace dd4hep                */
-#endif  // DD4HEP_DDCORE_GRIDDRIFTCHAMBER_H
+#endif  // DD4HEP_DDCORE_GRIDSIMPLIFIEDDRIFTCHAMBER_H
