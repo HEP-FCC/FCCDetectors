@@ -19,6 +19,8 @@
   <includes>
     <gdmlFile  ref="../../DetCommon/compact/elements.xml"/>
     <gdmlFile  ref="../../DetCommon/compact/materials.xml"/>
+    <gdmlFile  ref="DriftChamber_materials.xml"/>
+    <gdmlFile  ref="DriftChamber_parameters.xml"/>
   </includes>
 
   <define>
@@ -35,7 +37,7 @@
   <include ref="LumiCal.xml"/>
   <include ref="HOMAbsorber.xml"/>
   <include ref="../../DetFCCeeCLD/compact/FCCee_o2_v02/Vertex.xml"/>
-  <include ref="SimplifiedDriftChamber.xml"/>
+  <include ref="DriftChamber.xml"/>
   <!--include ref="Calorimeter.xml"/-->
 
 </lccdd>
