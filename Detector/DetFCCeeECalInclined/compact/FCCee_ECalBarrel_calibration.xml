@@ -1,14 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0"
-       xmlns:xs="http://www.w3.org/2001/XMLSchema"
-       xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
+<?xml version="1.0" ?><lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
 
-  <info name="FCCee_ECalBarrel"
-        title="Settings for FCCee Inclined ECal Barrel Calorimeter"
-        author="M.Aleksa,J.Faltova,A.Zaborowska, V. Volkl"
-        url="no"
-        status="development"
-        version="1.0">
+  <info name="FCCee_ECalBarrel" title="Settings for FCCee Inclined ECal Barrel Calorimeter" author="M.Aleksa,J.Faltova,A.Zaborowska, V. Volkl" url="no" status="development" version="1.0">
     <comment>
       Settings for the inclined EM calorimeter.
       The barrel is filled with liquid argon. Passive material includes lead in the middle and steal on the outside, glued together.
@@ -26,11 +18,22 @@
     <constant name="LArGapThickness" value="1.239749*2*mm"/>
 
     <!-- Air margin, thicknesses of cryostat and LAr bath -->
-    <constant name="AirMarginThickness" value="15*mm"/>
-    <constant name="CryoBarrelFront" value="120*mm"/>
-    <constant name="CryoBarrelBack" value="100*mm"/>
-    <constant name="CryoBarrelSide" value="100*mm"/>
-    <constant name="LArBathThicknessFront" value="10*mm"/>
+    <constant name="AirMarginThickness" value="54*mm"/>    <!-- Space holder for air gap between cryostat vessels --> 
+
+    <constant name="CryoBarrelFrontWarm" value="10*mm"/>   <!-- Al solid corresponding to 0.11 X0 -->
+    <constant name="CryoBarrelFrontCold" value="3.8*mm"/>  <!-- Al solid equivalent of 0.043 X0 sandwich CFRP -->
+    <constant name="CryoBarrelFront" value="CryoBarrelFrontWarm+CryoBarrelFrontCold"/>
+
+    <constant name="CryoBarrelBackCold" value="30*mm"/>   <!-- Al solid corresponding to 0.34 X0 -->
+    <constant name="CryoBarrelBackWarm" value="2.7*mm"/>  <!-- Al solid equivalent of 0.03 X0 sandwich CFRP -->
+    <constant name="SolenoidBarrel" value="70*mm"/>    <!-- Al solenoid with thickness of 0.8 X0 -->
+    <constant name="CryoBarrelBack" value="CryoBarrelBackWarm+SolenoidBarrel+CryoBarrelBackCold"/>
+
+    <constant name="CryoBarrelSideWarm" value="30*mm"/>
+    <constant name="CryoBarrelSideCold" value="3.8*mm"/>
+    <constant name="CryoBarrelSide" value="CryoBarrelSideWarm+CryoBarrelSideCold"/>
+
+    <constant name="LArBathThicknessFront" value="5*mm"/>
     <constant name="LArBathThicknessBack" value="40*mm"/>
 
     <!-- air margin around calorimeter -->
@@ -53,7 +56,7 @@
          taking into account the angular projection effect -->
     <!-- <constant name="Pb_thickness_max" value="1.3 * Pb_thickness * EMBarrel_rmax/EMBarrel_rmin *
          cos(InclinationAngle - phi) / cos(InclinationAngle)" />-->
-    <constant name="Pb_thickness_max" value="Pb_thickness" />
+    <constant name="Pb_thickness_max" value="Pb_thickness"/>
     <!-- total amount of steel in one passive plate: it is divided for the outside layer on top and bottom -->
     <constant name="Steel_thickness" value="0.1*mm"/>
     <!-- total amount of glue in one passive plate: it is divided for the outside layer on top and bottom -->
@@ -63,7 +66,7 @@
   </define>
 
   <display>
-    <vis name="ecal_envelope" r="0.1" g="0.2" b="0.6" alpha="1" showDaughers="false" visible="true" />
+    <vis name="ecal_envelope" r="0.1" g="0.2" b="0.6" alpha="1" showDaughers="false" visible="true"/>
   </display>
 
   <readouts>
@@ -122,7 +125,7 @@
         <readout thickness="readout_thickness" sensitive="true">
           <material name="PCB"/>
         </readout>
-        <layers> <!-- pcb electrode longitunidal segmentation in the radial direction -->
+        <layers> <!-- pcb electrode segmentation in the radial direction -->
            <layer thickness="1.5*cm" repeat="1"/>
            <layer thickness="3.5*cm" repeat="11"/>
         </layers>
