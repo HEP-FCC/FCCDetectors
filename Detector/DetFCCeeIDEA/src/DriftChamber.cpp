@@ -653,7 +653,7 @@ static dd4hep::Ref_t create_element( dd4hep::Detector& description, xml_h e, dd4
   CDCHBuild builder( description, x_det, sens_det );
   string    det_name = x_det.nameStr();
 
-  dd4hep::printout( dd4hep::DEBUG, "CreateCDCH", "Detector name: %s with ID: %s", det_name, x_det.id() );
+  dd4hep::printout( dd4hep::DEBUG, "CreateCDCH", "Detector name: %s with ID: %s", det_name.c_str(), x_det.id() );
 
   DetElement  CDCH_det = builder.detector; // ( det_name, x_det.id() );
   dd4hep::Box CDCH_box( "5000/2", "5000/2", "5000/2" );
