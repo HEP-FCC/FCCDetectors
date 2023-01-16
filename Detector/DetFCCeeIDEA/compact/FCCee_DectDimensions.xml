@@ -198,6 +198,7 @@
   <regions>
     <region name="BeampipeRegion"/>
     <region name="VertexBarrelRegion"/>
+    <region name="VertexOuterBarrelRegion"/>
     <region name="VertexEndcapRegion"/>
   </regions>
 
