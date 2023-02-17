@@ -1,12 +1,6 @@
 /*****************************************************************************\
-* (c) Copyright 2020 CERN for the benefit of the LHCb Collaboration           *
-*                                                                             *
-* This software is distributed under the terms of the GNU General Public      *
-* Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".   *
-*                                                                             *
-* In applying this licence, CERN does not waive the privileges and immunities *
-* granted to it by virtue of its status as an Intergovernmental Organization  *
-* or submit itself to any jurisdiction.                                       *
+* DD4hep geometry code for the central drift chamber of the IDEA detector     *
+* Author: Lorenzo Capriotti                                                   *
 \*****************************************************************************/
 #include "DD4hep/DetFactoryHelper.h"
 #include "DD4hep/Printout.h"
@@ -42,15 +36,13 @@ struct wire
 namespace {
 
   struct CDCHBuild : public dd4hep::xml::tools::VolumeBuilder {
+    std::vector<dd4hep::DetElement> deSuperLayer, deLayer, deSWire;
 
     CDCHBuild( dd4hep::Detector& description, xml_elt_t e, dd4hep::SensitiveDetector sens );
 
     double diff_of_squares(double a, double b);
-    void PlaceWires( struct wire &w, double outwrap, double halflength, int copyNunOffset);
+    void PlaceWires( struct wire &w, double outwrap, double halflength, int copyNunOffset, int SL, int iring, int wirenum);
     void build_layer(DetElement parent, Volume parentVol);
-//    void build_cell();
-//    void build_beamplug();
-//    void build_CDCH( DetElement parent, Volume parentVol );
 
   };
 
@@ -69,7 +61,7 @@ namespace {
   }
 
 
-  void CDCHBuild::PlaceWires( struct wire &w, double outwrap, double halflength, int copyNunOffset=0) {
+  void CDCHBuild::PlaceWires( struct wire &w, double outwrap, double halflength, int copyNunOffset=0, int SL=999, int iring=999, int wirenum=-1) {
 
     dd4hep::RotationZYX rot( 0., 0., w.stereo );
     dd4hep::RotationX     rot_stereo( w.stereo );
@@ -78,15 +70,42 @@ namespace {
 
     dd4hep::Transform3D T(transl*rot_stereo);
 
-    dd4hep::Tube WrapTube(w.thickness, w.thickness+0.5*outwrap, halflength);
-    dd4hep::Volume lvWireWrapVol("lvWireWrap", WrapTube, description.material( "G4_Au") );
+    string wirewrapname = "lvWireWrap_SL";
+    wirewrapname += std::to_string(SL);
+    wirewrapname += "_ring";
+    wirewrapname += std::to_string(iring);
+    wirewrapname += "_type";
+    wirewrapname += w.type;
+    wirewrapname += "_stereo";
+    wirewrapname += std::to_string(w.stereo);
 
-    registerVolume(lvWireWrapVol.name(), lvWireWrapVol);
+    cout << "wirewrapname: " << wirewrapname << endl;
+
+    string wirename = "lvWire_SL";
+    wirename += std::to_string(SL);
+    wirename += "_ring";
+    wirename += std::to_string(iring);
+    wirename += "_type";
+    wirename += w.type;
+    wirename += "_stereo";
+    wirename += std::to_string(w.stereo);
+
+
+    dd4hep::Tube WrapTube(w.thickness, w.thickness+0.5*outwrap, halflength);
+    dd4hep::Volume lvWireWrapVol(wirewrapname, WrapTube, description.material( "G4_Au") );
+
+    dd4hep::Tube TotalWire(0.0, w.thickness+0.5*outwrap, halflength);
+    dd4hep::Volume lvWireVol(wirename, TotalWire, description.material("Air"));
+
+    lvWireVol.placeVolume( w.volume, dd4hep::Position( 0.0, 0.0, 0.0) );
+    lvWireVol.placeVolume( lvWireWrapVol, dd4hep::Position( 0.0, 0.0, 0.0) );
+
+//    registerVolume(lvWireWrapVol.name(), lvWireWrapVol);
+//    registerVolume(lvWireVol.name(), lvWireVol);
 
     for (int n=0; n<w.num; n++) {
         dd4hep::RotationZ iRot(w.thetaoffset + w.theta*n);
-        if (n%1==0) w.layer.placeVolume( w.volume, dd4hep::Transform3D( iRot*T ) );    
-        if (n%1==0) w.layer.placeVolume( lvWireWrapVol, dd4hep::Transform3D( iRot*T ) );
+        if (n%1==0) w.layer.placeVolume( lvWireVol, dd4hep::Transform3D( iRot*T ) );
     }
   }
 
@@ -109,6 +128,10 @@ namespace {
     double Carbon2OuterWallThick = dd4hep::_toDouble("CDCH:Carbon2OuterWallThick");
     double CopperOuterWallThick = dd4hep::_toDouble("CDCH:CopperOuterWallThick");
     double FoamOuterWallThick    = dd4hep::_toDouble("CDCH:FoamOuterWallThick");
+    double GasEndcapWallThick = dd4hep::_toDouble("CDCH:GasEndcapWallThick");
+    double CopperEndcapWallThick = dd4hep::_toDouble("CDCH:CopperEndcapWallThick");
+    double KaptonEndcapWallThick = dd4hep::_toDouble("CDCH:KaptonEndcapWallThick");
+    double CarbonEndcapWallThick = dd4hep::_toDouble("CDCH:CarbonEndcapWallThick");
     double FWireShellThickIn = dd4hep::_toDouble( "CDCH:FWireShellThickIn" );
     double FWireShellThickOut = dd4hep::_toDouble( "CDCH:FWireShellThickOut" );
     double SWireShellThickIn = dd4hep::_toDouble( "CDCH:SWireShellThickIn" );
@@ -190,6 +213,45 @@ namespace {
 
     double enlarge = 60.;
 
+    //------------------------------------------------------------------------
+    // Build the inner, outer and endcap walls first
+    //------------------------------------------------------------------------
+
+    dd4hep::Tube Endcap_Gas(inner_radius, outer_radius, 0.5*GasEndcapWallThick);
+    dd4hep::Tube Endcap_Copper(inner_radius, outer_radius, 0.5*CopperEndcapWallThick);
+    dd4hep::Tube Endcap_Kapton(inner_radius, outer_radius, 0.5*KaptonEndcapWallThick);
+    dd4hep::Tube Endcap_Carbon(inner_radius, outer_radius, 0.5*CarbonEndcapWallThick);
+
+    dd4hep::Volume lvEndcapWallGas = dd4hep::Volume("lvEndcapWallGasVol", Endcap_Gas, description.material( "GasHe_90Isob_10" ));
+    dd4hep::Volume lvEndcapWallCopper = dd4hep::Volume("lvEndcapWallCopperVol", Endcap_Copper, description.material( "G4_Cu" ));
+    dd4hep::Volume lvEndcapWallKapton = dd4hep::Volume("lvEndcapWallKaptonVol", Endcap_Kapton, description.material( "Kapton" ));
+    dd4hep::Volume lvEndcapWallCarbon = dd4hep::Volume("lvEndcapWallCarbonVol", Endcap_Carbon, description.material( "CarbonFiber" ));
+
+
+    dd4hep::Tube InnerWall_Carbon(inner_radius, inner_radius+CarbonInnerWallThick, halflength);
+    dd4hep::Tube InnerWall_Copper(inner_radius+CarbonInnerWallThick, inner_radius+CarbonInnerWallThick+CopperInnerWallThick, halflength);
+    dd4hep::Tube InnerWall_Gas(inner_radius+CarbonInnerWallThick+CopperInnerWallThick, inner_radius+envelop_Inner_thickness, halflength);
+
+    dd4hep::Volume lvInnerWallCarbon = dd4hep::Volume("lvInnerWallCarbonVol", InnerWall_Carbon, description.material( "CarbonFiber" ));
+    dd4hep::Volume lvInnerWallCopper = dd4hep::Volume("lvInnerWallCopperVol", InnerWall_Copper, description.material( "G4_Cu" ));
+    dd4hep::Volume lvInnerWallGas = dd4hep::Volume("lvInnerWallGasVol", InnerWall_Gas, description.material( "GasHe_90Isob_10" ));
+
+
+    dd4hep::Tube OuterWall_Copper(outer_radius-envelop_Outer_thickness, outer_radius-Carbon1OuterWallThick-Carbon2OuterWallThick-FoamOuterWallThick, halflength);
+    dd4hep::Tube OuterWall_Carbon1(outer_radius-Carbon1OuterWallThick-Carbon2OuterWallThick-FoamOuterWallThick, outer_radius-Carbon2OuterWallThick-FoamOuterWallThick, halflength);
+    dd4hep::Tube OuterWall_Foam(outer_radius-Carbon2OuterWallThick-FoamOuterWallThick, outer_radius-Carbon2OuterWallThick, halflength);
+    dd4hep::Tube OuterWall_Carbon2(outer_radius-Carbon2OuterWallThick, outer_radius, halflength);
+
+    dd4hep::Volume lvOuterWallCarbon1 = dd4hep::Volume("lvOuterWallCarbon1Vol", OuterWall_Carbon1, description.material( "CarbonFiber" ));
+    dd4hep::Volume lvOuterWallCarbon2 = dd4hep::Volume("lvOuterWallCarbon2Vol", OuterWall_Carbon2, description.material( "CarbonFiber" ));
+    dd4hep::Volume lvOuterWallCopper = dd4hep::Volume("lvOuterWallCopperVol", OuterWall_Copper, description.material( "G4_Cu" ));
+    dd4hep::Volume lvOuterWallFoam = dd4hep::Volume("lvOuterWallFoamVol", OuterWall_Foam, description.material( "GasHe_90Isob_10" ));
+
+    //------------------------------------------------------------------------
+    // Now we are ready to loop over the SuperLayers and fill the gas volume!
+    //------------------------------------------------------------------------
+
+
     std::vector<dd4hep::Volume> lvLayerVol;
     std::vector<dd4hep::Hyperboloid> HypeLayer;
     std::vector<dd4hep::Volume> lvFwireVol, lvSwireVol, lvGwireVol, lvWrapVol;
@@ -251,12 +313,12 @@ namespace {
         lvGwireVol.back().setVisAttributes( description, wirecol );
 
         w.volume = lvGwireVol.back();
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, -1);
 
         w.radius = inGuardRad+inGWradii+extShiftFW;
         w.thetaoffset = ringangle+theta_ring;
         w.stereo = -1.0*epsilonInGwRing;
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, nInGWire/2);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, nInGWire/2, SL, -1);
 
 
         drop = radius_ring_0*dropFactor;
@@ -297,7 +359,7 @@ namespace {
         lvFwireVol.back().setVisAttributes( description, wirecol );
 
         w.volume = lvFwireVol.back();
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, -1);
 
 	radius_ring_0+=FWradii;
 
@@ -396,7 +458,7 @@ namespace {
         //------------------------------------------------------------------------
 
 	w.volume = lvFwireVol.back();
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, iring);
 
         //------------------------------------------------------------------------
         // Next, fill the geometry parameters of the central layer.
@@ -461,7 +523,7 @@ namespace {
         //------------------------------------------------------------------------
 
         w.volume = lvSwireVol.back();
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, iring);
 
         //------------------------------------------------------------------------
         // Tune the radius and epsilon of the central field wires
@@ -488,7 +550,7 @@ namespace {
         w.halflength = zlength;
         w.volume = lvFwireVol.back();
 
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, iring);
 
         //------------------------------------------------------------------------
         // Next, fill the geometry parameters of the upper layer.
@@ -535,7 +597,7 @@ namespace {
         w.halflength = zlength;
         w.volume = lvFwireVol.back();
 
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, iring);
 
         //------------------------------------------------------------------------
         // Scale the delta radius of the ring for next iteration
@@ -580,7 +642,7 @@ namespace {
         lvFwireVol.back().setVisAttributes( description, wirecol );
 
         w.volume = lvFwireVol.back();
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, -1);
  
 
         //------------------------------------------------------------------------
@@ -619,19 +681,19 @@ namespace {
         lvGwireVol.back().setVisAttributes( description, wirecol );
 
         w.volume = lvGwireVol.back();
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, -1);
 
         w.radius = outGuardRad+inGWradii+extShiftFW;
         w.thetaoffset = ringangle+theta_ring;
         w.stereo = -1.0*epsilonOutGwRing;
-        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, nOutGWire/2);
+        CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, nOutGWire/2, SL, -1);
 
       }
 
     }  
 
     dd4hep::PlacedVolume pv;
-    dd4hep::DetElement   EcalDetector( parent, "Ecal_DP", parent.id() );
+    dd4hep::DetElement   CDCHDetector( parent, "Ecal_DP", parent.id() );
 
     Int_t sizeLayer = lvLayerVol.size();
 
@@ -639,8 +701,29 @@ namespace {
         registerVolume( lvLayerVol.at(i).name(), lvLayerVol.at(i) );
         cout << "Placing Volume: " << lvLayerVol.at(i).name() << endl;
         pv = parentVol.placeVolume( volume( lvLayerVol.at(i).name() ) );
-        EcalDetector.setPlacement( pv );
+        CDCHDetector.setPlacement( pv );
     }
+
+    double PosEndcapGas = halflength + 0.5*GasEndcapWallThick;
+    double PosEndcapCopper = halflength + GasEndcapWallThick + 0.5*CopperEndcapWallThick;
+    double PosEndcapKapton = halflength	+ GasEndcapWallThick + CopperEndcapWallThick + 0.5*KaptonEndcapWallThick;
+    double PosEndcapCarbon = halflength	+ GasEndcapWallThick + CopperEndcapWallThick + KaptonEndcapWallThick + 0.5*CarbonEndcapWallThick;
+
+    parentVol.placeVolume(lvInnerWallCarbon);
+    parentVol.placeVolume(lvInnerWallCopper);
+    parentVol.placeVolume(lvInnerWallGas);
+    parentVol.placeVolume(lvOuterWallCarbon1);
+    parentVol.placeVolume(lvOuterWallCarbon2);
+    parentVol.placeVolume(lvOuterWallCopper);
+    parentVol.placeVolume(lvOuterWallFoam);
+    parentVol.placeVolume(lvEndcapWallGas, dd4hep::Position(0., 0., PosEndcapGas));
+    parentVol.placeVolume(lvEndcapWallCopper, dd4hep::Position(0., 0., PosEndcapCopper));
+    parentVol.placeVolume(lvEndcapWallKapton, dd4hep::Position(0., 0., PosEndcapKapton));
+    parentVol.placeVolume(lvEndcapWallCarbon, dd4hep::Position(0., 0., PosEndcapCarbon));
+    parentVol.placeVolume(lvEndcapWallGas, dd4hep::Position(0., 0., -PosEndcapGas));
+    parentVol.placeVolume(lvEndcapWallCopper, dd4hep::Position(0., 0., -PosEndcapCopper)); 
+    parentVol.placeVolume(lvEndcapWallKapton, dd4hep::Position(0., 0., -PosEndcapKapton)); 
+    parentVol.placeVolume(lvEndcapWallCarbon, dd4hep::Position(0., 0., -PosEndcapCarbon));  
 
   }
 
@@ -653,7 +736,7 @@ static dd4hep::Ref_t create_element( dd4hep::Detector& description, xml_h e, dd4
   CDCHBuild builder( description, x_det, sens_det );
   string    det_name = x_det.nameStr();
 
-  dd4hep::printout( dd4hep::DEBUG, "CreateCDCH", "Detector name: %s with ID: %s", det_name, x_det.id() );
+  dd4hep::printout( dd4hep::DEBUG, "CreateCDCH", "Detector name: %s with ID: %s", det_name.c_str(), x_det.id() );
 
   DetElement  CDCH_det = builder.detector; // ( det_name, x_det.id() );
   dd4hep::Box CDCH_box( "5000/2", "5000/2", "5000/2" );
