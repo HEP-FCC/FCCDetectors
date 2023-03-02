@@ -12,7 +12,7 @@ target_link_libraries(DetFCCeeCLD DD4hep::DDCore)
 set(LIBRARY_OUTPUT_PATH ${CMAKE_LIBRARY_OUTPUT_DIRECTORY})
 
 add_test(NAME ConstructDetFCCeeCLD
-         COMMAND root -q -b ".github/scripts/load_detector.C(\"Detector/DetFCCeeCLD/compact/FCCee_o2_v02/FCCee_o2_v02.xml\")"
+         COMMAND root -q -b ".github/scripts/load_detector.C(\"Detector/DetFCCeeCLD/compact/FCCee_o2_v02/FCCee_o2_v02.xml\", \"${CMAKE_BINARY_DIR}/fccee_cld.root\")"
          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
          )
 k4_set_test_env(ConstructDetFCCeeCLD)
