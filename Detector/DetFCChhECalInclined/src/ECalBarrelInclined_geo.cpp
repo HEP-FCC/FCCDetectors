@@ -2,6 +2,8 @@
 #include "DD4hep/Handle.h"
 #include "XML/Utilities.h"
 
+#include <DDRec/DetectorData.h>
+
 // todo: remove gaudi logging and properly capture output
 #define endmsg std::endl
 #define lLog std::cout
@@ -553,6 +555,11 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
   dd4hep::PlacedVolume envelopePhysVol = motherVol.placeVolume(envelopeVol);
   envelopePhysVol.addPhysVolID("system", xmlDetElem.id());
   caloDetElem.setPlacement(envelopePhysVol);
+
+  // Create caloData object
+  auto caloData = new dd4hep::rec::LayeredCalorimeterData;
+  caloData->layoutType = dd4hep::rec::LayeredCalorimeterData::BarrelLayout;
+  caloDetElem.addExtension<dd4hep::rec::LayeredCalorimeterData>(caloData);
 
   // Set type flags
   dd4hep::xml::setDetectorTypeFlag(xmlDetElem, caloDetElem);
