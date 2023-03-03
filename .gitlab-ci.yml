@@ -22,10 +22,10 @@ generate-root:
     - ninja -k0 && ctest --output-on-failure
     - cd ..
     - mkdir -p detectors
-    - mv fccee_cld.root detectors/
-    - mv fccee_idea.root detectors/
-    - mv fccee_nlq.root detectors/
-    - mv fcchh_baseline.root detectors/
+    - mv build/fccee_cld.root detectors/
+    - mv build/fccee_idea.root detectors/
+    - mv build/fccee_nlq.root detectors/
+    - mv build/fcchh_baseline.root detectors/
   artifacts:
     paths:
       - detectors/*root
