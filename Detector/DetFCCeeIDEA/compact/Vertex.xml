@@ -200,7 +200,7 @@
 
     <!-- Vertex inner barrel -->
     <detectors>
-        <detector name="VertexBarrel" type="VertexBarrel_o1_v01" vis="VXDVis" id="DetID_VXD_Barrel" readout="VertexBarrelCollection"  region="VertexBarrelRegion">
+        <detector name="VertexBarrel" type="VertexBarrel_IDEA_o1_v01" vis="VXDVis" id="DetID_VXD_Barrel" readout="VertexBarrelCollection"  region="VertexBarrelRegion">
 
             <type_flags type=" DetType_TRACKER + DetType_PIXEL + DetType_VERTEX + DetType_BARREL"/>
 
@@ -273,7 +273,7 @@
 
     <!-- Vertex outer barrel -->
     <detectors>
-        <detector name="VertexOuterBarrel" type="VertexBarrel_o1_v01" vis="VXDVis" id="DetID_VXD_OuterBarrel" readout="VertexOuterBarrelCollection"  region="VertexOuterBarrelRegion">
+        <detector name="VertexOuterBarrel" type="VertexBarrel_IDEA_o1_v01" vis="VXDVis" id="DetID_VXD_OuterBarrel" readout="VertexOuterBarrelCollection"  region="VertexOuterBarrelRegion">
             <envelope vis="VXDVis">
                 <shape type="Assembly"/>
             </envelope>
@@ -327,7 +327,7 @@
     
     <!-- Vertex endcap -->
     <detectors>
-        <detector id="DetID_VXD_Endcap" name="VertexEndcap" type="VertexEndcap_o1_v07" readout="VertexEndcapCollection" reflect="true" region="VertexEndcapRegion">
+        <detector id="DetID_VXD_Endcap" name="VertexEndcap" type="VertexEndcap_IDEA_o1_v01" readout="VertexEndcapCollection" reflect="true" region="VertexEndcapRegion">
             <envelope vis="VXDVis">
                 <shape type="Assembly"/>
             </envelope>
@@ -379,7 +379,6 @@
             </module>
 
             <layer id="0" z="VertexEndcap_z1" nPetals="4" dz="0.0*mm" rmin="VertexEndcap_rmin1" dr="VertexEndcap_dr1" phi0="0.0">
-                <!-- Face A-->
                 <stave nmodules="2" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="0.0*mm" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="3" z_offset="VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="1.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="4" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="2.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
@@ -387,7 +386,6 @@
                 <stave nmodules="5" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="4.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="6" z_offset="VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="5.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
 
-                <!-- Face B-->
                 <stave nmodules="2" z_offset="VertexEndcap_zoffset_face" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="0.0*mm" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1B" module="SiVertexEndCapModule"/>
                 <stave nmodules="3" z_offset="VertexEndcap_zoffset_face+VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="1.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1B" module="SiVertexEndCapModule"/>
                 <stave nmodules="4" z_offset="VertexEndcap_zoffset_face" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="2.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1B" module="SiVertexEndCapModule"/>
@@ -412,6 +410,9 @@
                 <stave nmodules="6" z_offset="VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="3.*(outer_mod_z+VertexEndcap_rModOverlap)" dr="VertexEndcap_dr3" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="7" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="4.*(outer_mod_z+VertexEndcap_rModOverlap)" dr="VertexEndcap_dr3" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
             </layer>   
+
+
+
         </detector>
     </detectors>
 <!--        

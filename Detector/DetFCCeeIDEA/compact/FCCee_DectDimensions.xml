@@ -186,6 +186,9 @@
     <constant name="CollimatorInFrontOfQD0_dz" value="20*cm"/>   
     <constant name="CollimatorInFrontOfQD0_radius" value="10*mm"/>
     <constant name="CollimatorInFrontOfQD0_dr" value="16*mm"/>
+
+    <constant name="tracker_region_zmax" value="DCH_half_length"/>
+    <constant name="tracker_region_rmax" value="DCH_outer_radius"/>
   </define>
   
   
