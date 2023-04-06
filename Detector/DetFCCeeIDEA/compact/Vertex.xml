@@ -13,7 +13,7 @@
     <comment>A Vertex Detector for FCCee IDEA detector concept</comment>
   </info>
 
-    <!-- <comment>Tracking detectors</comment>
+    <comment>Tracking detectors</comment>
     <detectors>
         <detector name="Vertex" type="DD4hep_SubdetectorAssembly" vis="VXDVis">
             <shape type="BooleanShape" operation="Subtraction" material="Air">
@@ -30,9 +30,9 @@
             <composite name="VertexBarrel"/>
             <composite name="VertexOuterBarrel"/>
             <composite name="VertexEndcap"/>
-            <composite name="VertexVerticalCable"/>
+            <!-- <composite name="VertexVerticalCable"/> -->
         </detector>
-    </detectors> -->
+    </detectors>
     
     <display>
         <vis name="SiVertexSensitiveVis" alpha="1.0" r="0.5" g="0.5"  b="0"     showDaughters="true"  visible="true"/>
@@ -113,7 +113,8 @@
         <!-- Vertex endcap -->
             <constant name="VertexEndcap_rmax1" value="247.644*mm"/>
             <constant name="VertexEndcap_rmax2" value="289.595*mm"/>
-            <constant name="VertexEndcap_rmax3" value="289.595*mm"/>        
+            <constant name="VertexEndcap_rmax3" value="289.595*mm"/>
+            <constant name="VertexEndcap_rmax" value="VertexEndcap_rmax3"/>        
             <constant name="VertexEndcap_z1" value="285*mm"/>
             <constant name="VertexEndcap_z2" value="620*mm"/>
             <constant name="VertexEndcap_z3" value="930*mm"/>
@@ -373,16 +374,14 @@
             <type_flags type=" DetType_TRACKER + DetType_PIXEL + DetType_VERTEX + DetType_ENDCAP"/>
             <module name="SiVertexEndCapModule">
                 <!-- Order of layers: 688 um power-bus stave flex, 50 um silicon sensor, 20 um carbon fleece grafite, 120 um carbon fiber, 25 um carbon paper-grafite -->
+
+                <!-- Flex at low-z -->
                 <readout z_offset="0.0*mm">
-                    <!-- Flex at low-z -->
                     <component thickness="FlexKaptonThicknessOuter" width="VertexEndcap_flex_width" offset="0.0*mm" z_offset="0.0*mm" material="Kapton" vis="SiVertexCableVis"/>
                     <component thickness="FlexCopperThicknessOuter" width="VertexEndcap_flex_width" offset="0.0*mm" z_offset="FlexKaptonThicknessOuter" material="Copper" vis="SiVertexCableVis"/>
-
-                    <!-- Flex at high-z -->
-                    <component thickness="FlexCopperThicknessOuter" width="VertexEndcap_flex_width" offset="0.0*mm" z_offset="outer_flex_thickness+2.0*(VertexOuterBarrel_Sensitive_Thickness+VertexEndcap_Support_Thickness)+VertexEndcap_stave_dz" material="Copper" vis="SiVertexCableVis"/>
-                    <component thickness="FlexKaptonThicknessOuter" width="VertexEndcap_flex_width" offset="0.0*mm" z_offset="outer_flex_thickness+2.0*(VertexOuterBarrel_Sensitive_Thickness+VertexEndcap_Support_Thickness)+VertexEndcap_stave_dz+FlexCopperThicknessOuter" material="Kapton" vis="SiVertexCableVis"/>
                 </readout>
 
+                <!-- Sensor -->
                 <sensor z_offset="outer_flex_thickness" thickness="VertexOuterBarrel_Sensitive_Thickness" material="Silicon">
                     <component sensitive="False" xmin="-(outer_z_sensitive+outer_z_periphery+outer_z_sens_spacing/2.0)" xmax="-(outer_z_sensitive+outer_z_sens_spacing/2.0)"                ymin="-(outer_rphi_sensitive+outer_rphi_periphery+outer_rphi_sens_spacing/2.0)" ymax="outer_rphi_sensitive+outer_rphi_periphery+outer_rphi_sens_spacing/2.0"    vis="SiVertexEndcapPeripheryVis"/> <!-- top Quad periphery-->
                     <component sensitive="False" xmin="outer_z_sensitive+outer_z_sens_spacing/2.0"                      xmax="outer_z_sensitive+outer_z_periphery+outer_z_sens_spacing/2.0" ymin="-(outer_rphi_sensitive+outer_rphi_periphery+outer_rphi_sens_spacing/2.0)" ymax="outer_rphi_sensitive+outer_rphi_periphery+outer_rphi_sens_spacing/2.0"    vis="SiVertexEndcapPeripheryVis"/> <!-- bottom Quad periphery-->   
@@ -401,20 +400,28 @@
                     <component sensitive="True" xmin="outer_z_sens_spacing/2.0"                     xmax="outer_z_sensitive+outer_z_sens_spacing/2.0"   ymin="-outer_rphi_sens_spacing/2.0-outer_rphi_sensitive"    ymax="-outer_rphi_sens_spacing/2.0"                     vis="SiVertexEndcapSensitiveVis"/> <!-- bottom right sensitive--> 
                 </sensor>
 
+                <!-- low-z support -->
                 <support z_offset="outer_flex_thickness+VertexOuterBarrel_Sensitive_Thickness">
-                    <!-- low-z support -->
                     <component thickness="VertexOuterBarrel_Support_Thickness_Fleece" width="outer_mod_z" offset="0.0*mm" z_offset="0.0*mm" material="CarbonFiber" vis="CarbonFiberVis"/> <!-- should be material="CarbonFleeceGraphite", not implemented yet! -->
                     <component thickness="VertexOuterBarrel_Support_Thickness_CarbonFiber" width="outer_mod_z" offset="0.0*mm" z_offset="VertexOuterBarrel_Support_Thickness_Fleece" material="CarbonFiber" vis="CarbonFiberVis"/>
                     <component thickness="VertexOuterBarrel_Support_Thickness_PaperGraphite" width="outer_mod_z" offset="0.0*mm" z_offset="VertexOuterBarrel_Support_Thickness_Fleece+VertexOuterBarrel_Support_Thickness_CarbonFiber" material="CarbonFiber" vis="CarbonFiberVis"/> <!-- should be material="CarbonPaperGraphite", not implemented yet! -->
- 
-                    <!-- high-z support -->
-                    <component thickness="VertexOuterBarrel_Support_Thickness_PaperGraphite" width="outer_mod_z" offset="0.0*mm" z_offset="VertexEndcap_stave_dz" material="CarbonFiber" vis="CarbonFiberVis"/> <!-- should be material="CarbonPaperGraphite", not implemented yet! -->
-                    <component thickness="VertexOuterBarrel_Support_Thickness_CarbonFiber" width="outer_mod_z" offset="0.0*mm" z_offset="VertexEndcap_stave_dz+VertexOuterBarrel_Support_Thickness_PaperGraphite" material="CarbonFiber" vis="CarbonFiberVis"/>
-                    <component thickness="VertexOuterBarrel_Support_Thickness_Fleece" width="outer_mod_z" offset="0.0*mm" z_offset="VertexEndcap_stave_dz+VertexOuterBarrel_Support_Thickness_PaperGraphite+VertexOuterBarrel_Support_Thickness_CarbonFiber" material="CarbonFiber" vis="CarbonFiberVis"/> <!-- should be material="CarbonFleeceGraphite", not implemented yet! -->
                 </support>
+
+                <!-- high-z support -->
+                <support z_offset="outer_flex_thickness+VertexOuterBarrel_Sensitive_Thickness+VertexEndcap_stave_dz">
+                    <component thickness="VertexOuterBarrel_Support_Thickness_PaperGraphite" width="outer_mod_z" offset="0.0*mm" z_offset="0.0*mm" material="CarbonFiber" vis="CarbonFiberVis"/> <!-- should be material="CarbonPaperGraphite", not implemented yet! -->
+                    <component thickness="VertexOuterBarrel_Support_Thickness_CarbonFiber" width="outer_mod_z" offset="0.0*mm" z_offset="VertexOuterBarrel_Support_Thickness_PaperGraphite" material="CarbonFiber" vis="CarbonFiberVis"/>
+                    <component thickness="VertexOuterBarrel_Support_Thickness_Fleece" width="outer_mod_z" offset="0.0*mm" z_offset="VertexOuterBarrel_Support_Thickness_PaperGraphite+VertexOuterBarrel_Support_Thickness_CarbonFiber" material="CarbonFiber" vis="CarbonFiberVis"/> <!-- should be material="CarbonFleeceGraphite", not implemented yet! -->
+                </support>
+
+                <!-- Flex at high-z -->
+                <readout z_offset="outer_flex_thickness+2.0*(VertexOuterBarrel_Sensitive_Thickness+VertexEndcap_Support_Thickness)+VertexEndcap_stave_dz">
+                    <component thickness="FlexCopperThicknessOuter" width="VertexEndcap_flex_width" offset="0.0*mm" z_offset="0.0*mm" material="Copper" vis="SiVertexCableVis"/>
+                    <component thickness="FlexKaptonThicknessOuter" width="VertexEndcap_flex_width" offset="0.0*mm" z_offset="FlexCopperThicknessOuter" material="Kapton" vis="SiVertexCableVis"/>
+                </readout>
             </module>
 
-            <layer id="0" z="VertexEndcap_z1" nPetals="4" dz="0.0*mm" rmin="VertexEndcap_rmin1" dr="VertexEndcap_dr1" phi0="0.0">
+            <layer id="0" z="VertexEndcap_z1" nphi="4" dz="0.0*mm" rmin="VertexEndcap_rmin1" dr="VertexEndcap_dr1" phi0="0.0">
                 <stave nmodules="2" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="0.0*mm" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="3" z_offset="VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="1.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="4" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="2.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
@@ -430,7 +437,7 @@
                 <stave nmodules="6" z_offset="VertexEndcap_zoffset_face+VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="5.*(outer_mod_z+VertexEndcap_rModOverlap)" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1B" module="SiVertexEndCapModule"/>
             </layer>
 
-            <layer id="1" z="VertexEndcap_z2" nPetals="8" dz="VertexEndcap_zoffset_face" rmin="VertexEndcap_rmin2" dr="VertexEndcap_dr2" phi0="0.0">
+            <layer id="1" z="VertexEndcap_z2" nphi="8" dz="VertexEndcap_zoffset_face" rmin="VertexEndcap_rmin2" dr="VertexEndcap_dr2" phi0="0.0">
                 <stave nmodules="3" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="0.0*mm" dr="VertexEndcap_dr2" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="4" z_offset="VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="1.*(outer_mod_z+VertexEndcap_rModOverlap)" dr="VertexEndcap_dr2" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="5" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="2.*(outer_mod_z+VertexEndcap_rModOverlap)" dr="VertexEndcap_dr2" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
@@ -439,7 +446,7 @@
                 <stave nmodules="8" z_offset="VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="5.*(outer_mod_z+VertexEndcap_rModOverlap)" dr="VertexEndcap_dr2" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
             </layer>        
 
-            <layer id="2" z="VertexEndcap_z3" nPetals="8" dz="VertexEndcap_zoffset_face" rmin="VertexEndcap_rmin3" dr="VertexEndcap_dr3" phi0="0.0">
+            <layer id="2" z="VertexEndcap_z3" nphi="8" dz="VertexEndcap_zoffset_face" rmin="VertexEndcap_rmin3" dr="VertexEndcap_dr3" phi0="0.0">
                 <stave nmodules="4" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="0.0*mm" dr="VertexEndcap_dr3" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="5" z_offset="VertexEndcap_zoffset_stave" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="1.*(outer_mod_z+VertexEndcap_rModOverlap)" dr="VertexEndcap_dr3" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
                 <stave nmodules="5" z_offset="0.0*mm" dz="VertexEndcap_Support_Thickness+VertexEndcap_stave_dz+VertexEndcap_Support_Thickness" r="2.*(outer_mod_z+VertexEndcap_rModOverlap)" dr="VertexEndcap_dr3" step="VertexEndcapModOverlap" phi0="VertexEndcap_phi1A" module="SiVertexEndCapModule"/>
@@ -463,13 +470,15 @@
         </detector>
 -->
 
+    <!-- also needed for barrel? -->
     <plugins>
         <plugin name="DD4hep_GenericSurfaceInstallerPlugin">
             <argument value="VertexEndcap"/> 
             <argument value="dimension=2"/>
             <argument value="u_x=-1."/>
-            <argument value="v_z=1."/>
-            <argument value="n_y=1."/>
+            <argument value="v_y=1."/>
+            <argument value="n_z=-1."/>
         </plugin>
     </plugins>
+
 </lccdd>

@@ -16,6 +16,8 @@
     </comment>
   </info>
 
+  <include ref="${DD4hepINSTALL}/DDDetectors/compact/detector_types.xml" />
+
   <includes>
     <gdmlFile  ref="../../DetCommon/compact/elements.xml"/>
     <gdmlFile  ref="../../DetCommon/compact/materials.xml"/>
@@ -32,7 +34,7 @@
   <include ref="../../DetFCCeeCommon/compact/Beampipe.xml"/>
   <include ref="../../DetFCCeeCommon/compact/BeamInstrumentation.xml"/>
   <include ref="../../DetFCCeeCommon/compact/LumiCal.xml"/>
-  <include ref="../../DetFCCeeCommon/compact/HOMAbsorber.xml"/> 
+  <include ref="../../DetFCCeeCommon/compact/HOMAbsorber.xml"/>
 
   <include ref="Vertex.xml"/>
 
@@ -46,7 +48,7 @@
     <!-- </plugin> -->
 
   </plugins>
-  <include ref="SimplifiedDriftChamber.xml"/>
-  <!--include ref="Calorimeter.xml"/-->
+  <include ref="SimplifiedDriftChamber.xml"/> 
+  <include ref="Calorimeter.xml"/>
 
 </lccdd>
