@@ -68,7 +68,7 @@ public:
    *   @param[in] aFieldName Field name for eta.
    */
   inline void setFieldNameEta(const std::string& fieldName) { m_etaID = fieldName; }
-  /// calculates the Cartesian position from spherical coordinates (r, phi, eta)
+  /// calculates the Cartesian position from cylindrical coordinates (r, phi, eta)
   inline Vector3D positionFromREtaPhi(double ar, double aeta, double aphi) const {
     return Vector3D(ar * std::cos(aphi), ar * std::sin(aphi), ar * std::sinh(aeta));
   }
