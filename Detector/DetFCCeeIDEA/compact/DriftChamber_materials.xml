@@ -306,6 +306,7 @@
       <MEE unit="eV" value="166"/>
       <D unit="g/cm3" value="2.699"/>
       <atom unit="g/mole" value="26.9815"/>
+      <fraction n="1.0" ref="Al0x5633439c3890"/>
     </material>
     <material name="Kapton" state="solid">
       <T unit="K" value="293.15"/>
@@ -328,6 +329,7 @@
       <MEE unit="eV" value="790"/>
       <D unit="g/cm3" value="19.32"/>
       <atom unit="g/mole" value="196.967"/>
+      <fraction n="1.0" ref="Au"/>
     </material>
     <isotope N="180" Z="74" name="W1800x563354403a30">
       <atom unit="g/mole" value="179.947"/>
