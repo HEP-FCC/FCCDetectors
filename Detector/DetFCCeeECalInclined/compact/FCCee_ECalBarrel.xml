@@ -40,7 +40,7 @@
 
     <constant name="CryoBarrelSideWarm" value="30*mm"/>
     <constant name="CryoBarrelSideCold" value="3.8*mm"/>
-    <constant name="CryoBarrelSide" value="CryoBarrelSideWarm+CryoBarrelSideCold"/>
+    <constant name="CryoBarrelSide" value="CryoBarrelSideWarm+CryoBarrelSideCold+CryoAirGapThickness"/>
 
     <constant name="LArBathThicknessFront" value="5*mm"/>
     <constant name="LArBathThicknessBack" value="40*mm"/>
@@ -84,14 +84,14 @@
     <readout name="ECalBarrelEta">
         <!-- segmentation type="GridTheta" grid_size_theta="0.5625" offset_theta="-0.83"/ -->
 	<segmentation type="GridEta" grid_size_eta="0.01" offset_eta="-1.2"/>
-      <id>system:4,cryo:1,type:3,subtype:3,layer:8,module:11,eta:9</id>
+      <id>system:4,cryo:1,type:4,subtype:3,layer:8,module:11,eta:9</id>
     </readout>
     <!-- readout for the reconstruction -->
     <!-- phi position is calculated based on the centre of volume (hence it cannot be done in the simulation from energy deposits position) -->
     <readout name="ECalBarrelPhiEta">
         <!-- segmentation type="FCCSWGridPhiTheta" grid_size_theta="0.5625" phi_bins="768" offset_theta="-0.83" offset_phi="-pi+(pi/768.)"/ -->
         <segmentation type="FCCSWGridPhiEta" grid_size_eta="0.01" phi_bins="768" offset_eta="-1.2" offset_phi="-pi+(pi/768.)"/>
-      <id>system:4,cryo:1,type:3,subtype:3,layer:8,eta:9,phi:10</id>
+      <id>system:4,cryo:1,type:4,subtype:3,layer:8,eta:9,phi:10</id>
     </readout>
   </readouts>
 
@@ -108,18 +108,21 @@
         <cryo_front_cold sentive="false">
           <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness" rmax="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness+CryoBarrelFrontCold" dz="BarCryoECal_dz"/>
         </cryo_front_cold>
+	<cryo_back_cold sentive="false">
+          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-CryoAirGapThickness-SolenoidBarrel-CryoBarrelBackCold" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-CryoAirGapThickness-SolenoidBarrel" dz="BarCryoECal_dz"/>
+	</cryo_back_cold>
+	<cryo_solenoid sentive="false">
+          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-0.5*CryoAirGapThickness-SolenoidBarrel" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-0.5*CryoAirGapThickness" dz="BarCryoECal_dz"/>
+	</cryo_solenoid>
+        <cryo_back_warm sentive="false">
+          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm" rmax = "BarCryoECal_rmax" dz="BarCryoECal_dz"/>
+        </cryo_back_warm>
         <cryo_back sensitive="false">
           <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-CryoBarrelBackCold-SolenoidBarrel" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
         </cryo_back>
         <cryo_side sensitive="false">
           <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoBarrelFrontCold" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-CryoBarrelBackCold-SolenoidBarrel" dz="BarCryoECal_dz"/>
         </cryo_side>
-	<!--
-	<dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoBarrelFront" rmax1="BarCryoECal_rmax-CryoBarrelBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>	
-        <front sensitive="false"/>
-        <side sensitive="false"/>
-        <back sensitive="false"/>
-	-->
       </cryostat>
       <calorimeter name="EM_barrel">
         <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
