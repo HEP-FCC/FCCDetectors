@@ -26,16 +26,17 @@
     <constant name="LArGapThickness" value="1.239749*2*mm"/>
 
     <!-- Air margin, thicknesses of cryostat and LAr bath -->
-    <constant name="AirMarginThickness" value="54*mm"/>    <!-- Space holder for air gap between cryostat vessels --> 
-
+    <constant name="AirMarginThickness" value="4*mm"/> 
+    <constant name="CryoAirGapThickness" value="50*mm"/>    <!-- Air gap between cryostat vessels --> 
+    
     <constant name="CryoBarrelFrontWarm" value="10*mm"/>   <!-- Al solid corresponding to 0.11 X0 -->
     <constant name="CryoBarrelFrontCold" value="3.8*mm"/>  <!-- Al solid equivalent of 0.043 X0 sandwich CFRP -->
-    <constant name="CryoBarrelFront" value="CryoBarrelFrontWarm+CryoBarrelFrontCold"/>
+    <constant name="CryoBarrelFront" value="CryoBarrelFrontWarm+CryoBarrelFrontCold+CryoAirGapThickness"/>
 
     <constant name="CryoBarrelBackCold" value="30*mm"/>   <!-- Al solid corresponding to 0.34 X0 -->
     <constant name="CryoBarrelBackWarm" value="2.7*mm"/>  <!-- Al solid equivalent of 0.03 X0 sandwich CFRP -->
     <constant name="SolenoidBarrel" value="70*mm"/>    <!-- Al solenoid with thickness of 0.8 X0 -->
-    <constant name="CryoBarrelBack" value="CryoBarrelBackWarm+SolenoidBarrel+CryoBarrelBackCold"/>
+    <constant name="CryoBarrelBack" value="CryoBarrelBackWarm+SolenoidBarrel+CryoBarrelBackCold+CryoAirGapThickness"/>
 
     <constant name="CryoBarrelSideWarm" value="30*mm"/>
     <constant name="CryoBarrelSideCold" value="3.8*mm"/>
@@ -101,10 +102,24 @@
       <dimensions rmin="BarCryoECal_rmin" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz" vis="ecal_envelope"/>
       <cryostat name="ECAL_Cryo">
         <material name="Aluminum"/>
-	<dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoBarrelFront" rmax1="BarCryoECal_rmax-CryoBarrelBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
-        <front sensitive="false"/> <!-- inner wall of the cryostat -->
-        <side sensitive="false"/> <!-- both sides of the cryostat -->
-        <back sensitive="false"/> <!-- outer wall of the cryostat -->
+        <cryo_front_warm sentive="false">
+          <dimensions rmin="BarCryoECal_rmin" rmax = "BarCryoECal_rmin+CryoBarrelFrontWarm" dz="BarCryoECal_dz"/>
+        </cryo_front_warm>
+        <cryo_front_cold sentive="false">
+          <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness" rmax="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness+CryoBarrelFrontCold" dz="BarCryoECal_dz"/>
+        </cryo_front_cold>
+        <cryo_back sensitive="false">
+          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-CryoBarrelBackCold-SolenoidBarrel" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
+        </cryo_back>
+        <cryo_side sensitive="false">
+          <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoBarrelFrontCold" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-CryoBarrelBackCold-SolenoidBarrel" dz="BarCryoECal_dz"/>
+        </cryo_side>
+	<!--
+	<dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoBarrelFront" rmax1="BarCryoECal_rmax-CryoBarrelBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>	
+        <front sensitive="false"/>
+        <side sensitive="false"/>
+        <back sensitive="false"/>
+	-->
       </cryostat>
       <calorimeter name="EM_barrel">
         <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
