@@ -17,6 +17,9 @@ DECLARE_SEGMENTATION(GridTheta, create_segmentation<dd4hep::DDSegmentation::Grid
 #include "DetSegmentation/FCCSWGridPhiTheta.h"
 DECLARE_SEGMENTATION(FCCSWGridPhiTheta, create_segmentation<dd4hep::DDSegmentation::FCCSWGridPhiTheta>)
 
+#include "DetSegmentation/FCCSWGridModuleThetaMerged.h"
+DECLARE_SEGMENTATION(FCCSWGridModuleThetaMerged, create_segmentation<dd4hep::DDSegmentation::FCCSWGridModuleThetaMerged>)
+
 #include "DetSegmentation/FCCSWGridPhiEta.h"
 DECLARE_SEGMENTATION(FCCSWGridPhiEta, create_segmentation<dd4hep::DDSegmentation::FCCSWGridPhiEta>)
 
