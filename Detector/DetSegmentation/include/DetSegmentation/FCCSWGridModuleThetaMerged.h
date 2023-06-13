@@ -69,7 +69,7 @@ public:
   /**  Set the number of modules
    *   return The number of modules (as it was set by the user in the xml file..)
    */
-  inline int setNModules(const int nModules) { m_nModules = nModules; }
+  inline void setNModules(const int nModules) { m_nModules = nModules; }
   /**  Get the field name used for the layer
    *   return The field name for the layer.
    */
