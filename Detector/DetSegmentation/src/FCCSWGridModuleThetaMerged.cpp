@@ -17,6 +17,7 @@ FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const std::string& cellEn
   registerParameter("mergedCells_Theta", "Numbers of merged cells in theta per layer", m_mergedCellsTheta, std::vector<int>());
   registerParameter("mergedModules", "Numbers of merged modules per layer", m_mergedModules, std::vector<int>());
   registerParameter("nModules", "Number of modules", m_nModules, 1545);
+
   //m_nModules = 1545;
   //m_alpha = 50./180.*M_PI;
   //m_rLayers = {217.28, 218.78, 222.28, 225.78, 229.28, 232.78, 236.28, 239.78, 243.28, 246.78, 250.28, 253.78, 257.33};
@@ -42,39 +43,11 @@ FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const BitFieldCoder* deco
 /// determine the local position based on the cell ID
 Vector3D FCCSWGridModuleThetaMerged::position(const CellID& cID) const {
 
-  //debug
-  std::cout << "cellID: " << cID << std::endl;
+  // debug
+  // std::cout << "cellID: " << cID << std::endl;
 
   // cannot return for R=0 otherwise will lose phi info, return for R=1
   return positionFromRThetaPhi(1.0, theta(cID), phi(cID));
-
-  // version 1: determine radius/theta/phi from cellID
-  // return positionFromRThetaPhi(radius(cID), theta(cID), phi(cID));
-
-  // version 2: use detector position 
-  // read in outGlobal the x-y-z coordinates of the 1st of the merged group of cells
-  /*
-  VolumeID vID = cID;
-  _decoder->set(vID, m_thetaID, 0);
-  auto detelement = m_volman.lookupDetElement(vID);
-  const auto& transformMatrix = detelement.nominal().worldTransformation();
-  double outGlobal[3];
-  double inLocal[] = {0, 0, 0};
-  transformMatrix.LocalToMaster(inLocal, outGlobal);
-  // now get R-phi
-  Vector3D position(outGlobal[0],outGlobal[1],outGlobal[2]);
-  double _radius = std::sqrt(outGlobal[0]*outGlobal[0] + outGlobal[1]*outGlobal[1]);
-  double _phi = std::atan2(outGlobal[1], outGlobal[0]);
-  // now add shifts in phi due to merging of modules and theta cells
-  int layer = _decoder->get(cID, m_layerID);
-  if (m_mergedModules[layer]>1) {
-    _phi += (m_mergedModules[layer]-1) * M_PI / m_nModules ;
-    // should we check (and adjust) that phi is in -pi..pi? or 0..2pi?
-  }
-  // get theta from grid
-  double _theta = theta(cID);
-  return positionFromRThetaPhi(_radius, _theta, _phi);
-  */
 }
 
 /// determine the cell ID based on the global position
@@ -152,13 +125,12 @@ double FCCSWGridModuleThetaMerged::phi(const CellID& cID) const {
   double phi = 0.0;
   if (m_mergedModules[layer]>1) {
     phi += (m_mergedModules[layer]-1) * M_PI / m_nModules ;
-    // should we check (and adjust) that phi is in -pi..pi? or 0..2pi?
   }
 
-  //debug
-  std::cout << "layer: " << layer << std::endl;
-  std::cout << "merged modules: " << m_mergedModules[layer] << std::endl;
-  std::cout << "phi: " << phi << std::endl;
+  // debug
+  // std::cout << "layer: " << layer << std::endl;
+  // std::cout << "merged modules: " << m_mergedModules[layer] << std::endl;
+  // std::cout << "phi: " << phi << std::endl;
 
   return phi;
 }
@@ -170,17 +142,21 @@ double FCCSWGridModuleThetaMerged::theta(const CellID& cID) const {
 
   // retrieve theta bin from cellID and determine theta position
   CellID thetaValue = _decoder->get(cID, m_thetaID);
-  // debug
-  std::cout << "theta bin: " << thetaValue << std::endl;
   double _theta = binToPosition(thetaValue, m_gridSizeTheta, m_offsetTheta);
-  std::cout << "gridSizeTheta, offsetTheta: " << m_gridSizeTheta << " , " << m_offsetTheta << std::endl;
+
   // adjust return value if cells are merged along theta in this layer
   // shift by (N-1)*half theta grid size
   if (m_mergedCellsTheta[layer]>1) {
     _theta += (m_mergedCellsTheta[layer]-1) * m_gridSizeTheta / 2.0 ;
   }
 
-  std::cout << "theta: " << _theta << std::endl;
+  // debug
+  // std::cout << "layer: " << layer << std::endl;
+  // std::cout << "theta bin: " << thetaValue << std::endl;
+  // std::cout << "gridSizeTheta, offsetTheta: " << m_gridSizeTheta << " , " << m_offsetTheta << std::endl;
+  // std::cout << "merged cells: " << m_mergedCellsTheta[layer] << std::endl;
+  // std::cout << "theta: " << _theta << std::endl;
+
   return _theta;
 }
 
