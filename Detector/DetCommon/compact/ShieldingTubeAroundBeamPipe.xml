@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0"
+       xmlns:xs="http://www.w3.org/2001/XMLSchema"
+       xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
+
+  <info name="TubeAroundBeampipe"
+    title="Shielding tube around beam pipe"
+    author="J. Smiesko"
+    url="no"
+    status="development"
+    version="0.1">
+    <comment>
+      Simulates shielding around beampipe.
+    </comment>
+  </info>
+
+  <define>
+    <constant name="Tube_thickness" value="500*mm" />
+    <!-- <constant name="Flux_r" value="MuonTagger_outer_radius" />
+    <constant name="Flux_z" value="MuonTaggerEndcap_max_z" /> -->
+    <!-- <constant name="Flux_r" value="YokeEndcap_outer_radius" />
+    <constant name="Flux_z" value="YokeEndcap_max_z" /> -->
+    <!-- <constant name="Flux_r" value="Solenoid_outer_radius + 5*mm" />
+    <constant name="Flux_z" value="world_z - 5*mm" /> -->
+    <constant name="Tube_r" value="200*mm" />
+    <!-- <constant name="Tube_min_z" value="3705*mm" /> -->
+    <constant name="Tube_min_z" value="5300*mm" />
+    <constant name="Tube_max_z" value="world_z - 5*mm" />
+  </define>
+
+  <materials>
+    <material name="ShieldingConcrete">
+      <D type="density" unit="g/cm3" value="2.5"/>
+      <fraction n="0.52" ref="O"/>
+      <fraction n="0.325" ref="Si"/>
+      <fraction n="0.06" ref="Ca"/>
+      <fraction n="0.015" ref="Na"/>
+      <fraction n="0.04" ref="Fe"/>
+      <fraction n="0.04" ref="Al"/>
+    </material>
+  </materials>
+
+  <display>
+    <vis name="ShieldingTubeVis"
+         r="0.6" g="0.2" b="0.2" alpha="1"
+         showDaughters="false"
+         visible="true" />
+  </display>
+
+  <detectors>
+    <detector name="ShieldingTubePositiveSide"
+              type="SimpleCylinder"
+              id="88"
+              sensitive="false"
+              vis="ShieldingTubeVis">
+      <material name="ShieldingConcrete" />
+      <dimensions rmin="Tube_r"
+                  rmax="Tube_r + Tube_thickness"
+                  dz="(Tube_max_z - Tube_min_z) / 2"
+                  phi0="0"
+                  deltaphi="360*deg"
+                  z_offset="Tube_min_z + (Tube_max_z - Tube_min_z) / 2"
+                  material="ShieldingConcrete" />
+    </detector>
+    <detector name="ShieldingTubeNegativeSide"
+              type="SimpleCylinder"
+              id="89"
+              sensitive="false"
+              vis="ShieldingTubeVis">
+      <material name="ShieldingConcrete" />
+      <dimensions rmin="Tube_r"
+                  rmax="Tube_r + Tube_thickness"
+                  dz="(Tube_max_z - Tube_min_z) / 2"
+                  phi0="0"
+                  deltaphi="360*deg"
+                  z_offset="-Tube_min_z - (Tube_max_z - Tube_min_z) / 2"
+                  material="ShieldingConcrete" />
+    </detector>
+  </detectors>
+</lccdd>
