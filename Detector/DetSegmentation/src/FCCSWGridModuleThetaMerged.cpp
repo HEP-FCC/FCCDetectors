@@ -17,10 +17,6 @@ FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const std::string& cellEn
   registerParameter("mergedCells_Theta", "Numbers of merged cells in theta per layer", m_mergedCellsTheta, std::vector<int>());
   registerParameter("mergedModules", "Numbers of merged modules per layer", m_mergedModules, std::vector<int>());
   registerParameter("nModules", "Number of modules", m_nModules, 1545);
-
-  //m_nModules = 1545;
-  //m_alpha = 50./180.*M_PI;
-  //m_rLayers = {217.28, 218.78, 222.28, 225.78, 229.28, 232.78, 236.28, 239.78, 243.28, 246.78, 250.28, 253.78, 257.33};
 }
 
 FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const BitFieldCoder* decoder) : GridTheta(decoder) {
@@ -34,10 +30,6 @@ FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const BitFieldCoder* deco
   registerParameter("mergedCells_Theta", "Numbers of merged cells in theta per layer", m_mergedCellsTheta, std::vector<int>());
   registerParameter("mergedModules", "Numbers of merged cells in phi per layer", m_mergedModules, std::vector<int>());
   registerParameter("nModules", "Number of modules", m_nModules, 1545);
-
-  //m_nModules = 1545;
-  //m_alpha = 50./180.*M_PI;
-  //m_rLayers = {217.28, 218.78, 222.28, 225.78, 229.28, 232.78, 236.28, 239.78, 243.28, 246.78, 250.28, 253.78, 257.33};
 }
 
 /// determine the local position based on the cell ID
@@ -88,38 +80,16 @@ CellID FCCSWGridModuleThetaMerged::cellID(const Vector3D& /* localPosition */, c
   return cID;
 }
 
-/// determine the radius based on the cell ID
-/*
-double FCCSWGridModuleThetaMerged::radius(const CellID& cID) const {
-
-  int layer = _decoder->get(cID, m_layerID);
-
-  return (m_rLayers[layer+1]+m_rLayers[layer])/2.0;
-}
-*/
-
 /// determine the azimuth based on the cell ID
+/// the value returned is the relative shift in phi
+/// with respect to the first module in the group of
+/// merged ones - which will be then added on top of
+/// the phi of the volume containing the first cell
+/// by the positioning tool
 double FCCSWGridModuleThetaMerged::phi(const CellID& cID) const {
 
   // retrieve layer, radius and module
   int layer = _decoder->get(cID, m_layerID);
-
-  /*
-  // calculate phi of volume
-  int module = _decoder->get(cID, m_moduleID);
-  double r = radius(cID);
-
-  // calculate initial phi
-  // not sure this is fully consistent with Geant4 positioning!!!!
-  // I need to find out which phi is module=0
-  double phi = 2.0*M_PI/m_nModules * (module) - m_alpha;
-
-  // calculate phi offset due to electrode inclination
-  double r0 = m_rLayers[0];
-  double L = -r0*cos(m_alpha) + std::sqrt(r*r-r0*r0*std::sin(m_alpha)*std::sin(m_alpha));
-  double dphi = std::acos((r*r+r0*r0-L*L)/(2*r*r0));
-  phi += dphi;
-  */
 
   // calculate phi offset due to merging 
   double phi = 0.0;
@@ -135,6 +105,8 @@ double FCCSWGridModuleThetaMerged::phi(const CellID& cID) const {
   return phi;
 }
 
+/// determine the polar angle based on the cell ID and the
+/// number of merged theta cells
 double FCCSWGridModuleThetaMerged::theta(const CellID& cID) const {
 
   // retrieve layer
