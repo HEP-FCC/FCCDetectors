@@ -100,7 +100,7 @@
 
     <!-- readout for the reconstruction, with merged modules and merged cells in theta -->
     <readout name="ECalBarrelModuleThetaMerged2">
-        <segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="4 8 2 1 8 4 2 1 4 2 1 8" mergedModules="2 2 2 2 2 2 1 1 1 1 1 1" grid_size_theta="0.00981745/4" offset_theta="0.589049"/>
+        <segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="4 1 4 4 4 4 4 4 4 4 4 4" mergedModules="2 2 2 2 2 2 2 2 2 2 2 2" grid_size_theta="0.00981745/4" offset_theta="0.589049"/>
         <id>system:4,cryo:1,type:3,subtype:3,layer:8,module:11,theta:10</id>
     </readout>
   </readouts>

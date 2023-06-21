@@ -89,14 +89,9 @@ protected:
   /// vector of number of modules to be merged for each layer
   std::vector<int> m_mergedModules;
 
-  /// to be seen if we need these
-  /// and how to retrieve them at initialization step from the geometry
+  /// to be seen how to retrieve this initialization step from the geometry
   /// number of modules (or, equivalently, the deltaPhi between adjacent modules)
   int m_nModules;
-  /// innermost radius of electrodes (not needed)
-  /// std::vector<double> m_rLayers;
-  /// inclination in phi of electrodes (not needed)
-  //// double m_alpha;
 };
 }
 }
