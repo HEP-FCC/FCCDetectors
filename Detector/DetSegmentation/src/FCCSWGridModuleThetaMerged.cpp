@@ -57,10 +57,8 @@ CellID FCCSWGridModuleThetaMerged::cellID(const Vector3D& /* localPosition */, c
   int thetaBin = positionToBin(lTheta, m_gridSizeTheta, m_offsetTheta);
 
   // adjust theta bin if cells are merged along theta in this layer
-  if (m_mergedCellsTheta[layer]>1) {
-    if ((thetaBin % m_mergedCellsTheta[layer])>0)
-      thetaBin -= (thetaBin % m_mergedCellsTheta[layer]);
-  }
+  // assume that m_mergedCellsTheta[layer]>=1
+  thetaBin -= (thetaBin % m_mergedCellsTheta[layer]);
 
   // set theta field of cellID
   _decoder->set(cID, m_thetaID, thetaBin);
@@ -69,10 +67,8 @@ CellID FCCSWGridModuleThetaMerged::cellID(const Vector3D& /* localPosition */, c
   int module = _decoder->get(vID, m_moduleID);
 
   // adjust module number if modules are merged in this layer
-  if (m_mergedModules[layer]>1) {
-    if ((module % m_mergedModules[layer])>0)
-      module -= (module % m_mergedModules[layer]);
-  }
+  // assume that m_mergedModules[layer]>=1
+  module -= (module % m_mergedModules[layer]);
 
   // set module field of cellID
   _decoder->set(cID, m_moduleID, module);
@@ -88,14 +84,12 @@ CellID FCCSWGridModuleThetaMerged::cellID(const Vector3D& /* localPosition */, c
 /// by the positioning tool
 double FCCSWGridModuleThetaMerged::phi(const CellID& cID) const {
 
-  // retrieve layer, radius and module
+  // retrieve layer
   int layer = _decoder->get(cID, m_layerID);
 
-  // calculate phi offset due to merging 
-  double phi = 0.0;
-  if (m_mergedModules[layer]>1) {
-    phi += (m_mergedModules[layer]-1) * M_PI / m_nModules ;
-  }
+  // calculate phi offset due to merging
+  // assume that m_mergedModules[layer]>=1
+  double phi = (m_mergedModules[layer]-1) * M_PI / m_nModules ;
 
   // debug
   // std::cout << "layer: " << layer << std::endl;
@@ -118,9 +112,8 @@ double FCCSWGridModuleThetaMerged::theta(const CellID& cID) const {
 
   // adjust return value if cells are merged along theta in this layer
   // shift by (N-1)*half theta grid size
-  if (m_mergedCellsTheta[layer]>1) {
-    _theta += (m_mergedCellsTheta[layer]-1) * m_gridSizeTheta / 2.0 ;
-  }
+  // assume that m_mergedCellsTheta[layer]>=1
+  _theta += (m_mergedCellsTheta[layer]-1) * m_gridSizeTheta / 2.0 ;
 
   // debug
   // std::cout << "layer: " << layer << std::endl;

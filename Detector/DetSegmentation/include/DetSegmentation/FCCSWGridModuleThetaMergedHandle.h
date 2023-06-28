@@ -78,13 +78,13 @@ public:
   inline double offsetTheta() const { return access()->implementation->offsetTheta(); }
 
   /// access the number of theta cells merged for given layer
-  inline int mergedThetaCells(const unsigned int layer) const { return access()->implementation->mergedThetaCells(layer); }
+  inline int mergedThetaCells(const int layer) const { return access()->implementation->mergedThetaCells(layer); }
 
   /// access the number of modules
   inline int nModules() const { return access()->implementation->nModules(); }
 
   /// access the number of merged modules for given layer
-  inline int mergedModules(const unsigned int layer) const { return access()->implementation->mergedModules(layer); }
+  inline int mergedModules(const int layer) const { return access()->implementation->mergedModules(layer); }
 
 
   /// set the coordinate offset in theta

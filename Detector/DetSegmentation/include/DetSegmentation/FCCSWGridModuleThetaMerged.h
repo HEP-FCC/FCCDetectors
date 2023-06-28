@@ -56,12 +56,12 @@ public:
    *   @param[in] layer
    *   return The number of merged cells in theta
    */
-  inline int mergedThetaCells(const unsigned int layer) const { return m_mergedCellsTheta[layer]; }
+  inline int mergedThetaCells(const int layer) const { return m_mergedCellsTheta[layer]; }
   /**  Get the number of merged modules (inclined in phi)
    *   @param[in] layer
    *   return The number of merged cells in theta
    */
-  inline int mergedModules(const unsigned int layer) const { return m_mergedModules[layer]; }
+  inline int mergedModules(const int layer) const { return m_mergedModules[layer]; }
   /**  Get the number of modules
    *   return The number of modules (as it was set by the user in the xml file..)
    */

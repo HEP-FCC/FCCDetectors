@@ -81,10 +81,10 @@
     <!-- readout for the simulation -->
     <!-- offset in theta is the eta max value including cryostat TO BE FIXED -->
     <!-- THIS LACKS Z POSITION -->
-    <readout name="ECalBarrelTheta">
-        <segmentation type="GridTheta" grid_size_theta="0.00981745/4" offset_theta="0.589049"/>
+    <!--readout name="ECalBarrelTheta">
+        <segmentation type="GridTheta" grid_size_theta="0.00981745/4" offset_theta="0.5902785"/>
         <id>system:4,cryo:1,type:3,subtype:3,layer:8,module:11,theta:10</id>
-    </readout>
+    </readout-->
 
     <!-- readout for the reconstruction, with phi-theta -->
     <!-- readout name="ECalBarrelPhiTheta">
@@ -92,15 +92,17 @@
         <id>system:4,cryo:1,type:3,subtype:3,layer:8,phi:11,theta:10</id>
     </readout -->
 
-    <!-- readout for the reconstruction, with merged modules and merged cells in theta -->
+    <!-- readout for the simulation, with no merged modules and no merged cells in theta -->
     <readout name="ECalBarrelModuleThetaMerged">
-        <segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="1 1 1 1 1 1 1 1 1 1 1 1" mergedModules="1 1 1 1 1 1 1 1 1 1 1 1" grid_size_theta="0.00981745/4" offset_theta="0.589049"/>
+      <!--segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="1 1 1 1 1 1 1 1 1 1 1 1" mergedModules="1 1 1 1 1 1 1 1 1 1 1 1" grid_size_theta="0.00981745/4" offset_theta="0.5902785"/-->
+      <segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="4 1 4 4 4 4 4 4 4 4 4 4" mergedModules="2 2 2 2 2 2 2 2 2 2 2 2" grid_size_theta="0.00981745/4" offset_theta="0.5902785"/>
         <id>system:4,cryo:1,type:3,subtype:3,layer:8,module:11,theta:10</id>
     </readout>
 
     <!-- readout for the reconstruction, with merged modules and merged cells in theta -->
     <readout name="ECalBarrelModuleThetaMerged2">
-        <segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="4 1 4 4 4 4 4 4 4 4 4 4" mergedModules="2 2 2 2 2 2 2 2 2 2 2 2" grid_size_theta="0.00981745/4" offset_theta="0.589049"/>
+      <segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="2 4 2 1 2 1 2 2 1 1 1 2" mergedModules="2 1 1 2 2 1 1 1 2 2 1 1" grid_size_theta="0.00981745/4" offset_theta="0.5902785"/>
+        <!--segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="4 1 4 4 4 4 4 4 4 4 4 4" mergedModules="2 2 2 2 2 2 2 2 2 2 2 2" grid_size_theta="0.00981745/4" offset_theta="0.5902785"/-->
         <id>system:4,cryo:1,type:3,subtype:3,layer:8,module:11,theta:10</id>
     </readout>
   </readouts>
