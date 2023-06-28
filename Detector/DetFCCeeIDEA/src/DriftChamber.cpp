@@ -41,7 +41,7 @@ struct CDCHBuild : public dd4hep::xml::tools::VolumeBuilder {
 
   double diff_of_squares(double a, double b);
   void PlaceWires(struct wire& w, double outwrap, double halflength, int copyNunOffset, int SL, int iring, int wirenum);
-  void build_layer(DetElement parent, Volume parentVol);
+  void build_layer(DetElement parent, Volume parentVol, dd4hep::SensitiveDetector sens_det);
 };
 
 // ******************************************************
@@ -105,7 +105,7 @@ void CDCHBuild::PlaceWires(struct wire& w, double outwrap, double halflength, in
   }
 }
 
-void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
+void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::SensitiveDetector sens_det) {
 
   // ******************************************************
   // Loading parameters
@@ -705,9 +705,11 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
   Int_t sizeLayer = lvLayerVol.size();
 
   for (Int_t i = 0; i < sizeLayer; i++) {
+    lvLayerVol.at(i).setSensitiveDetector(sens_det);
     registerVolume(lvLayerVol.at(i).name(), lvLayerVol.at(i));
     cout << "Placing Volume: " << lvLayerVol.at(i).name() << endl;
     pv = parentVol.placeVolume(volume(lvLayerVol.at(i).name()));
+    pv.addPhysVolID("wire", i);
     CDCHDetector.setPlacement(pv);
   }
 
@@ -761,7 +763,7 @@ static dd4hep::Ref_t create_element(dd4hep::Detector& description, xml_h e, dd4h
   // Build CDCH cable
   // ******************************************************
 
-  builder.build_layer(CDCH_det, envelope);
+  builder.build_layer(CDCH_det, envelope, sens_det);
 
   // ******************************************************
   // Build CDCH cell and beam plug

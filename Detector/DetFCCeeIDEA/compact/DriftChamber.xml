@@ -21,7 +21,7 @@
 
   <readouts>
     <readout name="CDCHHits">
-      <id>innmodule:8,</id>
+      <id>system:4,wire:17</id>
     </readout>
   </readouts>
 
