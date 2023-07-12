@@ -58,6 +58,7 @@
     <!-- When employing trapezoidal planes Pb_thickness corresponds to the minimum thickness, i.e at the front of the calo -->
     <constant name="Pb_thickness" value="1.80*mm"/>
     <constant name="planeLength" value="-EMBarrel_rmin*cos(InclinationAngle) + sqrt(EMBarrel_rmax*EMBarrel_rmax - EMBarrel_rmin*EMBarrel_rmin*sin(InclinationAngle)*sin(InclinationAngle))"/>
+    <constant name="ECalBarrelNumPlanes" value="1545"/>
     <constant name="phi" value="asin(planeLength / EMBarrel_rmax * sin(InclinationAngle))"/>
     <!-- use a different value for Pb_thickness_max when employing trapezoidal planes -->
     <!-- approximate constant sampling fraction: make the absorber grow linearly with the radius,

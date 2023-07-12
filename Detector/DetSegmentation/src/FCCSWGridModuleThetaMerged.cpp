@@ -1,6 +1,7 @@
 #include "DetSegmentation/FCCSWGridModuleThetaMerged.h"
 
 #include <iostream>
+#include "DD4hep/Detector.h"
 
 namespace dd4hep {
 namespace DDSegmentation {
@@ -16,7 +17,7 @@ FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const std::string& cellEn
   registerIdentifier("identifier_module", "Cell ID identifier for readout module", m_moduleID, "module");
   registerParameter("mergedCells_Theta", "Numbers of merged cells in theta per layer", m_mergedCellsTheta, std::vector<int>());
   registerParameter("mergedModules", "Numbers of merged modules per layer", m_mergedModules, std::vector<int>());
-  registerParameter("nModules", "Number of modules", m_nModules, 1545);
+  GetNModulesFromGeom();
 }
 
 FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const BitFieldCoder* decoder) : GridTheta(decoder) {
@@ -30,8 +31,20 @@ FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const BitFieldCoder* deco
   registerParameter("mergedCells_Theta", "Numbers of merged cells in theta per layer", m_mergedCellsTheta, std::vector<int>());
   registerParameter("mergedModules", "Numbers of merged cells in phi per layer", m_mergedModules, std::vector<int>());
   registerParameter("nModules", "Number of modules", m_nModules, 1545);
+  GetNModulesFromGeom();
 }
 
+void FCCSWGridModuleThetaMerged::GetNModulesFromGeom() {
+  dd4hep::Detector* dd4hepgeo = &(dd4hep::Detector::getInstance());
+  try {
+    m_nModules = dd4hepgeo->constant<int>("ECalBarrelNumPlanes");
+  }
+  catch(...) {
+    std::cout << "Number of modules not found in detector metadata, exiting..." << std::endl;
+    exit(1);
+  }
+  std::cout << "Number of modules read from detector metadata and used in readout class: " << m_nModules << std::endl;
+}
 /// determine the local position based on the cell ID
 Vector3D FCCSWGridModuleThetaMerged::position(const CellID& cID) const {
 

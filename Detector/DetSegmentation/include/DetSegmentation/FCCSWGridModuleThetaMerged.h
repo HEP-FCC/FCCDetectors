@@ -24,6 +24,9 @@ public:
   /// destructor
   virtual ~FCCSWGridModuleThetaMerged() = default;
 
+  /// read nmodules from detector metadata
+  void GetNModulesFromGeom();
+  
   /**  Determine the local position based on the cell ID.
    *   @param[in] aCellId ID of a cell.
    *   return Position (relative to R, phi of Geant4 volume it belongs to, scaled for R=1).
