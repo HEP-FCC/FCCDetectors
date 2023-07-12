@@ -185,12 +185,21 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
        << " rotation angle = " << angle << endmsg;
   uint numPlanes =
       round(M_PI / asin((passiveThickness + activeThickness + readoutThickness) / (2. * caloDim.rmin() * cos(angle))));
-  /*
-  const std::string strNumPlanes = std::to_string(numPlanes);
-  dd4hep::_toDictionary("ECalBarrelNumPlanes", strNumPlanes, "number");
-  dd4hep::Constant constNumPlanes("ECalBarrelNumPlanes", strNumPlanes, "number");
-  aLcdd.addConstant(constNumPlanes);
-  */
+
+  int nModules = -1;
+  try {
+    nModules = aLcdd.constant<int>("ECalBarrelNumPlanes");
+  }
+  catch(...) {
+    ;
+  }
+  if (nModules > 0 && nModules != numPlanes) {
+    lLog << MSG::ERROR << "Incorrect number of planes in xml file!" << endmsg;
+    // todo: incidentSvc->fireIncident(Incident("ECalConstruction", "GeometryFailure"));
+    // make the code crash (incidentSvc does not work)
+     assert(nModules == numPlanes);
+  }
+  //std::cout << "Number of modules read from detector metadata and used in readout class: " << m_nModules << std::endl;
   double dPhi = 2. * M_PI / numPlanes;
   lLog << MSG::INFO << "number of passive plates = " << numPlanes << " azim. angle difference =  " << dPhi << endmsg;
   lLog << MSG::INFO << " distance at inner radius (cm) = " << 2. * M_PI * caloDim.rmin() / numPlanes << "\n"
