@@ -639,7 +639,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       w.radius = radius_ringIn_0 + FWradii + extShiftFW;
       w.theta = theta_ring1;
       w.thetaoffset = ringangle + cellStaggering + theta_ring;
-      w.stereo = -1. * epsilon;
+      w.stereo = -1. * sign_epsilon * epsilon;
       w.halfalpha = halfalpha;
       w.thickness = 0.5 * FWireShellThickIn * enlarge;
       w.halflength = zlength;
