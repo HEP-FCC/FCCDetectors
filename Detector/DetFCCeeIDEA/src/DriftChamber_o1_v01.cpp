@@ -1,35 +1,34 @@
-/*****************************************************************************\
-* DD4hep geometry code for the central drift chamber of the IDEA detector     *
-* Author: Lorenzo Capriotti                                                   *
-\*****************************************************************************/
+/***************************************************************************************\
+* DD4hep geometry code for the central drift chamber of the IDEA detector               *
+* Author: Lorenzo Capriotti, Modified by Brieuc Francois to have sensitive cell volumes *
+\***************************************************************************************/
 #include "DD4hep/DetFactoryHelper.h"
 #include "DD4hep/Printout.h"
 #include "DD4hep/detail/DetectorInterna.h"
 #include "TClass.h"
 #include "TMath.h"
 #include "XML/Utilities.h"
-#include <DD4hep/DetFactoryHelper.h>
 #include <XML/Layering.h>
 #include <iostream>
+#include <math.h>
 
 using namespace std;
 using namespace dd4hep;
 
 struct wire
-
 {
-
-  dd4hep::Volume layer;
+  dd4hep::Volume mother_volume;
   string type;
   int num;
   double radius;
-  double theta;
-  double thetaoffset;
+  double phi;
+  double phioffset;
   double stereo;
   double halfalpha;
   double thickness;
   double halflength;
   dd4hep::Volume volume;
+  string name;
 };
 
 namespace {
@@ -40,8 +39,9 @@ struct CDCHBuild : public dd4hep::xml::tools::VolumeBuilder {
   CDCHBuild(dd4hep::Detector& description, xml_elt_t e, dd4hep::SensitiveDetector sens);
 
   double diff_of_squares(double a, double b);
-  void PlaceWires(struct wire& w, double outwrap, double halflength, int copyNunOffset, int SL, int iring, int wirenum);
-  void build_layer(DetElement parent, Volume parentVol);
+  void apply_wire_coating(struct wire& w, double outwrap, double halflength, string material);
+  void PlaceWires(struct wire& w, double outwrap, double halflength, int copyNunOffset, int SL, int iring);
+  void build_layer(DetElement parent, Volume parentVol, dd4hep::SensitiveDetector sens);
 };
 
 // ******************************************************
@@ -57,12 +57,22 @@ double CDCHBuild::diff_of_squares(double a, double b) {
   return diff;
 }
 
+void CDCHBuild::apply_wire_coating(struct wire& w, double outwrap, double halflength, string material = "G4_Au"){
+  dd4hep::Tube WrapTube(w.thickness, w.thickness + 0.5 * outwrap, halflength);
+  dd4hep::Volume lvWireWrapVol(w.name + "_coating", WrapTube, description.material(material));
+  dd4hep::Tube TotalWire(0.0, w.thickness + 0.5 * outwrap, halflength);
+  dd4hep::Volume lvWireVol(w.name + "_totalWire", TotalWire, description.material("Air"));
+  lvWireVol.placeVolume(w.volume, dd4hep::Position(0.0, 0.0, 0.0));
+  lvWireVol.placeVolume(lvWireWrapVol, dd4hep::Position(0.0, 0.0, 0.0));
+  w.volume = lvWireVol;
+}
+
+// deprecated function, only use it for the wires before and after the sensitive zone (mainly guard wires)
 void CDCHBuild::PlaceWires(struct wire& w, double outwrap, double halflength, int copyNunOffset = 0, int SL = 999,
-                           int iring = 999, int wirenum = -1) {
+                           int iring = 999) {
 
   dd4hep::RotationZYX rot(0., 0., w.stereo);
   dd4hep::RotationX rot_stereo(w.stereo);
-  dd4hep::Position pos(w.radius, 0., 0.);
   dd4hep::Translation3D transl(w.radius, 0., 0.);
 
   dd4hep::Transform3D T(transl * rot_stereo);
@@ -76,7 +86,7 @@ void CDCHBuild::PlaceWires(struct wire& w, double outwrap, double halflength, in
   wirewrapname += "_stereo";
   wirewrapname += std::to_string(w.stereo);
 
-  cout << "wirewrapname: " << wirewrapname << endl;
+  //cout << "wirewrapname: " << wirewrapname << endl;
 
   string wirename = "lvWire_SL";
   wirename += std::to_string(SL);
@@ -87,26 +97,22 @@ void CDCHBuild::PlaceWires(struct wire& w, double outwrap, double halflength, in
   wirename += "_stereo";
   wirename += std::to_string(w.stereo);
 
-  dd4hep::Tube WrapTube(w.thickness, w.thickness + 0.5 * outwrap, halflength);
-  dd4hep::Volume lvWireWrapVol(wirewrapname, WrapTube, description.material("G4_Au"));
-
-  dd4hep::Tube TotalWire(0.0, w.thickness + 0.5 * outwrap, halflength);
-  dd4hep::Volume lvWireVol(wirename, TotalWire, description.material("Air"));
-
-  lvWireVol.placeVolume(w.volume, dd4hep::Position(0.0, 0.0, 0.0));
-  lvWireVol.placeVolume(lvWireWrapVol, dd4hep::Position(0.0, 0.0, 0.0));
+  //apply_wire_coating(w, outwrap, halflength);
 
   //    registerVolume(lvWireWrapVol.name(), lvWireWrapVol);
   //    registerVolume(lvWireVol.name(), lvWireVol);
 
+  // repeat the placement of wires over phi
   for (int n = 0; n < w.num; n++) {
-    dd4hep::RotationZ iRot(w.thetaoffset + w.theta * n);
-    if (n % 1 == 0) w.layer.placeVolume(lvWireVol, dd4hep::Transform3D(iRot * T));
+    dd4hep::RotationZ iRot(w.phioffset + w.phi * n);
+    if (n % 1 == 0) w.mother_volume.placeVolume(w.volume, dd4hep::Transform3D(iRot * T));
   }
 }
 
-void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
+void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::SensitiveDetector sens_det) {
 
+  //dd4hep::PlacedVolume pv;
+  dd4hep::DetElement CDCHDetector(parent, "CDCH", parent.id());
   // ******************************************************
   // Loading parameters
   // ******************************************************
@@ -151,10 +157,11 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
   int nSuperLayer = dd4hep::_toInt("CDCH:nSuperLayer");
   int nRing = dd4hep::_toInt("CDCH:nRing");
   int nFieldWireShells = dd4hep::_toInt("CDCH:nFieldWireShells");
+  //bool setWireSensitive = true; // FIXME: add the possibility to have wires sensitive (parameter in the xml) which could be useful for detailed chamber behavior studies, current attempt never lead to a hit in the wire, even with enlarged wires...
 
   double epsilon = 0.0;
-  double theta_ring = 0.0;
-  double theta_ring1 = 0.0;
+  double phi_ring = 0.0;
+  double phi_ring1 = 0.0;
   int nFWire = 0;
   int nFWire1 = 0;
   int num_wire = 0;
@@ -201,6 +208,8 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
   double cellStaggering = 0.0;
   double epsilonInGwRing = 0.0;
   double epsilonOutGwRing = 0.0;
+  double radius_ringIn_whole_cell = 0.0;
+  double epsilonIn_whole_cell = 0.0;
 
   //------------------------------------------------------------------------
   // The enlarge parameter is used to see the wires in the rendering
@@ -257,18 +266,18 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
   dd4hep::Volume lvOuterWallFoam =
       dd4hep::Volume("lvOuterWallFoamVol", OuterWall_Foam, description.material("GasHe_90Isob_10"));
 
+
   //------------------------------------------------------------------------
   // Now we are ready to loop over the SuperLayers and fill the gas volume!
   //------------------------------------------------------------------------
 
   std::vector<dd4hep::Volume> lvLayerVol;
-  std::vector<dd4hep::Hyperboloid> HypeLayer;
-  std::vector<dd4hep::Volume> lvFwireVol, lvSwireVol, lvGwireVol, lvWrapVol;
+  std::vector<dd4hep::Volume> lvFwireVol, lvGwireVol;
 
-  string lvName1, lvName2, lvName3, HypeName1, HypeName2, HypeName3, wirecol, gascol;
+  string wirecol, gascol, wholeHyperboloidVolumeName;
   string lvFwireName, lvSwireName;
 
-  struct wire w;
+  struct wire guard_wires{}, field_wires_bottom{}, field_wires_center{}, field_wires_top{}, sense_wires{};
   // nSuperLayer = 1;
 
   for (int SL = 0; SL < nSuperLayer; ++SL) {
@@ -276,14 +285,17 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
     num_wire = nSWire + SL * nSDeltaWire;
     phi = 2. * TMath::Pi() / num_wire;
     nFWire = nHorizontalFWire * num_wire;
-    theta_ring = 2. * TMath::Pi() / nFWire;
+    phi_ring = 2. * TMath::Pi() / nFWire;
     nFWire1 = nFWire / 2;
-    theta_ring1 = 2.0 * theta_ring;
+    if (ceilf(nFWire1) != nFWire1)
+      throw std::runtime_error("Error: Failed to build CDCH. Please make sure that '(nStoFWireRatio - nVerticalFWire) * (nSWire + SuperLayerIndex * nSDeltaWire)' is always an even number");
+    phi_ring1 = 2.0 * phi_ring;
     scaleFactor = (1.0 + TMath::Pi() / num_wire) / (1.0 - TMath::Pi() / num_wire);
     dropFactor = (1.0 / cos(halfalpha) - 1.0);
     epsilonFactor = sin(halfalpha) / halflength;
     ringangle = -0.5 * phi;
 
+    gascol = "vCDCH:Gas1";
     if (SL % 3 == 0)
       gascol = "vCDCH:Gas1";
     else if ((SL + 1) % 3 == 0)
@@ -298,41 +310,123 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
     else if ((SL + 2) % 3 == 0)
       wirecol = "vCDCH:Wire3";
 
-    if (SL == 0) {
+    if (SL == 0) {// SL = 0 is special due to the guard wires and the first field wires that lie outside of the sensitive volume
 
+      // deal with the first guard layer
       double stereoOut0 = atan(radius_ringOut_0 * (1.0 * dropFactor * epsilonFactor));
 
+
+
+      //dd4hep::Hyperboloid HypeLayer0(inner_radius_0, 0.0, radius_ringOut_0 - secure, stereoOut0, halflength);
+      //lvLayerVol.push_back(dd4hep::Volume("lvLayerInit", HypeLayer0, description.material("GasHe_90Isob_10")));
+      //lvLayerVol.back().setVisAttributes(description, "vCDCH:Pb");
+
+      //epsilonInGwRing = atan(inGuardRad * (1.0 + dropFactor) * epsilonFactor);
+      //zlength = halflength;
+      //zlength -= sin(epsilonInGwRing) * inGWradii;
+      //zlength /= cos(epsilonInGwRing);
+
+      //guard_wires.mother_volume = lvLayerVol.back();
+      //guard_wires.type = string("G");
+      //guard_wires.num = nInGWire / 2;
+      //guard_wires.radius = inGuardRad - inGWradii;
+      //guard_wires.phi = phi_ring1;
+      //guard_wires.phioffset = ringangle;
+      //guard_wires.stereo = epsilonInGwRing;
+      //guard_wires.halfalpha = halfalpha;
+      //guard_wires.thickness = 0.5 * InGWireShellThickIn * enlarge;  // half the inner thickness as radius of tube
+      //guard_wires.halflength = zlength;
+
+      //dd4hep::Tube Gwire(0.0, guard_wires.thickness, halflength);
+      //lvGwireVol.push_back(dd4hep::Volume("Gwire_inner", Gwire, description.material("G4_Al")));
+      //lvGwireVol.back().setVisAttributes(description, wirecol);
+
+      //guard_wires.volume = lvGwireVol.back();
+      ////CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, 0, SL, -1);
+      
+
+      cout << "********************************" << endl;
+
+
+
       dd4hep::Hyperboloid HypeLayer0(inner_radius_0, 0.0, radius_ringOut_0 - secure, stereoOut0, halflength);
-      lvLayerVol.push_back(dd4hep::Volume("lvLayerInit", HypeLayer0, description.material("GasHe_90Isob_10")));
-      lvLayerVol.back().setVisAttributes(description, "vCDCH:Pb");
+      dd4hep::Volume inner_guard_layer_volume("hyperboloid_inner_guard_layer", HypeLayer0, description.material("GasHe_90Isob_10"));
+      int count = 0;
+      count += 1;
+      std::cout << count << std::endl;
+      dd4hep::PlacedVolume inner_guard_layer_placedVolume = parentVol.placeVolume(inner_guard_layer_volume);
+      CDCHDetector.setPlacement(inner_guard_layer_placedVolume);
+
+      //lvLayerVol.push_back(dd4hep::Volume("lvLayerInit", HypeLayer0, description.material("GasHe_90Isob_10")));
+      //lvLayerVol.back().setVisAttributes(description, "vCDCH:Pb");
+
 
       epsilonInGwRing = atan(inGuardRad * (1.0 + dropFactor) * epsilonFactor);
       zlength = halflength;
       zlength -= sin(epsilonInGwRing) * inGWradii;
       zlength /= cos(epsilonInGwRing);
 
-      w.layer = lvLayerVol.back();
-      w.type = "G";
-      w.num = nInGWire / 2;
-      w.radius = inGuardRad - inGWradii;
-      w.theta = theta_ring1;
-      w.thetaoffset = ringangle;
-      w.stereo = epsilonInGwRing;
-      w.halfalpha = halfalpha;
-      w.thickness = 0.5 * InGWireShellThickIn * enlarge;  // half the inner thickness as radius of tube
-      w.halflength = zlength;
+      count += 1;
+      std::cout << count << std::endl;
 
-      dd4hep::Tube Gwire(0.0, w.thickness, halflength);
+      //guard_wires.mother_volume = lvLayerVol.back();
+      guard_wires.mother_volume = inner_guard_layer_volume;
+      count += 1;
+      std::cout << count << std::endl;
+      guard_wires.type = string("G");
+      guard_wires.num = nInGWire / 2;
+      guard_wires.radius = inGuardRad - inGWradii;
+      guard_wires.phi = phi_ring1;
+      guard_wires.phioffset = ringangle;
+      count += 1;
+      std::cout << count << std::endl;
+      guard_wires.stereo = epsilonInGwRing;
+      guard_wires.halfalpha = halfalpha;
+      guard_wires.thickness = 0.5 * InGWireShellThickIn * enlarge;  // half the inner thickness as radius of tube
+      guard_wires.halflength = zlength;
+      count += 1;
+      std::cout << count << std::endl;
+      //guard_wires.name = "lvWire_SL" + std::to_string(SL) + "_ring0_type" + guard_wires.type + "_stereo" + std::to_string(guard_wires.stereo);
+      //guard_wires.name = string("InnerGuardWire") + dd4hep::_toString(guard_wires.stereo, "_stereo%f");
+      guard_wires.name = string("blo");
+      count += 1;
+      std::cout << count << std::endl;
+      dd4hep::Tube Gwire(0.0, guard_wires.thickness, halflength);
+      count += 1;
+      std::cout << count << std::endl;
       lvGwireVol.push_back(dd4hep::Volume("Gwire_inner", Gwire, description.material("G4_Al")));
       lvGwireVol.back().setVisAttributes(description, wirecol);
+      guard_wires.volume = lvGwireVol.back();
+      count += 1;
+      std::cout << count << std::endl;
+      apply_wire_coating(guard_wires, InGWireShellThickIn, halflength);
+      // Radial translation 
+      dd4hep::Translation3D radial_translation_guard_wire(guard_wires.radius, 0., 0.);
+      // stereo rotation
+      dd4hep::RotationX rot_stereo_guard_wire(guard_wires.stereo);
+      //dd4hep::PlacedVolume inner_guard_wire_placedvolume;
+      count += 1;
+      std::cout << count << std::endl;
+      for (int phi_index = 0; phi_index < guard_wires.num; phi_index++) {
+        dd4hep::RotationZ iRot(guard_wires.phioffset + guard_wires.phi * phi_index);
+        //dd4hep::Transform3D total_transformation(iRot * radial_translation_guard_wire * rot_stereo_guard_wire);
+        //dd4hep::Transform3D total_transformation(iRot * radial_translation_guard_wire * rot_stereo_guard_wire);
+        //inner_guard_wire_placedvolume = inner_guard_layer_volume.placeVolume(guard_wires.volume, total_transformation);
+        //inner_guard_wire_placedvolume = inner_guard_layer_volume.placeVolume(guard_wires.volume, dd4hep::Transform3D(iRot * radial_translation_guard_wire * rot_stereo_guard_wire));
+        dd4hep::PlacedVolume inner_guard_wire_placedvolume = inner_guard_layer_volume.placeVolume(guard_wires.volume, dd4hep::Transform3D(iRot * radial_translation_guard_wire));
+        //if(setWireSensitive)
+        //  inner_guard_wire_placedvolume.addPhysVolID("phi", phi_index).addPhysVolID("hitorigin", 3).addPhysVolID("stereo", guard_wires.stereo > 0 ? 0 : 1).addPhysVolID("layerInCell", 0);
+      }
+      count += 1;
+      std::cout << count << std::endl;
 
-      w.volume = lvGwireVol.back();
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, -1);
-
-      w.radius = inGuardRad + inGWradii + extShiftFW;
-      w.thetaoffset = ringangle + theta_ring;
-      w.stereo = -1.0 * epsilonInGwRing;
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, nInGWire / 2, SL, -1);
+      guard_wires.radius = inGuardRad + inGWradii + extShiftFW;
+      guard_wires.phioffset = ringangle + phi_ring;
+      guard_wires.stereo = -1.0 * epsilonInGwRing;
+      //guard_wires.name = "lvWire_SL" + std::to_string(SL) + "_ring0_type" + guard_wires.type + "_stereo" + std::to_string(guard_wires.stereo);
+      //guard_wires.name = string("InnerGuardWire") + dd4hep::_toString(guard_wires.stereo, "_stereo%f");
+      guard_wires.name = string("bla");
+      //CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, nInGWire / 2, SL, -1);
 
       drop = radius_ring_0 * dropFactor;
       radius_ring = radius_ring_0 + drop;
@@ -352,25 +446,27 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       zlength -= sin(epsilon) * FWradii;
       zlength /= cos(epsilon);
 
-      w.layer = lvLayerVol.back();
-      w.type = "F";
-      w.num = nFWire1;
-      w.radius = radius_ringIn_0 - FWradii - extShiftFW;
-      w.theta = theta_ring1;
-      w.thetaoffset = ringangle + cellStaggering - theta_ring;
-      w.stereo = sign_epsilon * epsilon;
-      w.halfalpha = halfalpha;
-      w.thickness = 0.5 * FWireShellThickIn * enlarge;
-      w.halflength = zlength;
+      field_wires_top.mother_volume = lvLayerVol.back();
+      field_wires_top.type = string("F");
+      field_wires_top.num = nFWire1;
+      field_wires_top.radius = radius_ringIn_0 - FWradii - extShiftFW;
+      field_wires_top.phi = phi_ring1;
+      field_wires_top.phioffset = ringangle + cellStaggering - phi_ring;
+      field_wires_top.stereo = sign_epsilon * epsilon;
+      field_wires_top.halfalpha = halfalpha;
+      field_wires_top.thickness = 0.5 * FWireShellThickIn * enlarge;
+      field_wires_top.halflength = zlength;
+      //field_wires_top.name = dd4hep::_toString(SL, "lvWire_SL%d") + dd4hep::_toString(-1, "_ring%d") + string("_type") + field_wires_top.type + dd4hep::_toString(field_wires_top.stereo, "_stereo%f_top");
+      field_wires_top.name = string("blu");
 
       lvFwireName = dd4hep::_toString(SL, "lvFwire_%d_init");
 
-      dd4hep::Tube Fwire(0.0, w.thickness, halflength);
+      dd4hep::Tube Fwire(0.0, field_wires_top.thickness, halflength);
       lvFwireVol.push_back(dd4hep::Volume(lvFwireName, Fwire, description.material("G4_Al")));
       lvFwireVol.back().setVisAttributes(description, wirecol);
 
-      w.volume = lvFwireVol.back();
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, -1);
+      //field_wires_top.volume = lvFwireVol.back();
+      ////CDCHBuild::PlaceWires(field_wires_top, FWireShellThickOut, halflength, 0, SL, -1);
 
       radius_ring_0 += FWradii;
 
@@ -384,20 +480,8 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
     //------------------------------------------------------------------------
 
     for (int iring = 0; iring < nRing; iring++) {
-
       //------------------------------------------------------------------------
-      // First define some useful names for the future
-      //------------------------------------------------------------------------
-
-      HypeName1 = dd4hep::_toString(SL, "HypeLayer1_%d") + dd4hep::_toString(iring, "_%d");
-      HypeName2 = dd4hep::_toString(SL, "HypeLayer2_%d") + dd4hep::_toString(iring, "_%d");
-      HypeName3 = dd4hep::_toString(SL, "HypeLayer3_%d") + dd4hep::_toString(iring, "_%d");
-      lvName1 = dd4hep::_toString(SL, "lvLayer1_%d") + dd4hep::_toString(iring, "_%d");
-      lvName2 = dd4hep::_toString(SL, "lvLayer2_%d") + dd4hep::_toString(iring, "_%d");
-      lvName3 = dd4hep::_toString(SL, "lvLayer3_%d") + dd4hep::_toString(iring, "_%d");
-
-      //------------------------------------------------------------------------
-      // Next, fill the geometry parameters of the layer. Each layer lies
+      // Fill the geometry parameters of the layer. Each layer lies
       // on top of the following one, so new ringIn = old ringOut
       //------------------------------------------------------------------------
 
@@ -416,14 +500,9 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
 
       zlength = halflength;
 
-      //------------------------------------------------------------------------
-      // Build the hyperboloid shape and the volume of the layer. This is the
-      // base layer of the cell.
-      //------------------------------------------------------------------------
-
-      HypeLayer.push_back(dd4hep::Hyperboloid(radius_ringIn_0, epsilonIn, radius_ringOut_0, epsilonOut, zlength));
-      lvLayerVol.push_back(dd4hep::Volume(lvName1, HypeLayer.back(), description.material("GasHe_90Isob_10")));
-      lvLayerVol.back().setVisAttributes(description, gascol);
+      // save bottom layer inner radius and epsilon before they are modified to build the whole layer hyperboloid volume 
+      radius_ringIn_whole_cell = radius_ringIn_0;
+      epsilonIn_whole_cell = epsilonIn;
 
       //------------------------------------------------------------------------
       // Reduce zlength to avoid volume extrusions and check the staggering
@@ -433,25 +512,26 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       zlength /= cos(epsilon);
 
       if (iring % 2 == 1)
-        cellStaggering = theta_ring;
+        cellStaggering = phi_ring;
       else
         cellStaggering = 0.0;
 
       //------------------------------------------------------------------------
       // Fill the field wire struct with all the relevant information to be
-      // passed to the PlaceWires function. This is the base of the cell.
+      // passed to the PlaceWires function. This is the bottom of the cell.
       //------------------------------------------------------------------------
 
-      w.layer = lvLayerVol.back();
-      w.type = "F";
-      w.num = nFWire1;
-      w.radius = radius_ringIn_0 + FWradii + extShiftFW;
-      w.theta = theta_ring1;
-      w.thetaoffset = ringangle + cellStaggering;
-      w.stereo = sign_epsilon * epsilon;
-      w.halfalpha = halfalpha;
-      w.thickness = 0.5 * FWireShellThickIn * enlarge;
-      w.halflength = zlength;
+      field_wires_bottom.type = string("F");
+      field_wires_bottom.num = nFWire1;
+      field_wires_bottom.radius = radius_ringIn_0 + FWradii + extShiftFW;
+      field_wires_bottom.phi = phi_ring1;
+      field_wires_bottom.phioffset = ringangle + cellStaggering;
+      field_wires_bottom.stereo = sign_epsilon * epsilon;
+      field_wires_bottom.halfalpha = halfalpha;
+      field_wires_bottom.thickness = 0.5 * FWireShellThickIn * enlarge;
+      field_wires_bottom.halflength = zlength;
+      field_wires_bottom.name = dd4hep::_toString(SL, "lvWire_SL%d") + dd4hep::_toString(iring, "_ring%d") + string("_type") + field_wires_bottom.type + dd4hep::_toString(field_wires_bottom.stereo, "_stereo%f_bottom");
+      //field_wires_bottom.name = "lvWire_SL" + std::to_string(SL) + "_ring" + std::to_string(iring) + "_type" + field_wires_bottom.type + "_stereo" + std::to_string(field_wires_bottom.stereo) + "_bottom";
 
       //------------------------------------------------------------------------
       // Define the field wire name and build the field wire volume
@@ -459,7 +539,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
 
       lvFwireName = dd4hep::_toString(SL, "lvFwire_%d") + dd4hep::_toString(iring, "_%d");
 
-      dd4hep::Tube Fwire(0.0, w.thickness, halflength);
+      dd4hep::Tube Fwire(0.0, field_wires_bottom.thickness, halflength);
       lvFwireVol.push_back(dd4hep::Volume(lvFwireName, Fwire, description.material("G4_Al")));
       lvFwireVol.back().setVisAttributes(description, wirecol);
 
@@ -467,8 +547,8 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       // Add the field wire volume to the struct and call the magic function
       //------------------------------------------------------------------------
 
-      w.volume = lvFwireVol.back();
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, iring);
+      field_wires_bottom.volume = lvFwireVol.back();
+      apply_wire_coating(field_wires_bottom, FWireShellThickOut, halflength);
 
       //------------------------------------------------------------------------
       // Next, fill the geometry parameters of the central layer.
@@ -487,15 +567,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       zlength = halflength;
 
       //------------------------------------------------------------------------
-      // Build the hyperboloid shape and the volume of the layer. This is the
-      // central layer of the cell.
-      //------------------------------------------------------------------------
-
-      HypeLayer.push_back(dd4hep::Hyperboloid(radius_ringIn_0, epsilonIn, radius_ringOut_0, epsilonOut, zlength));
-      lvLayerVol.push_back(dd4hep::Volume(lvName2, HypeLayer.back(), description.material("GasHe_90Isob_10")));
-      lvLayerVol.back().setVisAttributes(description, gascol);
-
-      //------------------------------------------------------------------------
       // Reduce zlength to avoid volume extrusions
       //------------------------------------------------------------------------
 
@@ -507,16 +578,17 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       // passed to the PlaceWires function.
       //------------------------------------------------------------------------
 
-      w.layer = lvLayerVol.back();
-      w.type = "S";
-      w.num = num_wire;
-      w.radius = senseWireRing_radius_0;
-      w.theta = phi;
-      w.thetaoffset = cellStaggering;
-      w.stereo = sign_epsilon * epsilon;
-      w.halfalpha = halfalpha;
-      w.thickness = 0.5 * SWireShellThickIn * enlarge;
-      w.halflength = zlength;
+      sense_wires.type = string("S");
+      sense_wires.num = num_wire;
+      sense_wires.radius = senseWireRing_radius_0;
+      sense_wires.phi = phi;
+      sense_wires.phioffset = cellStaggering;
+      sense_wires.stereo = sign_epsilon * epsilon;
+      sense_wires.halfalpha = halfalpha;
+      sense_wires.thickness = 0.5 * SWireShellThickIn * enlarge;
+      sense_wires.halflength = zlength;
+      sense_wires.name = dd4hep::_toString(SL, "lvWire_SL%d") + dd4hep::_toString(iring, "_ring%d") + string("_type") + sense_wires.type + dd4hep::_toString(sense_wires.stereo, "_stereo%f");
+      //sense_wires.name = "lvWire_SL" + std::to_string(SL) + "_ring" + std::to_string(iring) + "_type" + sense_wires.type + "_stereo" + std::to_string(sense_wires.stereo);
 
       //------------------------------------------------------------------------
       // Define the sense wire name and build the sense wire volume
@@ -524,16 +596,11 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
 
       lvSwireName = dd4hep::_toString(SL, "lvSwire_%d") + dd4hep::_toString(iring, "_%d");
 
-      dd4hep::Tube Swire(0.0, w.thickness, halflength);
-      lvSwireVol.push_back(dd4hep::Volume(lvSwireName, Swire, description.material("G4_W")));
-      lvSwireVol.back().setVisAttributes(description, wirecol);
-
-      //------------------------------------------------------------------------
-      // Add the sense wire volume to the struct and call the magic function
-      //------------------------------------------------------------------------
-
-      w.volume = lvSwireVol.back();
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, iring);
+      dd4hep::Tube Swire(0.0, sense_wires.thickness, halflength);
+      dd4hep::Volume lvSwireVol(lvSwireName, Swire, description.material("G4_W"));
+      lvSwireVol.setVisAttributes(description, wirecol);
+      sense_wires.volume = lvSwireVol;
+      apply_wire_coating(sense_wires, SWireShellThickOut, halflength);
 
       //------------------------------------------------------------------------
       // Tune the radius and epsilon of the central field wires
@@ -548,19 +615,20 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       // and call the magic function.
       //------------------------------------------------------------------------
 
-      w.layer = lvLayerVol.back();
-      w.type = "F";
-      w.num = num_wire;
-      w.radius = iradius;
-      w.theta = phi;
-      w.thetaoffset = ringangle + cellStaggering;
-      w.stereo = sign_epsilon * epsilon;
-      w.halfalpha = halfalpha;
-      w.thickness = 0.5 * FWireShellThickIn * enlarge;
-      w.halflength = zlength;
-      w.volume = lvFwireVol.back();
+      field_wires_center.type = string("F");
+      field_wires_center.num = num_wire;
+      field_wires_center.radius = iradius;
+      field_wires_center.phi = phi;
+      field_wires_center.phioffset = ringangle + cellStaggering;
+      field_wires_center.stereo = sign_epsilon * epsilon;
+      field_wires_center.halfalpha = halfalpha;
+      field_wires_center.thickness = 0.5 * FWireShellThickIn * enlarge;
+      field_wires_center.halflength = zlength;
+      field_wires_center.volume = lvFwireVol.back();
+      field_wires_center.name = dd4hep::_toString(SL, "lvWire_SL%d") + dd4hep::_toString(iring, "_ring%d") + string("_type") + field_wires_center.type + dd4hep::_toString(field_wires_center.stereo, "_stereo%f_center");
+      //field_wires_center.name = "lvWire_SL" + std::to_string(SL) + "_ring" + std::to_string(iring) + "_type" + field_wires_center.type + "_stereo" + std::to_string(field_wires_center.stereo) + "_middle";
+      apply_wire_coating(field_wires_center, FWireShellThickOut, halflength);
 
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, iring);
 
       //------------------------------------------------------------------------
       // Next, fill the geometry parameters of the upper layer.
@@ -579,9 +647,23 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       // central layer of the cell.
       //------------------------------------------------------------------------
 
-      HypeLayer.push_back(dd4hep::Hyperboloid(radius_ringIn_0, epsilonIn, radius_ringOut_0, epsilonOut, zlength));
-      lvLayerVol.push_back(dd4hep::Volume(lvName3, HypeLayer.back(), description.material("GasHe_90Isob_10")));
-      lvLayerVol.back().setVisAttributes(description, gascol);
+      //HypeLayer.push_back(dd4hep::Hyperboloid(radius_ringIn_0, epsilonIn, radius_ringOut_0, epsilonOut, zlength));
+      //lvLayerVol.push_back(dd4hep::Volume(lvName3, HypeLayer.back(), description.material("GasHe_90Isob_10")));
+      //lvLayerVol.back().setVisAttributes(description, gascol);
+
+      // Create hyperboloid volume of the whole ring for cellID definition
+      wholeHyperboloidVolumeName = dd4hep::_toString(SL, "hyperboloid_SL_%d") + dd4hep::_toString(iring, "_ring_%d");
+      dd4hep::Hyperboloid whole_ring_hyperboloid = dd4hep::Hyperboloid(radius_ringIn_whole_cell, epsilonIn_whole_cell, radius_ringOut_0, epsilonOut, zlength);
+      dd4hep::Volume whole_ring_hyperboloid_volume = dd4hep::Volume(wholeHyperboloidVolumeName, whole_ring_hyperboloid, description.material("GasHe_90Isob_10"));
+      whole_ring_hyperboloid_volume.setVisAttributes(description, gascol);
+      //whole_ring_hyperboloid_volume.setSensitiveDetector(sens_det);
+      registerVolume(wholeHyperboloidVolumeName, whole_ring_hyperboloid_volume);
+      cout << "Placing Volume: " << wholeHyperboloidVolumeName << endl;
+      //parentVol.placeVolume(volume(wholeHyperboloidVolumeName));
+      dd4hep::PlacedVolume whole_ring_hyperboloid_placedVolume;
+      whole_ring_hyperboloid_placedVolume = parentVol.placeVolume(whole_ring_hyperboloid_volume);
+      //CDCHDetector.setPlacement(whole_ring_hyperboloid_placedVolume);
+      whole_ring_hyperboloid_placedVolume.addPhysVolID("superLayer", SL).addPhysVolID("ring", iring);
 
       //------------------------------------------------------------------------
       // Reduce zlength to avoid volume extrusions
@@ -595,19 +677,95 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       // call the magic function. This is the top of the cell.
       //------------------------------------------------------------------------
 
-      w.layer = lvLayerVol.back();
-      w.type = "F";
-      w.num = nFWire1;
-      w.radius = radius_ringIn_0 - FWradii - extShiftFW;
-      w.theta = theta_ring1;
-      w.thetaoffset = ringangle + cellStaggering;
-      w.stereo = sign_epsilon * epsilon;
-      w.halfalpha = halfalpha;
-      w.thickness = 0.5 * FWireShellThickIn * enlarge;
-      w.halflength = zlength;
-      w.volume = lvFwireVol.back();
+      field_wires_top.type = string("F");
+      field_wires_top.num = nFWire1;
+      field_wires_top.radius = radius_ringIn_0 - FWradii - extShiftFW;
+      field_wires_top.phi = phi_ring1;
+      field_wires_top.phioffset = ringangle + cellStaggering;
+      field_wires_top.stereo = sign_epsilon * epsilon;
+      field_wires_top.halfalpha = halfalpha;
+      field_wires_top.thickness = 0.5 * FWireShellThickIn * enlarge;
+      field_wires_top.halflength = zlength;
+      field_wires_top.volume = lvFwireVol.back();
+      field_wires_top.name = dd4hep::_toString(SL, "lvWire_SL%d") + dd4hep::_toString(iring, "_ring%d") + string("_type") + field_wires_top.type + dd4hep::_toString(field_wires_top.stereo, "_stereo%f_top");
+      //field_wires_top.name = "lvWire_SL" + std::to_string(SL) + "_ring" + std::to_string(iring) + "_type" + field_wires_top.type + "_stereo" + std::to_string(field_wires_top.stereo) + "_top";
+      apply_wire_coating(field_wires_top, FWireShellThickOut, halflength);
 
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, iring);
+      //if(setWireSensitive){
+      //  field_wires_bottom.volume.setSensitiveDetector(sens_det);
+      //  field_wires_center.volume.setSensitiveDetector(sens_det);
+      //  sense_wires.volume.setSensitiveDetector(sens_det);
+      //  field_wires_top.volume.setSensitiveDetector(sens_det);
+      //}
+
+      // arbitrarily extended tube section to build the sensitive volume ID associated to the wire from boolean operation with the layer hyperboloid
+      dd4hep::Tube cellID_tube_for_boolean(0, sense_wires.radius * 2, halflength, - sense_wires.phi / 2.0, sense_wires.phi / 2.0);
+      dd4hep::IntersectionSolid cellID_shape;
+      dd4hep::PlacedVolume cellID_placedvolume;
+      string cellID_volume_name;
+      dd4hep::Volume cellID_volume;
+      dd4hep::PlacedVolume field_wire_bottom_placedvolume;
+      dd4hep::PlacedVolume sense_wire_placedvolume;
+      dd4hep::PlacedVolume field_wire_center_placedvolume;
+      dd4hep::PlacedVolume field_wire_top_placedvolume;
+      
+      // Radial translation 
+      dd4hep::Translation3D radial_translation_sense_wire(sense_wires.radius, 0., 0.);
+      // stereo rotation
+      dd4hep::RotationX rot_stereo_sense_wire(sense_wires.stereo);
+      // extract the number of wire ratio to place field wires in the loop for sense wires
+      // it is not very elegant but the sense wire define the sensitive volume in which wires are placed 
+      float middle_to_middle_num_wire_ratio = field_wires_center.num/float(sense_wires.num);
+      float middle_to_bottom_num_wire_ratio = field_wires_bottom.num/float(sense_wires.num);
+      float middle_to_top_num_wire_ratio = field_wires_top.num/float(sense_wires.num);
+      if(ceilf(middle_to_middle_num_wire_ratio) != middle_to_middle_num_wire_ratio || ceilf(middle_to_bottom_num_wire_ratio) != middle_to_bottom_num_wire_ratio || ceilf(middle_to_top_num_wire_ratio) != middle_to_top_num_wire_ratio)
+          throw std::runtime_error("Error: Failed to build CDCH. Please make sure that the number of wires in top/center cell rings is always a multiple of the number of wires in the middle of the cell");
+      // loop to arrange the wires in phi, starting with the sense wires to be able to build the volume associated to the cell
+      for (int phi_index = 0; phi_index < sense_wires.num; phi_index++) {
+        // Prepare the cell sensitive volume as the intersection of the hyperboloid and a rotated tube segment
+        // phi rotation
+        dd4hep::RotationZ iRot(sense_wires.phioffset + sense_wires.phi * phi_index);
+        // complete transformation for the sense wires
+        dd4hep::Transform3D total_transformation(iRot * radial_translation_sense_wire * rot_stereo_sense_wire);
+        // create the intersection of the tube with the hyperboloid after rotating the tube in phi and stereo angle 
+        cellID_shape = dd4hep::IntersectionSolid(whole_ring_hyperboloid, cellID_tube_for_boolean, dd4hep::Transform3D(dd4hep::RotationZ(sense_wires.phioffset + sense_wires.phi * phi_index) * dd4hep::RotationX(sense_wires.stereo)));
+        cellID_volume_name = dd4hep::_toString(SL, "cellIDvolume_SL_%d") + dd4hep::_toString(iring, "_ring_%d") + dd4hep::_toString(phi_index, "_phi_%d");
+        cellID_volume = dd4hep::Volume(cellID_volume_name, cellID_shape, description.material("GasHe_90Isob_10"));
+        cellID_volume.setVisAttributes(description, gascol);
+        cellID_volume.setSensitiveDetector(sens_det);
+        cellID_placedvolume = whole_ring_hyperboloid_volume.placeVolume(cellID_volume);
+        cellID_placedvolume.addPhysVolID("phi", phi_index).addPhysVolID("hitorigin", 0).addPhysVolID("stereo", sense_wires.stereo > 0 ? 0 : 1).addPhysVolID("layerInCell", 0);
+
+        // place the wires. The transformation is: apply the stereo angle rotation, translate the wire to the required radius, apply the phi rotation
+        // sense wires in the radial middle of the cell
+        sense_wire_placedvolume = cellID_volume.placeVolume(sense_wires.volume, total_transformation);
+
+        // bottom field wires
+        for(int sub_phi_index = phi_index * middle_to_bottom_num_wire_ratio; sub_phi_index < (phi_index * middle_to_bottom_num_wire_ratio) + middle_to_bottom_num_wire_ratio; sub_phi_index++){
+          field_wire_bottom_placedvolume = cellID_volume.placeVolume(field_wires_bottom.volume, dd4hep::Transform3D(dd4hep::RotationZ(field_wires_bottom.phioffset + field_wires_bottom.phi * sub_phi_index) * dd4hep::Translation3D(field_wires_bottom.radius, 0., 0.) *dd4hep::RotationX(field_wires_bottom.stereo)));
+          //if(setWireSensitive)
+          //  field_wire_bottom_placedvolume.addPhysVolID("phi", sub_phi_index).addPhysVolID("hitorigin", 2).addPhysVolID("stereo", field_wires_center.stereo > 0 ? 0 : 1).addPhysVolID("layerInCell", 1);
+        }
+
+        // central field wires
+        for(int sub_phi_index = phi_index * middle_to_middle_num_wire_ratio; sub_phi_index < (phi_index * middle_to_middle_num_wire_ratio) + middle_to_middle_num_wire_ratio; sub_phi_index++){
+          field_wire_center_placedvolume = cellID_volume.placeVolume(field_wires_center.volume, dd4hep::Transform3D(dd4hep::RotationZ(field_wires_center.phioffset + field_wires_center.phi * sub_phi_index) * dd4hep::Translation3D(field_wires_center.radius, 0., 0.) *dd4hep::RotationX(field_wires_center.stereo)));
+          //if(setWireSensitive)
+          //  field_wire_center_placedvolume.addPhysVolID("phi", sub_phi_index).addPhysVolID("hitorigin", 2).addPhysVolID("stereo", field_wires_center.stereo > 0 ? 0 : 1).addPhysVolID("layerInCell", 2);
+        }
+
+        // top field wires
+        for(int sub_phi_index = phi_index * middle_to_top_num_wire_ratio; sub_phi_index < (phi_index * middle_to_top_num_wire_ratio) + middle_to_top_num_wire_ratio; sub_phi_index++){
+          field_wire_top_placedvolume = cellID_volume.placeVolume(field_wires_top.volume, dd4hep::Transform3D(dd4hep::RotationZ(field_wires_top.phioffset + field_wires_top.phi * sub_phi_index) * dd4hep::Translation3D(field_wires_top.radius, 0., 0.) *dd4hep::RotationX(field_wires_top.stereo)));
+          //if(setWireSensitive)
+          //  field_wire_top_placedvolume.addPhysVolID("phi", sub_phi_index).addPhysVolID("hitorigin", 2).addPhysVolID("stereo", field_wires_center.stereo > 0 ? 0 : 1).addPhysVolID("layerInCell", 3);
+        }
+      }
+
+      //CDCHBuild::PlaceWires(field_wires_bottom, FWireShellThickOut, halflength, 0, SL, iring);
+      //CDCHBuild::PlaceWires(sense_wires, FWireShellThickOut, halflength, 0, SL, iring, sens_det, parentVol);
+      //CDCHBuild::PlaceWires(field_wires_center, FWireShellThickOut, halflength, 0, SL, iring);
+      //CDCHBuild::PlaceWires(field_wires_top, FWireShellThickOut, halflength, 0, SL, iring);
 
       //------------------------------------------------------------------------
       // Scale the delta radius of the ring for next iteration
@@ -633,25 +791,25 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       zlength -= sin(epsilon) * FWradii;
       zlength /= cos(epsilon);
 
-      w.layer = lvLayerVol.back();
-      w.type = "F";
-      w.num = nFWire1;
-      w.radius = radius_ringIn_0 + FWradii + extShiftFW;
-      w.theta = theta_ring1;
-      w.thetaoffset = ringangle + cellStaggering + theta_ring;
-      w.stereo = -1. * sign_epsilon * epsilon;
-      w.halfalpha = halfalpha;
-      w.thickness = 0.5 * FWireShellThickIn * enlarge;
-      w.halflength = zlength;
+      field_wires_bottom.mother_volume = lvLayerVol.back();
+      field_wires_bottom.type = string("F");
+      field_wires_bottom.num = nFWire1;
+      field_wires_bottom.radius = radius_ringIn_0 + FWradii + extShiftFW;
+      field_wires_bottom.phi = phi_ring1;
+      field_wires_bottom.phioffset = ringangle + cellStaggering + phi_ring;
+      field_wires_bottom.stereo = -1. * sign_epsilon * epsilon;
+      field_wires_bottom.halfalpha = halfalpha;
+      field_wires_bottom.thickness = 0.5 * FWireShellThickIn * enlarge;
+      field_wires_bottom.halflength = zlength;
 
       lvFwireName = dd4hep::_toString(SL, "lvFwire_%d_out");
 
-      dd4hep::Tube Fwire(0.0, w.thickness, halflength);
+      dd4hep::Tube Fwire(0.0, field_wires_bottom.thickness, halflength);
       lvFwireVol.push_back(dd4hep::Volume(lvFwireName, Fwire, description.material("G4_Al")));
       lvFwireVol.back().setVisAttributes(description, wirecol);
 
-      w.volume = lvFwireVol.back();
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, -1);
+      field_wires_bottom.volume = lvFwireVol.back();
+      //CDCHBuild::PlaceWires(field_wires_bottom, FWireShellThickOut, halflength, 0, SL, -1);
 
       //------------------------------------------------------------------------
       // Start placing the outer layer of guard wires
@@ -674,42 +832,42 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
       zlength -= sin(epsilonOutGwRing) * inGWradii;
       zlength /= cos(epsilonOutGwRing);
 
-      w.layer = lvLayerVol.back();
-      w.type = "G";
-      w.num = nOutGWire / 2;
-      w.radius = outGuardRad - inGWradii;
-      w.theta = theta_ring1;
-      w.thetaoffset = ringangle;
-      w.stereo = epsilonOutGwRing;
-      w.halfalpha = halfalpha;
-      w.thickness = 0.5 * OutGWireShellThickIn * enlarge;
-      w.halflength = zlength;
+      guard_wires.mother_volume = lvLayerVol.back();
+      guard_wires.type = string("G");
+      guard_wires.num = nOutGWire / 2;
+      guard_wires.radius = outGuardRad - inGWradii;
+      guard_wires.phi = phi_ring1;
+      guard_wires.phioffset = ringangle;
+      guard_wires.stereo = epsilonOutGwRing;
+      guard_wires.halfalpha = halfalpha;
+      guard_wires.thickness = 0.5 * OutGWireShellThickIn * enlarge;
+      guard_wires.halflength = zlength;
 
-      dd4hep::Tube Gwire(0.0, w.thickness, halflength);
+      dd4hep::Tube Gwire(0.0, guard_wires.thickness, halflength);
       lvGwireVol.push_back(dd4hep::Volume("Gwire_outer", Gwire, description.material("G4_Al")));
       lvGwireVol.back().setVisAttributes(description, wirecol);
 
-      w.volume = lvGwireVol.back();
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, 0, SL, -1);
+      guard_wires.volume = lvGwireVol.back();
+      //CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, 0, SL, -1);
 
-      w.radius = outGuardRad + inGWradii + extShiftFW;
-      w.thetaoffset = ringangle + theta_ring;
-      w.stereo = -1.0 * epsilonOutGwRing;
-      CDCHBuild::PlaceWires(w, FWireShellThickOut, halflength, nOutGWire / 2, SL, -1);
+      guard_wires.radius = outGuardRad + inGWradii + extShiftFW;
+      guard_wires.phioffset = ringangle + phi_ring;
+      guard_wires.stereo = -1.0 * epsilonOutGwRing;
+      //CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, nOutGWire / 2, SL, -1);
     }
   }
 
-  dd4hep::PlacedVolume pv;
-  dd4hep::DetElement CDCHDetector(parent, "Ecal_DP", parent.id());
 
   Int_t sizeLayer = lvLayerVol.size();
 
-  for (Int_t i = 0; i < sizeLayer; i++) {
-    registerVolume(lvLayerVol.at(i).name(), lvLayerVol.at(i));
-    cout << "Placing Volume: " << lvLayerVol.at(i).name() << endl;
-    pv = parentVol.placeVolume(volume(lvLayerVol.at(i).name()));
-    CDCHDetector.setPlacement(pv);
-  }
+
+  //for (Int_t i = 0; i < sizeLayer; i++) {
+  //  registerVolume(lvLayerVol.at(i).name(), lvLayerVol.at(i));
+  //  //cout << "Placing Volume: " << lvLayerVol.at(i).name() << endl;
+  //  //pv = parentVol.placeVolume(volume(lvLayerVol.at(i).name()));
+  //  //CDCHDetector.setPlacement(pv);
+  //  parentVol.placeVolume(volume(lvLayerVol.at(i).name()));
+  //}
 
   double PosEndcapGas = halflength + 0.5 * GasEndcapWallThick;
   double PosEndcapCopper = halflength + GasEndcapWallThick + 0.5 * CopperEndcapWallThick;
@@ -733,10 +891,10 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol) {
   parentVol.placeVolume(lvEndcapWallKapton, dd4hep::Position(0., 0., -PosEndcapKapton));
   parentVol.placeVolume(lvEndcapWallCarbon, dd4hep::Position(0., 0., -PosEndcapCarbon));
 }
-
-}  // namespace
+} //namespace
 
 static dd4hep::Ref_t create_element(dd4hep::Detector& description, xml_h e, dd4hep::SensitiveDetector sens_det) {
+  cout << "#####################" << endl;
 
   xml_det_t x_det = e;
   CDCHBuild builder(description, x_det, sens_det);
@@ -761,7 +919,7 @@ static dd4hep::Ref_t create_element(dd4hep::Detector& description, xml_h e, dd4h
   // Build CDCH cable
   // ******************************************************
 
-  builder.build_layer(CDCH_det, envelope);
+  builder.build_layer(CDCH_det, envelope, sens_det);
 
   // ******************************************************
   // Build CDCH cell and beam plug
