@@ -27,11 +27,11 @@
   <constant name = "CDCH:cellDimension"          value = "11.846*mm"/>
   <constant name = "CDCH:nSDeltaWire"            value = "48"/>
   <constant name = "CDCH:nSuperLayer"            value = "14"/>
-  <constant name = "CDCH:nRing"                  value = "8"/>
+  <constant name = "CDCH:nLayer"                  value = "8"/>
   <!--<constant name = "CDCH:nSuperLayer"            value = "14"/>
-  <constant name = "CDCH:nRing"                  value = "8"/>
+  <constant name = "CDCH:nLayer"                  value = "8"/>
   <constant name = "CDCH:nSuperLayer"            value = "4"/>
-  <constant name = "CDCH:nRing"                  value = "2"/>-->
+  <constant name = "CDCH:nLayer"                  value = "2"/>-->
   <constant name = "CDCH:nVerticalFWire"         value = "1"/>
   <constant name = "CDCH:nStoFWireRatio"         value = "5"/>
   <constant name = "CDCH:nFieldWireShells"       value = "2"/>
