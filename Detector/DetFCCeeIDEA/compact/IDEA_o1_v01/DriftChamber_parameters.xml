@@ -39,8 +39,6 @@
   <constant name = "CDCH:FWireShellThickOut"     value = "0.0003*mm"/>
   <constant name = "CDCH:centerFWireShellThickIn"   value = "0.050*mm"/> <!-- Field wires in the middle of the cell are thicker -->
   <constant name = "CDCH:centerFWireShellThickOut"  value = "0.0003*mm"/>
-  <constant name = "CDCH:CntFWireShellThickIn"   value = "0.0247*mm"/>
-  <constant name = "CDCH:CntFWireShellThickOut"  value = "0.0003*mm"/>
   <constant name = "CDCH:SWireShellThickIn"      value = "0.020*mm"/>
   <constant name = "CDCH:SWireShellThickOut"     value = "0.0003*mm"/>
   <constant name = "CDCH:InGWireShellThickIn"    value = "0.050*mm"/>

@@ -138,8 +138,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
   double centerFWireShellThickOut = dd4hep::_toDouble("CDCH:centerFWireShellThickOut");
   double SWireShellThickIn = dd4hep::_toDouble("CDCH:SWireShellThickIn");
   double SWireShellThickOut = dd4hep::_toDouble("CDCH:SWireShellThickOut");
-  double CntFWireShellThickIn = dd4hep::_toDouble("CDCH:CntFWireShellThickIn");
-  double CntFWireShellThickOut = dd4hep::_toDouble("CDCH:CntFWireShellThickOut");
   double InGWireShellThickIn = dd4hep::_toDouble("CDCH:InGWireShellThickIn");
   double InGWireShellThickOut = dd4hep::_toDouble("CDCH:InGWireShellThickOut");
   double OutGWireShellThickIn = dd4hep::_toDouble("CDCH:InGWireShellThickIn");
@@ -181,8 +179,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       Carbon1OuterWallThick + Carbon2OuterWallThick + CopperOuterWallThick + FoamOuterWallThick;
   double FWireDiameter = FWireShellThickIn + FWireShellThickOut;
   double FWradii = 0.5 * FWireDiameter;
-  double CntFWireDiameter = CntFWireShellThickIn + CntFWireShellThickOut;
-  double CntFWradii = 0.5 * CntFWireDiameter;
   double SWireDiameter = SWireShellThickIn + SWireShellThickOut;
   double SWradii = 0.5 * SWireDiameter;
   double inGWireDiameter = InGWireShellThickIn + InGWireShellThickOut;
@@ -582,7 +578,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       // Reduce zlength to avoid volume extrusions
       //------------------------------------------------------------------------
 
-      zlength -= sin(epsilon) * CntFWradii;
+      zlength -= sin(epsilon) * 0.5 * FWireShellThickIn;
       zlength /= cos(epsilon);
 
       //------------------------------------------------------------------------
