@@ -57,7 +57,7 @@ double CDCHBuild::diff_of_squares(double a, double b) {
   return diff;
 }
 
-void CDCHBuild::apply_wire_coating(struct wire& w, double outwrap, double halflength, string material = "G4_Au"){
+void CDCHBuild::apply_wire_coating(struct wire& w, double outwrap, double halflength, string material = "Silver"){
   dd4hep::Tube WrapTube(w.thickness, w.thickness + 0.5 * outwrap, halflength);
   dd4hep::Volume WireWrapVol(w.name + "_coating", WrapTube, description.material(material));
   dd4hep::Tube TotalWire(0.0, w.thickness + 0.5 * outwrap, halflength);
@@ -134,6 +134,8 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
   double CarbonEndcapWallThick = dd4hep::_toDouble("CDCH:CarbonEndcapWallThick");
   double FWireShellThickIn = dd4hep::_toDouble("CDCH:FWireShellThickIn");
   double FWireShellThickOut = dd4hep::_toDouble("CDCH:FWireShellThickOut");
+  double centerFWireShellThickIn = dd4hep::_toDouble("CDCH:centerFWireShellThickIn");
+  double centerFWireShellThickOut = dd4hep::_toDouble("CDCH:centerFWireShellThickOut");
   double SWireShellThickIn = dd4hep::_toDouble("CDCH:SWireShellThickIn");
   double SWireShellThickOut = dd4hep::_toDouble("CDCH:SWireShellThickOut");
   double CntFWireShellThickIn = dd4hep::_toDouble("CDCH:CntFWireShellThickIn");
@@ -608,7 +610,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       dd4hep::Volume lvSwireVol(lvSwireName, Swire, description.material("G4_W"));
       lvSwireVol.setVisAttributes(description, wirecol);
       sense_wires.volume = lvSwireVol;
-      apply_wire_coating(sense_wires, SWireShellThickOut, halflength);
+      apply_wire_coating(sense_wires, SWireShellThickOut, halflength, "G4_Au");
 
       //------------------------------------------------------------------------
       // Tune the radius and epsilon of the central field wires
@@ -629,11 +631,11 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       field_wires_center.phioffset = layerangle + cellStaggering;
       field_wires_center.stereo = sign_epsilon * epsilon;
       field_wires_center.halfalpha = halfalpha;
-      field_wires_center.thickness = 0.5 * FWireShellThickIn * enlarge;
+      field_wires_center.thickness = 0.5 * centerFWireShellThickIn * enlarge;
       field_wires_center.halflength = zlength;
       field_wires_center.volume = lvFwireVol.back();
       field_wires_center.name = dd4hep::_toString(SL, "Wire_SL%d") + dd4hep::_toString(ilayer, "_layer%d") + string("_type") + field_wires_center.type + dd4hep::_toString(field_wires_center.stereo, "_stereo%f_center");
-      apply_wire_coating(field_wires_center, FWireShellThickOut, halflength);
+      apply_wire_coating(field_wires_center, centerFWireShellThickOut, halflength);
 
 
       //------------------------------------------------------------------------
