@@ -40,7 +40,7 @@ struct CDCHBuild : public dd4hep::xml::tools::VolumeBuilder {
 
   double diff_of_squares(double a, double b);
   void apply_wire_coating(struct wire& w, double outwrap, double halflength, string material);
-  void PlaceWires(struct wire& w, double outwrap, double halflength, int copyNunOffset, int SL, int ilayer);
+  void PlaceWires(struct wire& w, double outwrap, double halflength, int SL, int ilayer);
   void build_layer(DetElement parent, Volume parentVol, dd4hep::SensitiveDetector sens);
 };
 
@@ -68,7 +68,7 @@ void CDCHBuild::apply_wire_coating(struct wire& w, double outwrap, double halfle
 }
 
 // deprecated function, only use it for the wires before and after the sensitive zone (mainly guard wires)
-void CDCHBuild::PlaceWires(struct wire& w, double outwrap, double halflength, int copyNunOffset = 0, int SL = 999,
+void CDCHBuild::PlaceWires(struct wire& w, double outwrap, double halflength, int SL = 999,
                            int ilayer = 999) {
 
   dd4hep::RotationZYX rot(0., 0., w.stereo);
@@ -340,13 +340,13 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       lvGwireVol.back().setVisAttributes(description, wirecol);
 
       guard_wires.volume = lvGwireVol.back();
-      CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, 0, SL, -1);
+      CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, SL, -1);
 
       guard_wires.radius = inGuardRad + inGWradii + extShiftFW;
       guard_wires.phioffset = layerangle + phi_layer;
       guard_wires.stereo = -1.0 * epsilonInGwRing;
       guard_wires.name = string("Gwire_inner_stereominus");
-      CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, nInGWire / 2, SL, -1);
+      CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, SL, -1);
 
       drop = radius_layer_0 * dropFactor;
       radius_layer = radius_layer_0 + drop;
@@ -385,7 +385,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       lvFwireVol.back().setVisAttributes(description, wirecol);
 
       field_wires_top.volume = lvFwireVol.back();
-      CDCHBuild::PlaceWires(field_wires_top, FWireShellThickOut, halflength, 0, SL, -1);
+      CDCHBuild::PlaceWires(field_wires_top, FWireShellThickOut, halflength, SL, -1);
 
       radius_layer_0 += FWradii;
       
@@ -479,7 +479,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       //lvFwireVol.back().setVisAttributes(description, wirecol);
 
       ////field_wires_top.volume = lvFwireVol.back();
-      //////CDCHBuild::PlaceWires(field_wires_top, FWireShellThickOut, halflength, 0, SL, -1);
+      //////CDCHBuild::PlaceWires(field_wires_top, FWireShellThickOut, halflength, SL, -1);
 
       //radius_layer_0 += FWradii;
 
@@ -803,7 +803,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       lvFwireVol.back().setVisAttributes(description, wirecol);
 
       field_wires_bottom.volume = lvFwireVol.back();
-      CDCHBuild::PlaceWires(field_wires_bottom, FWireShellThickOut, halflength, 0, SL, -1);
+      CDCHBuild::PlaceWires(field_wires_bottom, FWireShellThickOut, halflength, SL, -1);
 
       //------------------------------------------------------------------------
       // Start placing the outer layer of guard wires
@@ -843,12 +843,12 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       lvGwireVol.back().setVisAttributes(description, wirecol);
 
       guard_wires.volume = lvGwireVol.back();
-      CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, 0, SL, -1);
+      CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, SL, -1);
 
       guard_wires.radius = outGuardRad + inGWradii + extShiftFW;
       guard_wires.phioffset = layerangle + phi_layer;
       guard_wires.stereo = -1.0 * epsilonOutGwRing;
-      CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, nOutGWire / 2, SL, -1);
+      CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, SL, -1);
     }
   }
 
