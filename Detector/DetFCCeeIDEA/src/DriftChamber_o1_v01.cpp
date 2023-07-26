@@ -150,8 +150,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
   double outGuardRad = dd4hep::_toDouble("CDCH:outGuardRad");
   int nSDeltaWire = dd4hep::_toInt("CDCH:nSDeltaWire");
   int nSWire = dd4hep::_toInt("CDCH:nSWire");
-  int nInGWire = dd4hep::_toInt("CDCH:nInGWire");
-  int nOutGWire = dd4hep::_toInt("CDCH:nOutGWire");
   int nStoFWireRatio = dd4hep::_toInt("CDCH:nStoFWireRatio");
   int nVerticalFWire = dd4hep::_toInt("CDCH:nVerticalFWire");
   int nSuperLayer = dd4hep::_toInt("CDCH:nSuperLayer");
@@ -325,7 +323,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
 
       guard_wires.mother_volume = lvLayerVol.back();
       guard_wires.type = "G";
-      guard_wires.num = nInGWire;
+      guard_wires.num = nFWire1; //(#guard wires == # field wires)
       guard_wires.radius = inGuardRad - inGWradii;
       guard_wires.phi = 2. * TMath::Pi() / guard_wires.num;
       guard_wires.phioffset = layerangle;
@@ -806,7 +804,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       CDCHBuild::PlaceWires(field_wires_bottom, FWireShellThickOut, halflength, SL, -1);
 
       //------------------------------------------------------------------------
-      // Start placing the outer layer of guard wires
+      // Start placing the outer layer of guard wires (#guard wires == # field wires)
       //------------------------------------------------------------------------
 
       radius_layerIn_0 = radius_layerOut_0;
@@ -828,7 +826,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
 
       guard_wires.mother_volume = lvLayerVol.back();
       guard_wires.type = "G";
-      guard_wires.num = sense_wires.num; // To be checked
+      guard_wires.num = nFWire1;
       guard_wires.radius = outGuardRad - inGWradii;
       guard_wires.phi = 2. * TMath::Pi() / guard_wires.num;
       guard_wires.phioffset = layerangle;
