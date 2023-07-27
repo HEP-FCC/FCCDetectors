@@ -27,12 +27,6 @@
       <D unit="g/cm3" value="1e-25"/>
       <fraction n="1" ref="H"/>
     </material>
-    <material Z="4" name="G4_Be" state="solid">
-      <T unit="K" value="293.15"/>
-      <MEE unit="eV" value="63.7"/>
-      <D unit="g/cm3" value="1.848"/>
-      <atom unit="g/mole" value="9.01218"/>
-    </material>
     <isotope N="12" Z="6" name="C12">
       <atom unit="g/mole" value="12"/>
     </isotope>
