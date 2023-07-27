@@ -210,7 +210,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
   // The enlarge parameter is used to see the wires in the rendering
   //------------------------------------------------------------------------
 
-  double enlarge = 1.;
+  double enlarge = 50.;
 
   //------------------------------------------------------------------------
   // Build the inner, outer and endcap walls first
@@ -310,7 +310,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       double stereoOut0 = atan(radius_layerOut_0 * (1.0 * dropFactor * epsilonFactor));
 
       dd4hep::Hyperboloid HypeLayer0(inner_radius_0, 0.0, radius_layerOut_0 - secure, stereoOut0, halflength);
-      lvLayerVol.push_back(dd4hep::Volume("lvLayerInit", HypeLayer0, description.material("GasHe_90Isob_10")));
+      lvLayerVol.push_back(dd4hep::Volume("hyperboloid_inner_guard_layer", HypeLayer0, description.material("GasHe_90Isob_10")));
       lvLayerVol.back().setVisAttributes(description, "vCDCH:Pb");
 
       epsilonInGwRing = atan(inGuardRad * (1.0 + dropFactor) * epsilonFactor);
@@ -353,7 +353,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       epsilonOut = atan(sqrt(pow(radius_layerOut, 2) - pow(radius_layerOut_0, 2)) / halflength);
 
       dd4hep::Hyperboloid HypeLayer1(radius_layerIn_0, epsilonIn, radius_layerOut_0, epsilonOut, halflength);
-      lvLayerVol.push_back(dd4hep::Volume("lvLayer_0", HypeLayer1, description.material("GasHe_90Isob_10")));
+      lvLayerVol.push_back(dd4hep::Volume("hyperboloid_first_field_wire_ring", HypeLayer1, description.material("GasHe_90Isob_10")));
       lvLayerVol.back().setVisAttributes(description, "vCDCH:Plastic");
 
       zlength = halflength;
@@ -764,7 +764,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       epsilonOut = atan(sqrt(diff_of_squares(radius_layerOut, radius_layerOut_0)) / halflength);
 
       dd4hep::Hyperboloid HypeLayerOut(radius_layerIn_0, epsilonIn, radius_layerOut_0, epsilonOut, halflength);
-      lvLayerVol.push_back(dd4hep::Volume("lvLayerOut", HypeLayerOut, description.material("GasHe_90Isob_10")));
+      lvLayerVol.push_back(dd4hep::Volume("hyperboloid_last_field_wire_ring", HypeLayerOut, description.material("GasHe_90Isob_10")));
       lvLayerVol.back().setVisAttributes(description, "vCDCH:Plastic");
 
       zlength = halflength;
@@ -804,7 +804,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
 
       dd4hep::Hyperboloid HypeLayerOutG(radius_layerIn_0, epsilonOut, outer_radius - envelop_Outer_thickness - 0.0001,
                                         0.0, halflength);
-      lvLayerVol.push_back(dd4hep::Volume("lvLayerOutG", HypeLayerOutG, description.material("GasHe_90Isob_10")));
+      lvLayerVol.push_back(dd4hep::Volume("hyperboloid_outer_guard_layer", HypeLayerOutG, description.material("GasHe_90Isob_10")));
       lvLayerVol.back().setVisAttributes(description, "vCDCH:Pb");
 
       epsilonOutGwRing = atan(outGuardRad * (1.0 + dropFactor) * epsilonFactor);
@@ -821,7 +821,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       guard_wires.stereo = epsilonOutGwRing;
       guard_wires.thickness = 0.5 * OutGWireShellThickIn * enlarge;
       guard_wires.halflength = zlength;
-      guard_wires.name = string("Gwire_outer");
+      guard_wires.name = string("Gwire_outer_stereominus");
 
       dd4hep::Tube Gwire(0.0, guard_wires.thickness, halflength);
       lvGwireVol.push_back(dd4hep::Volume("Gwire_outer", Gwire, description.material("G4_Al")));
@@ -833,6 +833,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       guard_wires.radius = outGuardRad + inGWradii + extShiftFW;
       guard_wires.phioffset = layerangle + phi_layer;
       guard_wires.stereo = -1.0 * epsilonOutGwRing;
+      guard_wires.name = string("Gwire_outer_stereoplus");
       CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, SL, -1);
     }
   }
