@@ -13,7 +13,7 @@
 -->
 
   <detectors>
-    <detector id="555" name="CDCH" type="DriftChamber_o1_v01" readout="CDCHHits" vis="CDCH">
+    <detector id="DetID_DriftChamber" name="CDCH" type="DriftChamber_o1_v01" readout="CDCHHits" vis="CDCH">
     </detector>
   </detectors>
 

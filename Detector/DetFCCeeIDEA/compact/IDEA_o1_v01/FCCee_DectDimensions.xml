@@ -28,7 +28,7 @@
     
     <constant name="DetID_VXD_Barrel"       value=" 1"/>
     <constant name="DetID_VXD_Endcap"       value=" 2"/>
-    <constant name="DetID_DCH"       value=" 3"/>
+    <constant name="DetID_DriftChamber"       value=" 3"/>
     <constant name="DetID_Calo_Barrel"       value=" 4"/>
     <constant name="DetID_Calo_Endcap"       value=" 5"/>
     <constant name="DetID_Calo_Endcap_2"       value=" 6"/>
