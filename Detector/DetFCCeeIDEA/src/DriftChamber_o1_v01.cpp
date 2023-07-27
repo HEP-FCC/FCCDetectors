@@ -110,8 +110,6 @@ void CDCHBuild::PlaceWires(struct wire& w, double outwrap, double halflength, in
 
 void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::SensitiveDetector sens_det) {
 
-  //dd4hep::PlacedVolume pv;
-  dd4hep::DetElement CDCHDetector(parent, "CDCH", parent.id());
   // ******************************************************
   // Loading parameters
   // ******************************************************
@@ -643,13 +641,12 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       dd4hep::Hyperboloid whole_layer_hyperboloid = dd4hep::Hyperboloid(radius_layerIn_whole_cell, epsilonIn_whole_cell, radius_layerOut_0, epsilonOut, zlength);
       dd4hep::Volume whole_layer_hyperboloid_volume = dd4hep::Volume(wholeHyperboloidVolumeName, whole_layer_hyperboloid, description.material("GasHe_90Isob_10"));
       whole_layer_hyperboloid_volume.setVisAttributes(description, gascol);
-      //whole_layer_hyperboloid_volume.setSensitiveDetector(sens_det);
       //registerVolume(wholeHyperboloidVolumeName, whole_layer_hyperboloid_volume);
-      //parentVol.placeVolume(volume(wholeHyperboloidVolumeName));
       dd4hep::PlacedVolume whole_layer_hyperboloid_placedVolume;
       whole_layer_hyperboloid_placedVolume = parentVol.placeVolume(whole_layer_hyperboloid_volume);
-      CDCHDetector.setPlacement(whole_layer_hyperboloid_placedVolume);
       whole_layer_hyperboloid_placedVolume.addPhysVolID("superLayer", SL).addPhysVolID("layer", ilayer);
+      dd4hep::DetElement whole_layer_hyperboloid_detElement(parent, "superLayer_" + dd4hep::_toString(SL) + "_layer_" + dd4hep::_toString(ilayer) + "_hyperboloid", SL * nLayer + ilayer);
+      whole_layer_hyperboloid_detElement.setPlacement(whole_layer_hyperboloid_placedVolume);
 
       //------------------------------------------------------------------------
       // Reduce zlength to avoid volume extrusions
@@ -719,6 +716,8 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
         cellID_volume.setSensitiveDetector(sens_det);
         cellID_placedvolume = whole_layer_hyperboloid_volume.placeVolume(cellID_volume);
         cellID_placedvolume.addPhysVolID("phi", phi_index).addPhysVolID("hitorigin", 0).addPhysVolID("stereo", sense_wires.stereo > 0 ? 0 : 1).addPhysVolID("layerInCell", 0);
+        dd4hep::DetElement cellID_detElement(whole_layer_hyperboloid_detElement, "superLayer_" + dd4hep::_toString(SL) + "_layer_" + dd4hep::_toString(ilayer) + "_phi_" + dd4hep::_toString(phi_index) + "_cellID", phi_index);
+        cellID_detElement.setPlacement(cellID_placedvolume);
 
         // place the wires. The transformation is: apply the stereo angle rotation, translate the wire to the required radius, apply the phi rotation
         // sense wires in the radial middle of the cell
@@ -886,22 +885,21 @@ static dd4hep::Ref_t create_element(dd4hep::Detector& description, xml_h e, dd4h
   dd4hep::Box CDCH_box("5000/2", "5000/2", "5000/2");
   //dd4hep::Tube CDCH_envelope(dd4hep::_toDouble("CDCH:r0"), dd4hep::_toDouble("CDCH:rOut"), dd4hep::_toDouble("CDCH:zHalfLength"));
 
-  Volume envelope("lvCDCH", CDCH_box, description.air());
+  dd4hep::Volume envelope("lvCDCH", CDCH_box, description.air());
   //Volume envelope("lvCDCH", CDCH_envelope, description.air());
   envelope.setVisAttributes(description, "vCDCH:Air");
-  PlacedVolume pv;
-
-  dd4hep::printout(dd4hep::DEBUG, "CreateCDCH", "MotherVolume is: %s", envelope.name());
-  sens_det.setType("tracker");
-
-  builder.buildVolumes(e);
-  builder.placeDaughters(CDCH_det, envelope, e);
 
   // ******************************************************
   // Build CDCH cable
   // ******************************************************
 
   builder.build_layer(CDCH_det, envelope, sens_det);
+
+  dd4hep::printout(dd4hep::DEBUG, "CreateCDCH", "MotherVolume is: %s", envelope.name());
+  sens_det.setType("tracker");
+
+  builder.buildVolumes(e);
+  builder.placeDaughters(CDCH_det, envelope, e);
 
   // ******************************************************
   // Build CDCH cell and beam plug
@@ -920,6 +918,7 @@ static dd4hep::Ref_t create_element(dd4hep::Detector& description, xml_h e, dd4h
   // Place the CDCH in the world
   // ******************************************************
 
+  PlacedVolume pv;
   pv = builder.placeDetector(envelope);
   pv.addPhysVolID("system", x_det.id());
 
