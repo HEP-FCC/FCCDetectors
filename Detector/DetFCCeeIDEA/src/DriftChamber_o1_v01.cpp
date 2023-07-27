@@ -24,7 +24,6 @@ struct wire
   double phi;
   double phioffset;
   double stereo;
-  double halfalpha;
   double thickness;
   double halflength;
   dd4hep::Volume volume;
@@ -326,7 +325,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       guard_wires.phi = 2. * TMath::Pi() / guard_wires.num;
       guard_wires.phioffset = layerangle;
       guard_wires.stereo = epsilonInGwRing;
-      guard_wires.halfalpha = halfalpha;
       guard_wires.thickness = 0.5 * InGWireShellThickIn * enlarge;  // half the inner thickness as radius of tube
       guard_wires.halflength = zlength;
       guard_wires.name = string("Gwire_inner_stereoplus");
@@ -369,7 +367,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       field_wires_top.phi = 2. * TMath::Pi() /field_wires_top.num;;
       field_wires_top.phioffset = layerangle + cellStaggering - phi_layer;
       field_wires_top.stereo = sign_epsilon * epsilon;
-      field_wires_top.halfalpha = halfalpha;
       field_wires_top.thickness = 0.5 * FWireShellThickIn * enlarge;
       field_wires_top.halflength = zlength;
 
@@ -413,7 +410,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       //guard_wires.phi = 2. * TMath::Pi() / guard_wires.num;
       //guard_wires.phioffset = layerangle;
       //guard_wires.stereo = epsilonInGwRing;
-      //guard_wires.halfalpha = halfalpha;
       //guard_wires.thickness = 0.5 * InGWireShellThickIn * enlarge;  // half the inner thickness as radius of tube
       //guard_wires.halflength = zlength;
       //guard_wires.name = string("InnerGuardWire") + dd4hep::_toString(guard_wires.stereo, "_stereo%f");
@@ -463,7 +459,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       //field_wires_top.phi = phi_layer1;
       //field_wires_top.phioffset = layerangle + cellStaggering - phi_layer;
       //field_wires_top.stereo = sign_epsilon * epsilon;
-      //field_wires_top.halfalpha = halfalpha;
       //field_wires_top.thickness = 0.5 * FWireShellThickIn * enlarge;
       //field_wires_top.halflength = zlength;
       //field_wires_top.name = dd4hep::_toString(SL, "Wire_SL%d") + dd4hep::_toString(-1, "_layer%d") + string("_type") + field_wires_top.type + dd4hep::_toString(field_wires_top.stereo, "_stereo%f_top");
@@ -536,7 +531,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       field_wires_bottom.phi = phi_layer1;
       field_wires_bottom.phioffset = layerangle + cellStaggering;
       field_wires_bottom.stereo = sign_epsilon * epsilon;
-      field_wires_bottom.halfalpha = halfalpha;
       field_wires_bottom.thickness = 0.5 * FWireShellThickIn * enlarge;
       field_wires_bottom.halflength = zlength;
       field_wires_bottom.name = dd4hep::_toString(SL, "Wire_SL%d") + dd4hep::_toString(ilayer, "_layer%d") + string("_type") + field_wires_bottom.type + dd4hep::_toString(field_wires_bottom.stereo, "_stereo%f_bottom");
@@ -591,7 +585,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       sense_wires.phi = phi;
       sense_wires.phioffset = cellStaggering;
       sense_wires.stereo = sign_epsilon * epsilon;
-      sense_wires.halfalpha = halfalpha;
       sense_wires.thickness = 0.5 * SWireShellThickIn * enlarge;
       sense_wires.halflength = zlength;
       sense_wires.name = dd4hep::_toString(SL, "Wire_SL%d") + dd4hep::_toString(ilayer, "_layer%d") + string("_type") + sense_wires.type + dd4hep::_toString(sense_wires.stereo, "_stereo%f");
@@ -626,7 +619,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       field_wires_center.phi = phi;
       field_wires_center.phioffset = layerangle + cellStaggering;
       field_wires_center.stereo = sign_epsilon * epsilon;
-      field_wires_center.halfalpha = halfalpha;
       field_wires_center.thickness = 0.5 * centerFWireShellThickIn * enlarge;
       field_wires_center.halflength = zlength;
       field_wires_center.volume = lvFwireVol.back();
@@ -677,7 +669,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       field_wires_top.phi = phi_layer1;
       field_wires_top.phioffset = layerangle + cellStaggering;
       field_wires_top.stereo = sign_epsilon * epsilon;
-      field_wires_top.halfalpha = halfalpha;
       field_wires_top.thickness = 0.5 * FWireShellThickIn * enlarge;
       field_wires_top.halflength = zlength;
       field_wires_top.volume = lvFwireVol.back();
@@ -787,7 +778,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       field_wires_bottom.phi = 2. * TMath::Pi() / field_wires_bottom.num;
       field_wires_bottom.phioffset = layerangle + cellStaggering + phi_layer;
       field_wires_bottom.stereo = -1. * sign_epsilon * epsilon;
-      field_wires_bottom.halfalpha = halfalpha;
       field_wires_bottom.thickness = 0.5 * FWireShellThickIn * enlarge;
       field_wires_bottom.halflength = zlength;
 
@@ -829,7 +819,6 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       guard_wires.phi = 2. * TMath::Pi() / guard_wires.num;
       guard_wires.phioffset = layerangle;
       guard_wires.stereo = epsilonOutGwRing;
-      guard_wires.halfalpha = halfalpha;
       guard_wires.thickness = 0.5 * OutGWireShellThickIn * enlarge;
       guard_wires.halflength = zlength;
       guard_wires.name = string("Gwire_outer");
@@ -894,8 +883,10 @@ static dd4hep::Ref_t create_element(dd4hep::Detector& description, xml_h e, dd4h
 
   DetElement CDCH_det = builder.detector;  // ( det_name, x_det.id() );
   dd4hep::Box CDCH_box("5000/2", "5000/2", "5000/2");
+  //dd4hep::Tube CDCH_envelope(dd4hep::_toDouble("CDCH:r0"), dd4hep::_toDouble("CDCH:rOut"), dd4hep::_toDouble("CDCH:zHalfLength"));
 
   Volume envelope("lvCDCH", CDCH_box, description.air());
+  //Volume envelope("lvCDCH", CDCH_envelope, description.air());
   envelope.setVisAttributes(description, "vCDCH:Air");
   PlacedVolume pv;
 
