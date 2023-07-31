@@ -17,7 +17,8 @@
 
   <constant name = "CDCH:r0"                     value = "345.0*mm"/>
   <constant name = "CDCH:z0"                     value = "0.0*mm"/>
-  <constant name = "CDCH:zHalfLength"            value = "2250.24*mm"/>
+  <!-- Total z extent will be  zHalfLength + GasEndcapWallThick + CopperEndcapWallThick + KaptonEndcapWallThick + CarbonEndcapWallThick = 2250 mm;-->
+  <constant name = "CDCH:zHalfLength"            value = "2000.00*mm"/>
   <constant name = "CDCH:rOut"                   value = "2000.00*mm"/>
   <constant name = "CDCH:alpha"                  value = "30*degree"/>
   <constant name = "CDCH:geomType"               value = "50"/>
