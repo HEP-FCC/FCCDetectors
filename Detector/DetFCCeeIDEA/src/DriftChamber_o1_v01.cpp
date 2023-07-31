@@ -334,6 +334,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       guard_wires.volume = lvGwireVol.back();
       CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, SL, -1);
 
+      guard_wires.volume = lvGwireVol.back(); // needed because applyWireCoating acts on it
       guard_wires.radius = inGuardRad + inGWradii + extShiftFW;
       guard_wires.phioffset = layerangle + phi_layer;
       guard_wires.stereo = -1.0 * epsilonInGwRing;
@@ -829,6 +830,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       guard_wires.volume = lvGwireVol.back();
       CDCHBuild::PlaceWires(guard_wires, FWireShellThickOut, halflength, SL, -1);
 
+      guard_wires.volume = lvGwireVol.back(); // needed because applyWireCoating acts on it
       guard_wires.radius = outGuardRad + inGWradii + extShiftFW;
       guard_wires.phioffset = layerangle + phi_layer;
       guard_wires.stereo = -1.0 * epsilonOutGwRing;
