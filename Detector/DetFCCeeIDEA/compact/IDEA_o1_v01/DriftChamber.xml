@@ -1,0 +1,27 @@
+<lccdd>
+  <info name="CDCH" title="CDCH" author="CDCH" url="http://cern.ch/lhcb" status="development" version="$Id: $">
+    <comment>
+      Test Drift Chamber stack
+    </comment>
+  </info>
+
+<!--
+  <includes>
+    <gdmlFile  ref="DriftChambers_materials.xml"/>
+    <gdmlFile  ref="DriftChambers_parameters.xml"/>
+  </includes>
+-->
+
+  <detectors>
+    <detector id="DetID_DriftChamber" name="CDCH" type="DriftChamber_o1_v01" readout="CDCHHits" vis="CDCH">
+    </detector>
+  </detectors>
+
+  <readouts>
+    <readout name="CDCHHits">
+       <!-- <id>system: identifies the detector, superLayer: identifies the super layer (bloc of rings with the same number of wires in phi), ring: identifies a ring inside a super layer, phi: identifies a single wire whithin a ring which is formed of a replication of wires in phi, hitorigin: tells where the hit occured (0 in the gas, 1 in the sense wire, 2 in the field wire, 3 in the guard wire, 4 in the walls), stereo:tells whether it was a wire with positive -0- or negative -1- stereo angle, layerInCell: a cell is composed of three 'layers' with field wires only, both sense and field wires then field wire only again, this fields tells where it belongs 0 = not applicable e.g. hit in gas, 1 = bottom, 2 = middle, 3 = top (mind that the cells are built per stereo angle, so the + stereo bottom will correspond to the - stereo top) </id>-->
+       <id>system:4,superLayer:5,layer:5,phi:11,hitorigin:3,stereo:1,layerInCell:2</id>
+    </readout>
+  </readouts>
+
+</lccdd>

@@ -1,11 +1,24 @@
 <lccdd>
+<!--
+    (c) Copyright 2021 CERN for the benefit of the LHCb Collaboration
+
+    This software is distributed under the terms of the GNU General Public
+    Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+
+    In applying this licence, CERN does not waive the privileges and immunities
+    granted to it by virtue of its status as an Intergovernmental Organization
+    or submit itself to any jurisdiction.
+-->
  <define>
+
+
 
 <!-- %%%%%%                      Central Drift Chamber Basic Parameters                 %%%%%% -->
 
   <constant name = "CDCH:r0"                     value = "345.0*mm"/>
   <constant name = "CDCH:z0"                     value = "0.0*mm"/>
-  <constant name = "CDCH:zHalfLength"            value = "2250.24*mm"/>
+  <!-- Total z extent will be  zHalfLength + GasEndcapWallThick + CopperEndcapWallThick + KaptonEndcapWallThick + CarbonEndcapWallThick = 2250 mm;-->
+  <constant name = "CDCH:zHalfLength"            value = "2000.00*mm"/>
   <constant name = "CDCH:rOut"                   value = "2000.00*mm"/>
   <constant name = "CDCH:alpha"                  value = "30*degree"/>
   <constant name = "CDCH:geomType"               value = "50"/>
@@ -15,19 +28,23 @@
   <constant name = "CDCH:cellDimension"          value = "11.846*mm"/>
   <constant name = "CDCH:nSDeltaWire"            value = "48"/>
   <constant name = "CDCH:nSuperLayer"            value = "14"/>
-  <constant name = "CDCH:nRing"                  value = "8"/>
+  <constant name = "CDCH:nLayer"                  value = "8"/>
+  <!--<constant name = "CDCH:nSuperLayer"            value = "14"/>
+  <constant name = "CDCH:nLayer"                  value = "8"/>
+  <constant name = "CDCH:nSuperLayer"            value = "4"/>
+  <constant name = "CDCH:nLayer"                  value = "2"/>-->
   <constant name = "CDCH:nVerticalFWire"         value = "1"/>
   <constant name = "CDCH:nStoFWireRatio"         value = "5"/>
   <constant name = "CDCH:nFieldWireShells"       value = "2"/>
-  <constant name = "CDCH:FWireShellThickIn"      value = "0.0197*mm"/>
+  <constant name = "CDCH:FWireShellThickIn"      value = "0.040*mm"/>
   <constant name = "CDCH:FWireShellThickOut"     value = "0.0003*mm"/>
-  <constant name = "CDCH:CntFWireShellThickIn"   value = "0.0247*mm"/>
-  <constant name = "CDCH:CntFWireShellThickOut"  value = "0.0003*mm"/>
-  <constant name = "CDCH:SWireShellThickIn"      value = "0.0097*mm"/>
+  <constant name = "CDCH:centerFWireShellThickIn"   value = "0.050*mm"/> <!-- Field wires in the middle of the cell are thicker -->
+  <constant name = "CDCH:centerFWireShellThickOut"  value = "0.0003*mm"/>
+  <constant name = "CDCH:SWireShellThickIn"      value = "0.020*mm"/>
   <constant name = "CDCH:SWireShellThickOut"     value = "0.0003*mm"/>
-  <constant name = "CDCH:InGWireShellThickIn"    value = "0.0197*mm"/>
+  <constant name = "CDCH:InGWireShellThickIn"    value = "0.050*mm"/>
   <constant name = "CDCH:InGWireShellThickOut"   value = "0.0003*mm"/>
-  <constant name = "CDCH:OutGWireShellThickIn"   value = "0.0197*mm"/>
+  <constant name = "CDCH:OutGWireShellThickIn"   value = "0.050*mm"/>
   <constant name = "CDCH:OutGWireShellThickOut"  value = "0.0003*mm"/>
   <constant name = "CDCH:CarbonInnerWallThick"   value = "0.2*mm"/>
   <constant name = "CDCH:CopperInnerWallThick"   value = "0.001*mm"/>
