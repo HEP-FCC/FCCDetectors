@@ -208,7 +208,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
   // The enlarge parameter is used to see the wires in the rendering
   //------------------------------------------------------------------------
 
-  double enlarge = 50.;
+  double enlarge = 1.;
 
   //------------------------------------------------------------------------
   // Build the inner, outer and endcap walls first
@@ -284,7 +284,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       throw std::runtime_error("Error: Failed to build CDCH. Please make sure that '(nStoFWireRatio - nVerticalFWire) * (nSWire + SuperLayerIndex * nSDeltaWire)' is always an even number");
     phi_layer1 = 2.0 * phi_layer;
     scaleFactor = (1.0 + TMath::Pi() / num_wire) / (1.0 - TMath::Pi() / num_wire);
-    dropFactor = (1.0 / cos(halfalpha) - 1.0);
+    dropFactor = (1.0 / cos(halfalpha) - 1.0); // used to determine the radius of the hyperboloid in z = +- halflength with r_out = r_min + r_min * dropFactor
     epsilonFactor = sin(halfalpha) / halflength;
     layerangle = -0.5 * phi;
 
@@ -304,8 +304,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
       wirecol = "vCDCH:Wire3";
 
     if (SL == 0) {// SL = 0 is special due to the guard wires and the first field wires that lie outside of the sensitive volume
-      // FIXME there are some volume extrusion here (wire go outside of the hyperboloid)
-      double stereoOut0 = atan(radius_layerOut_0 * (1.0 * dropFactor * epsilonFactor));
+      double stereoOut0 = atan(sqrt(diff_of_squares((inGuardRad - inGWradii) + (inGuardRad - inGWradii) * dropFactor, inGuardRad - inGWradii)) / halflength);
 
       dd4hep::Hyperboloid HypeLayer0(inner_radius_0, 0.0, radius_layerOut_0 - secure, stereoOut0, halflength);
       lvLayerVol.push_back(dd4hep::Volume("hyperboloid_inner_guard_layer", HypeLayer0, description.material("GasHe_90Isob_10")));
