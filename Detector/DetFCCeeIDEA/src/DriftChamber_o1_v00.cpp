@@ -117,7 +117,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
   double halfalpha = 0.5 * dd4hep::_toDouble("CDCH:alpha");
   double inner_radius = dd4hep::_toDouble("CDCH:r0");
   double outer_radius = dd4hep::_toDouble("CDCH:rOut");
-  double halflength = dd4hep::_toDouble("CDCH:zHalfLength");
+  double zHalfExtentWithServices = dd4hep::_toDouble("CDCH:zHalfExtentWithServices");
   double CarbonInnerWallThick = dd4hep::_toDouble("CDCH:CarbonInnerWallThick");
   double CopperInnerWallThick = dd4hep::_toDouble("CDCH:CopperInnerWallThick");
   double GasInnerWallThick = dd4hep::_toDouble("CDCH:GasInnerWallThick");
@@ -153,6 +153,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
   int nLayer = dd4hep::_toInt("CDCH:nLayer");
   int nFieldWireShells = dd4hep::_toInt("CDCH:nFieldWireShells");
   //bool setWireSensitive = true; // FIXME: add the possibility to have wires sensitive (parameter in the xml) which could be useful for detailed chamber behavior studies, current attempt never lead to a hit in the wire, even with enlarged wires...
+  double halflength = zHalfExtentWithServices - (GasEndcapWallThick + CopperEndcapWallThick + KaptonEndcapWallThick + CarbonEndcapWallThick); // this will be the sensitive volume z extent
 
   double epsilon = 0.0;
   double phi_layer = 0.0;
@@ -245,7 +246,7 @@ void CDCHBuild::build_layer(DetElement parent, Volume parentVol, dd4hep::Sensiti
                                 outer_radius - Carbon1OuterWallThick - Carbon2OuterWallThick - FoamOuterWallThick,
                                 halflength);
   dd4hep::Tube OuterWall_Carbon1(outer_radius - Carbon1OuterWallThick - Carbon2OuterWallThick - FoamOuterWallThick,
-                                 outer_radius - Carbon2OuterWallThick - FoamOuterWallThick, halflength);
+                                 outer_radius - Carbon2OuterWallThick - FoamOuterWallThick, halflength);// FIXME there is an overlap with OuterWall_Carbon1 and the last guard wire layer
   dd4hep::Tube OuterWall_Foam(outer_radius - Carbon2OuterWallThick - FoamOuterWallThick,
                               outer_radius - Carbon2OuterWallThick, halflength);
   dd4hep::Tube OuterWall_Carbon2(outer_radius - Carbon2OuterWallThick, outer_radius, halflength);
@@ -883,7 +884,7 @@ static dd4hep::Ref_t create_element(dd4hep::Detector& description, xml_h e, dd4h
   dd4hep::printout(dd4hep::DEBUG, "CreateCDCH", "Detector name: %s with ID: %s", det_name.c_str(), x_det.id());
 
   DetElement CDCH_det = builder.detector;  // ( det_name, x_det.id() );
-  dd4hep::Tube CDCH_envelope(dd4hep::_toDouble("CDCH:r0"), dd4hep::_toDouble("CDCH:rOut"), dd4hep::_toDouble("CDCH:zHalfLength") + dd4hep::_toDouble("CDCH:GasEndcapWallThick") + dd4hep::_toDouble("CDCH:CopperEndcapWallThick") + dd4hep::_toDouble("CDCH:KaptonEndcapWallThick") + dd4hep::_toDouble("CDCH:CarbonEndcapWallThick"));
+  dd4hep::Tube CDCH_envelope(dd4hep::_toDouble("CDCH:r0"), dd4hep::_toDouble("CDCH:rOut"), dd4hep::_toDouble("CDCH:zHalfExtentWithServices"));
 
   dd4hep::Volume envelope("lvCDCH", CDCH_envelope, description.air());
   envelope.setVisAttributes(description, "vCDCH:Air");

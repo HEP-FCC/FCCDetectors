@@ -8,9 +8,7 @@
   <!-- %%%%%%             Central Drift Chamber Basic Parameters                 %%%%%% -->
   <define>
     <constant name = "CDCH:r0"                     value = "345.0*mm"/>
-    <constant name = "CDCH:z0"                     value = "0.0*mm"/>
-    <!-- zHalfLength is for the wire length, the total z extent of the detector will be  zHalfLength + GasEndcapWallThick + CopperEndcapWallThick + KaptonEndcapWallThick + CarbonEndcapWallThick = 2250 mm;-->
-    <constant name = "CDCH:zHalfLength"            value = "2000.00*mm"/>
+    <constant name = "CDCH:zHalfExtentWithServices" value = "2250.00*mm"/>
     <constant name = "CDCH:rOut"                   value = "2000.00*mm"/>
     <!-- Angle for the rotation of phi sectors leading to the stereo angle of the wires (the way the chamber will be built)
     alpha = angle between the line (0,0,-zHalfLength) - (wireX,wireY,-zHalfLength) and the line (0,0,+zHalfLength) - (wireX,wireY,+zHalfLength) projected on the -zHalfLength plane perpandicular to z
@@ -48,7 +46,7 @@
     <constant name = "CDCH:Carbon2OuterWallThick"  value = "2.5*mm"/>
     <constant name = "CDCH:CopperOuterWallThick"   value = "0.018*mm"/>
     <constant name = "CDCH:FoamOuterWallThick"     value = "10.000*mm"/>
-    <constant name = "CDCH:GasEndcapWallThick"   value = "249.98750*mm"/>
+    <constant name = "CDCH:GasEndcapWallThick"   value = "249.7475*mm"/>
     <constant name = "CDCH:CopperEndcapWallThick"  value = "0.0005*mm"/>
     <constant name = "CDCH:KaptonEndcapWallThick"  value = "0.012*mm"/>
     <constant name = "CDCH:CarbonEndcapWallThick"  value = "0.240*mm"/>
