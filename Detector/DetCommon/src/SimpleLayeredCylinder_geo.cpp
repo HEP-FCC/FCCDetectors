@@ -3,19 +3,19 @@
 
 namespace det {
 /**
-Factory for a shape from multiple cylinders. Meant for material approximations.
-Expected xml structure:
+Factory for a shape from multiple cylinders.
+Expected xml structure (the 'sensitive' keyword is optional and default to false):
 <detector type="SimpleLayeredCylinder" ...>
   <dimensions rmin="..." rmax="..." dz="..." z_offset="..."> <!-- envelope -->
   <layer rmin="..." rmax="..." dz="..." z_offset="..." material="...">
   ...
-  <layer rmin="..." rmax="..." dz="..." z_offset="..." material="...">
+  <layer rmin="..." rmax="..." dz="..." z_offset="..." material="..." sensitive="true">
 </detector>
 @author: Joschka Lingemann
 */
 static dd4hep::Ref_t createSimpleLayeredCylinder(dd4hep::Detector& lcdd,
                                                            dd4hep::xml::Handle_t xmlElement,
-                                                           dd4hep::SensitiveDetector /*sensDet*/) {
+                                                           dd4hep::SensitiveDetector sensDet) {
   dd4hep::xml::DetElement xmlDet = static_cast<dd4hep::xml::DetElement>(xmlElement);
   std::string name = xmlDet.nameStr();
   dd4hep::DetElement detElement(name, xmlDet.id());
@@ -38,6 +38,11 @@ static dd4hep::Ref_t createSimpleLayeredCylinder(dd4hep::Detector& lcdd,
     envVolume.placeVolume(layerVolume, dd4hep::Transform3D(dd4hep::RotationZ(0.), transLayer));
     if (layer.hasAttr("vis")) {
       layerVolume.setVisAttributes(lcdd, layerDet.visStr());
+    }
+    if (layer.hasAttr("sensitive") && layerDet.isSensitive()) {
+      dd4hep::xml::Dimension sdType(xmlElement.child(_U(sensitive)));// if called outside of the loop it breaks existing configs without sensitive layers
+      sensDet.setType(sdType.typeStr());
+      layerVolume.setSensitiveDetector(sensDet);
     }
     layer.m_node = layers.next();
   }
