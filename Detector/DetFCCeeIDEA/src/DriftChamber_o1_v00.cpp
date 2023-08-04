@@ -924,4 +924,4 @@ static dd4hep::Ref_t create_element(dd4hep::Detector& description, xml_h e, dd4h
   return CDCH_det;
 }
 
-DECLARE_DETELEMENT(DriftChamber_o1_v01, create_element)
+DECLARE_DETELEMENT(DriftChamber_o1_v00, create_element)
