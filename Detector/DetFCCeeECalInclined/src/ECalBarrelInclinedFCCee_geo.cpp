@@ -36,11 +36,12 @@ static dd4hep::detail::Ref_t createECalBarrelInclinedFCCee(dd4hep::Detector& aLc
   dd4hep::xml::DetElement cryoBackCold = cryostat.child(_Unicode(cryo_back_cold));
   dd4hep::xml::DetElement cryoSolenoid = cryostat.child(_Unicode(cryo_solenoid));
   dd4hep::xml::DetElement cryoBackWarm = cryostat.child(_Unicode(cryo_back_warm));
-  dd4hep::xml::DetElement cryoSide = cryostat.child(_Unicode(cryo_side));
+  dd4hep::xml::DetElement cryoSideWarm = cryostat.child(_Unicode(cryo_side_warm));
+  dd4hep::xml::DetElement cryoSideCold = cryostat.child(_Unicode(cryo_side_cold));
 
   bool cryoFrontSensitive = cryoFrontWarm.isSensitive();
-  bool cryoBackSensitive = cryoBackCold.isSensitive();
-  bool cryoSideSensitive = cryoSide.isSensitive();
+  bool cryoBackSensitive = cryoBackWarm.isSensitive();
+  bool cryoSideSensitive = cryoSideWarm.isSensitive();
   
   dd4hep::xml::Dimension cryoFrontWarmDim(cryoFrontWarm.dimensions());
   // if cryoThicknessFront>0 -> build the cryostat
@@ -49,8 +50,9 @@ static dd4hep::detail::Ref_t createECalBarrelInclinedFCCee(dd4hep::Detector& aLc
   dd4hep::xml::Dimension cryoBackColdDim(cryoBackCold.dimensions());
   dd4hep::xml::Dimension cryoSolenoidDim(cryoSolenoid.dimensions());
   dd4hep::xml::Dimension cryoBackWarmDim(cryoBackWarm.dimensions());
-  dd4hep::xml::Dimension cryoSideDim(cryoSide.dimensions());
-
+  dd4hep::xml::Dimension cryoSideColdDim(cryoSideCold.dimensions());
+  dd4hep::xml::Dimension cryoSideWarmDim(cryoSideWarm.dimensions());
+ 
   // Retrieve active and passive material data
   dd4hep::xml::DetElement calo = aXmlElement.child(_Unicode(calorimeter));
   dd4hep::xml::Dimension caloDim(calo.dimensions());
@@ -102,7 +104,8 @@ static dd4hep::detail::Ref_t createECalBarrelInclinedFCCee(dd4hep::Detector& aLc
   double bathRmin = caloDim.rmin(); // - margin for inclination
   double bathRmax = caloDim.rmax(); // + margin for inclination
   dd4hep::Tube bathOuterShape(bathRmin, bathRmax, caloDim.dz()); // make it 4 volumes + 5th for detector envelope
-  dd4hep::Tube bathAndServicesOuterShape(cryoFrontColdDim.rmax(), cryoBackWarmDim.rmin(), caloDim.dz()); // make it 4 volumes + 5th for detector envelope
+  dd4hep::Tube bathAndServicesWarmOuterShape(cryoSideWarmDim.rmin(), cryoSideWarmDim.rmax(), caloDim.dim_z()); // make it 4 volumes + 5th for detector envelope
+  dd4hep::Tube bathAndServicesColdOuterShape(cryoSideColdDim.rmin(), cryoSideColdDim.rmax(), caloDim.dz()); // make it 4 volumes + 5th for detector envelope
   if (cryoThicknessFront > 0) {
     // 1. Create cryostat
     dd4hep::Tube cryoFrontWarmShape(cryoFrontWarmDim.rmin(), cryoFrontWarmDim.rmax(), cryoFrontWarmDim.dz());
@@ -110,26 +113,31 @@ static dd4hep::detail::Ref_t createECalBarrelInclinedFCCee(dd4hep::Detector& aLc
     dd4hep::Tube cryoBackColdShape(cryoBackColdDim.rmin(), cryoBackColdDim.rmax(), cryoBackColdDim.dz());
     dd4hep::Tube cryoSolenoidShape(cryoSolenoidDim.rmin(), cryoSolenoidDim.rmax(), cryoSolenoidDim.dz());
     dd4hep::Tube cryoBackWarmShape(cryoBackWarmDim.rmin(), cryoBackWarmDim.rmax(), cryoBackWarmDim.dz());
-    dd4hep::Tube cryoSideOuterShape(cryoSideDim.rmin(), cryoSideDim.rmax(), cryoSideDim.dz());
-    dd4hep::SubtractionSolid cryoSideShape(cryoSideOuterShape, bathAndServicesOuterShape);
+    dd4hep::Tube cryoSideColdOuterShape(cryoSideColdDim.rmin(), cryoSideColdDim.rmax(), cryoSideColdDim.dz());
+    dd4hep::Tube cryoSideWarmOuterShape(cryoSideWarmDim.rmin(), cryoSideWarmDim.rmax(), cryoSideWarmDim.dz());
+    dd4hep::SubtractionSolid cryoSideColdShape(cryoSideColdOuterShape, bathAndServicesColdOuterShape);
+      dd4hep::SubtractionSolid cryoSideWarmShape(cryoSideWarmOuterShape, bathAndServicesWarmOuterShape);
     lLog << MSG::INFO << "ECAL cryostat: front warm: rmin (cm) = " << cryoFrontWarmDim.rmin() << " rmax (cm) = " << cryoFrontWarmDim.rmax() << " dz (cm) = " << cryoFrontWarmDim.dz()  << endmsg;
     lLog << MSG::INFO << "ECAL cryostat: front cold: rmin (cm) = " << cryoFrontColdDim.rmin() << " rmax (cm) = " << cryoFrontColdDim.rmax() << " dz (cm) = " << cryoFrontColdDim.dz()  << endmsg;
     lLog << MSG::INFO << "ECAL cryostat: back cold: rmin (cm) = " << cryoBackColdDim.rmin() << " rmax (cm) = " << cryoBackColdDim.rmax() << " dz (cm) = " << cryoBackColdDim.dz() << endmsg;
     lLog << MSG::INFO << "ECAL cryostat: solenoid: rmin (cm) = " << cryoSolenoidDim.rmin() << " rmax (cm) = " << cryoSolenoidDim.rmax() << " dz (cm) = " << cryoSolenoidDim.dz() << endmsg;
     lLog << MSG::INFO << "ECAL cryostat: back warm: rmin (cm) = " << cryoBackWarmDim.rmin() << " rmax (cm) = " << cryoBackWarmDim.rmax() << " dz (cm) = " << cryoBackWarmDim.dz() << endmsg;
-    lLog << MSG::INFO << "ECAL cryostat: side: rmin (cm) = " << cryoSideDim.rmin() << " rmax (cm) = " << cryoSideDim.rmax() << " dz (cm) = " << cryoSideDim.dz() - caloDim.dz()  << endmsg;
+    lLog << MSG::INFO << "ECAL cryostat: side cold: rmin (cm) = " << cryoSideColdDim.rmin() << " rmax (cm) = " << cryoSideColdDim.rmax() << " dz (cm) = " << cryoSideColdDim.dz() - caloDim.dz()  << endmsg;
+    lLog << MSG::INFO << "ECAL cryostat: side warm: rmin (cm) = " << cryoSideWarmDim.rmin() << " rmax (cm) = " << cryoSideWarmDim.rmax() << " dz (cm) = " << cryoSideWarmDim.dz() - caloDim.dim_z() << endmsg;
     dd4hep::Volume cryoFrontWarmVol(cryostat.nameStr()+"_frontWarm", cryoFrontWarmShape, aLcdd.material(cryostat.materialStr()));
     dd4hep::Volume cryoFrontColdVol(cryostat.nameStr()+"_frontCold", cryoFrontColdShape, aLcdd.material(cryostat.materialStr()));
     dd4hep::Volume cryoBackColdVol(cryostat.nameStr()+"_backCold", cryoBackColdShape, aLcdd.material(cryostat.materialStr()));
     dd4hep::Volume cryoSolenoidVol(cryostat.nameStr()+"_solenoid", cryoSolenoidShape, aLcdd.material(cryostat.materialStr()));
     dd4hep::Volume cryoBackWarmVol(cryostat.nameStr()+"_backWarm", cryoBackWarmShape, aLcdd.material(cryostat.materialStr()));
-    dd4hep::Volume cryoSideVol(cryostat.nameStr()+"_side", cryoSideShape, aLcdd.material(cryostat.materialStr()));
+    dd4hep::Volume cryoSideWarmVol(cryostat.nameStr()+"_sideWarm", cryoSideWarmShape, aLcdd.material(cryostat.materialStr()));
+    dd4hep::Volume cryoSideColdVol(cryostat.nameStr()+"_sideCold", cryoSideColdShape, aLcdd.material(cryostat.materialStr()));
     dd4hep::PlacedVolume cryoFrontWarmPhysVol = envelopeVol.placeVolume(cryoFrontWarmVol);
     dd4hep::PlacedVolume cryoFrontColdPhysVol = envelopeVol.placeVolume(cryoFrontColdVol);
     dd4hep::PlacedVolume cryoBackColdPhysVol = envelopeVol.placeVolume(cryoBackColdVol);
     dd4hep::PlacedVolume cryoSolenoidPhysVol = envelopeVol.placeVolume(cryoSolenoidVol);
     dd4hep::PlacedVolume cryoBackWarmPhysVol = envelopeVol.placeVolume(cryoBackWarmVol);
-    dd4hep::PlacedVolume cryoSidePhysVol = envelopeVol.placeVolume(cryoSideVol);
+    dd4hep::PlacedVolume cryoSideWarmPhysVol = envelopeVol.placeVolume(cryoSideWarmVol);
+    dd4hep::PlacedVolume cryoSideColdPhysVol = envelopeVol.placeVolume(cryoSideColdVol);
     if (cryoFrontSensitive) {
       cryoFrontWarmVol.setSensitiveDetector(aSensDet);
       cryoFrontWarmPhysVol.addPhysVolID("cryo", 1);
@@ -139,7 +147,6 @@ static dd4hep::detail::Ref_t createECalBarrelInclinedFCCee(dd4hep::Detector& aLc
       cryoFrontColdPhysVol.addPhysVolID("cryo", 1);
       cryoFrontColdPhysVol.addPhysVolID("type", 2);
       lLog << MSG::INFO << "Cryostat front cold volume set as sensitive" << endmsg;
-      
     }
     if (cryoBackSensitive) {
       cryoBackColdVol.setSensitiveDetector(aSensDet);
@@ -156,10 +163,14 @@ static dd4hep::detail::Ref_t createECalBarrelInclinedFCCee(dd4hep::Detector& aLc
       lLog << MSG::INFO << "Cryostat back warm volume set as sensitive" << endmsg;
     }
     if (cryoSideSensitive) {
-      cryoSideVol.setSensitiveDetector(aSensDet);
-      cryoSidePhysVol.addPhysVolID("cryo", 1);
-      cryoSidePhysVol.addPhysVolID("type", 6);
-      lLog << MSG::INFO << "Cryostat front volume set as sensitive" << endmsg;
+      cryoSideWarmVol.setSensitiveDetector(aSensDet);
+      cryoSideWarmPhysVol.addPhysVolID("cryo", 1);
+      cryoSideWarmPhysVol.addPhysVolID("type", 6);
+      lLog << MSG::INFO << "Cryostat side warm volume set as sensitive" << endmsg;
+      cryoSideColdVol.setSensitiveDetector(aSensDet);
+      cryoSideColdPhysVol.addPhysVolID("cryo", 1);
+      cryoSideColdPhysVol.addPhysVolID("type", 7);
+      lLog << MSG::INFO << "Cryostat side cold volume set as sensitive" << endmsg;
     }
     dd4hep::DetElement cryoFrontWarmDetElem(caloDetElem, "cryo_front_warm", 0);
     cryoFrontWarmDetElem.setPlacement(cryoFrontWarmPhysVol);
@@ -171,8 +182,10 @@ static dd4hep::detail::Ref_t createECalBarrelInclinedFCCee(dd4hep::Detector& aLc
     cryoSolenoidDetElem.setPlacement(cryoSolenoidPhysVol);
     dd4hep::DetElement cryoBackWarmDetElem(caloDetElem, "cryo_back_warm", 0);
     cryoBackWarmDetElem.setPlacement(cryoBackWarmPhysVol);
-    dd4hep::DetElement cryoSideDetElem(caloDetElem, "cryo_side", 0);
-    cryoSideDetElem.setPlacement(cryoSidePhysVol);
+    dd4hep::DetElement cryoSideWarmDetElem(caloDetElem, "cryo_side_warm", 0);
+    cryoSideWarmDetElem.setPlacement(cryoSideWarmPhysVol);
+    dd4hep::DetElement cryoSideColdDetElem(caloDetElem, "cryo_side_cold", 0);
+    cryoSideColdDetElem.setPlacement(cryoSideColdPhysVol);
     // 1.2. Create place-holder for services
     dd4hep::Tube servicesFrontShape(cryoFrontColdDim.rmax(), bathRmin, caloDim.dz());
     dd4hep::Tube servicesBackShape(bathRmax, cryoBackColdDim.rmin(), caloDim.dz());
@@ -185,13 +198,13 @@ static dd4hep::detail::Ref_t createECalBarrelInclinedFCCee(dd4hep::Detector& aLc
     if (cryoFrontSensitive) {
       servicesFrontVol.setSensitiveDetector(aSensDet);
       servicesFrontPhysVol.addPhysVolID("cryo", 1);
-      servicesFrontPhysVol.addPhysVolID("type", 7);
+      servicesFrontPhysVol.addPhysVolID("type", 8);
       lLog << MSG::INFO << "Services front volume set as sensitive" << endmsg;
     }
     if (cryoBackSensitive) {
       servicesBackVol.setSensitiveDetector(aSensDet);
       servicesBackPhysVol.addPhysVolID("cryo", 1);
-      servicesBackPhysVol.addPhysVolID("type", 7);
+      servicesBackPhysVol.addPhysVolID("type", 9);
       lLog << MSG::INFO << "Services back volume set as sensitive" << endmsg;
     }
     dd4hep::DetElement servicesFrontDetElem(caloDetElem, "services_front", 0);

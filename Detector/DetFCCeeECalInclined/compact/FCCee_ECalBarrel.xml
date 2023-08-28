@@ -48,11 +48,13 @@
     <!-- air margin around calorimeter -->
     <constant name="BarCryoECal_rmin" value="BarECal_rmin+AirMarginThickness"/>
     <constant name="BarCryoECal_rmax" value="BarECal_rmax-AirMarginThickness"/>
-    <constant name="BarCryoECal_dz" value="BarECal_dz"/>
+    <constant name="BarCryoECalWarm_dz" value="BarECal_dz"/>
+    <constant name="BarCryoECalCold_dz" value="BarECal_dz-CryoBarrelSideWarm-CryoAirGapThickness"/>
     <!-- calorimeter active volume -->
     <constant name="EMBarrel_rmin" value="BarCryoECal_rmin+CryoBarrelFront+LArBathThicknessFront"/>
     <constant name="EMBarrel_rmax" value="BarCryoECal_rmax-CryoBarrelBack-LArBathThicknessBack"/>
     <constant name="EMBarrel_dz" value="BarECal_dz-CryoBarrelSide"/>
+    <constant name="EMBarrel_warm_dz" value="BarECal_dz-CryoBarrelSideWarm"/>
     <!-- thickness of active volume between two absorber plates at EMBarrel_rmin, measuring perpendicular to the readout plate -->
     <constant name="LAr_thickness" value="LArGapThickness"/>
     <!-- passive layer consists of lead in the middle and steel on the outside, glued -->
@@ -99,34 +101,34 @@
     <detector id="BarECal_id" name="ECalBarrel" type="EmCaloBarrelInclinedFCCee" readout="ECalBarrelEta">
       <type_flags type=" DetType_CALORIMETER + DetType_ELECTROMAGNETIC + DetType_BARREL"/>
       <sensitive type="SimpleCalorimeterSD"/>
-      <dimensions rmin="BarCryoECal_rmin" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz" vis="ecal_envelope"/>
+      <dimensions rmin="BarCryoECal_rmin" rmax="BarCryoECal_rmax" dz="BarCryoECalWarm_dz" vis="ecal_envelope"/>
       <cryostat name="ECAL_Cryo">
         <material name="Aluminum"/>
         <cryo_front_warm sentive="false">
-          <dimensions rmin="BarCryoECal_rmin" rmax = "BarCryoECal_rmin+CryoBarrelFrontWarm" dz="BarCryoECal_dz"/>
+          <dimensions rmin="BarCryoECal_rmin" rmax = "BarCryoECal_rmin+CryoBarrelFrontWarm" dz="BarCryoECalWarm_dz"/>
         </cryo_front_warm>
         <cryo_front_cold sentive="false">
-          <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness" rmax="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness+CryoBarrelFrontCold" dz="BarCryoECal_dz"/>
+          <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness" rmax="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness+CryoBarrelFrontCold" dz="BarCryoECalCold_dz"/>
         </cryo_front_cold>
 	<cryo_back_cold sentive="false">
-          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-CryoAirGapThickness-SolenoidBarrel-CryoBarrelBackCold" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-CryoAirGapThickness-SolenoidBarrel" dz="BarCryoECal_dz"/>
+          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-CryoAirGapThickness-SolenoidBarrel-CryoBarrelBackCold" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-CryoAirGapThickness-SolenoidBarrel" dz="BarCryoECalCold_dz"/>
 	</cryo_back_cold>
 	<cryo_solenoid sentive="false">
-          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-0.5*CryoAirGapThickness-SolenoidBarrel" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-0.5*CryoAirGapThickness" dz="BarCryoECal_dz"/>
+          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-0.5*CryoAirGapThickness-SolenoidBarrel" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-0.5*CryoAirGapThickness" dz="BarCryoECalCold_dz"/>
 	</cryo_solenoid>
         <cryo_back_warm sentive="false">
-          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm" rmax = "BarCryoECal_rmax" dz="BarCryoECal_dz"/>
+          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm" rmax = "BarCryoECal_rmax" dz="BarCryoECalWarm_dz"/>
         </cryo_back_warm>
-        <cryo_back sensitive="false">
-          <dimensions rmin="BarCryoECal_rmax-CryoBarrelBackWarm-CryoBarrelBackCold-SolenoidBarrel" rmax="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
-        </cryo_back>
-        <cryo_side sensitive="false">
-          <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoBarrelFrontCold" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-CryoBarrelBackCold-SolenoidBarrel" dz="BarCryoECal_dz"/>
-        </cryo_side>
+        <cryo_side_cold sensitive="false">
+          <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm+CryoAirGapThickness+CryoBarrelFrontCold" rmax="BarCryoECal_rmax-CryoBarrelBackWarm-CryoBarrelBackCold-SolenoidBarrel-CryoAirGapThickness" dz="BarCryoECalCold_dz"/>
+        </cryo_side_cold>
+	<cryo_side_warm sensitive="false">
+          <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm" rmax="BarCryoECal_rmax-CryoBarrelBackWarm" dz="BarCryoECalWarm_dz"/>
+        </cryo_side_warm>
       </cryostat>
       <calorimeter name="EM_barrel">
         <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
-        <dimensions rmin="EMBarrel_rmin" rmax="EMBarrel_rmax" dz="EMBarrel_dz" offset="-InclinationAngle"/>
+        <dimensions rmin="EMBarrel_rmin" rmax="EMBarrel_rmax" dz="EMBarrel_dz" dim_z="EMBarrel_warm_dz" offset="-InclinationAngle"/>
         <active thickness="LAr_thickness">
           <material name="LAr"/>
           <!-- overlap offset is a specific feature of the construction; do not change! -->
