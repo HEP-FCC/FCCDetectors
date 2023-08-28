@@ -104,6 +104,7 @@
       <dimensions rmin="BarCryoECal_rmin" rmax="BarCryoECal_rmax" dz="BarCryoECalWarm_dz" vis="ecal_envelope"/>
       <cryostat name="ECAL_Cryo">
         <material name="Aluminum"/>
+<<<<<<< HEAD
         <cryo_front_warm sentive="false">
           <dimensions rmin="BarCryoECal_rmin" rmax = "BarCryoECal_rmin+CryoBarrelFrontWarm" dz="BarCryoECalWarm_dz"/>
         </cryo_front_warm>
@@ -125,6 +126,12 @@
 	<cryo_side_warm sensitive="false">
           <dimensions rmin="BarCryoECal_rmin+CryoBarrelFrontWarm" rmax="BarCryoECal_rmax-CryoBarrelBackWarm" dz="BarCryoECalWarm_dz"/>
         </cryo_side_warm>
+=======
+        <dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoBarrelFront" rmax1="BarCryoECal_rmax-CryoBarrelBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
+        <front sensitive="false"/> <!-- inner wall of the cryostat -->
+        <side sensitive="false"/> <!-- both sides of the cryostat -->
+        <back sensitive="false"/> <!-- outer wall of the cryostat -->
+>>>>>>> origin
       </cryostat>
       <calorimeter name="EM_barrel">
         <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->
