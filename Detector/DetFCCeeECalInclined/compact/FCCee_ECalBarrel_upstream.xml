@@ -11,7 +11,9 @@
     </comment>
   </info>
 
-  <define><constant name="BarECal_rmax" value="3840*mm"/>
+  <define>
+    <!-- Redefinition of a constant from Detector/DetFCCeeIDEA-LAr/compact/FCCee_DectDimensions.xml -->
+    <constant name="BarECal_rmax" value="3840*mm"/>
     <!-- Inclination angle of the lead plates -->
     <constant name="InclinationAngle" value="50*degree"/>
     <!-- thickness of active volume between two absorber plates at barrel Rmin, measured perpendicular to the readout plate -->
