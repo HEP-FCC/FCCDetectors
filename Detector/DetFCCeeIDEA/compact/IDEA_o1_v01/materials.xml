@@ -358,8 +358,8 @@
 
   <material name="CF4" formula="CF4" state="gas">
     <D value="0.00372" unit="g/cm3" />
-    <fraction n="1" ref="C"/>
-    <fraction n="4" ref="F"/>
+    <composite n="1" ref="C"/>
+    <composite n="4" ref="F"/>
   </material>
 
   <material name="ARCO2CF4" state="gas">
