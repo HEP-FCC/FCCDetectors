@@ -52,13 +52,8 @@ static dd4hep::Ref_t createSimpleSensitiveLayeredCylinder_o1_v00(dd4hep::Detecto
       dd4hep::xml::Dimension sdType(xmlElement.child(_U(sensitive)));// if called outside of the loop it breaks existing configs without sensitive layers
       sensDet.setType(sdType.typeStr());
       layerVolume.setSensitiveDetector(sensDet);
-      try {
-         layerPlacedVolume.addPhysVolID("layer", sensitiveLayerIndex);
-         sensitiveLayerIndex++;
-       }
-      catch (...) {
-        std::cout << "Error: you must include a field 'layer' in your readout. \n";
-             }
+      layerPlacedVolume.addPhysVolID("layer", sensitiveLayerIndex);
+      sensitiveLayerIndex++;
     }
     layer.m_node = layers.next();
   }
