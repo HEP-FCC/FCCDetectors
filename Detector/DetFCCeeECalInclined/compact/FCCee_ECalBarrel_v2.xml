@@ -10,7 +10,7 @@
         status="development"
         version="1.0">
     <comment>
-      Settings for the inclined EM calorimeter.
+      Settings for the inclined EM calorimeter using FCCee factory (EmCaloBarrelInclinedFCCee).
       The barrel is filled with liquid argon. Passive material includes lead in the middle and steal on the outside, glued together.
       Passive plates are inclined by a certain angle from the radial direction.
       In between of two passive plates there is a readout.
