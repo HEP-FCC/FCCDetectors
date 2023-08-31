@@ -36,6 +36,7 @@
   <include ref="HOMAbsorber.xml"/>
   <include ref="../../DetFCCeeCLD/compact/FCCee_o2_v02/Vertex.xml"/>-->
   <include ref="DriftChamber.xml"/>
+  <include ref="MuonSystem.xml"/>
   <!--include ref="Calorimeter.xml"/-->
 
 </lccdd>
