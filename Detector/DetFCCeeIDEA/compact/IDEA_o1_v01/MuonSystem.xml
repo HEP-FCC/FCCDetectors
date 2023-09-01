@@ -47,17 +47,17 @@
   <readouts>
     <readout name="MuonChamberBarrelReadout"> 
       <segmentation type="ProjectiveCylinder" phi_bins="3066" theta_bins="900"/>   <!-- Depending on cell size 1cm*1cm  -->
-      <id>system:4,layer:2,theta:10,phi:12</id>
+      <id>system:4,layer:2,theta:10,phi:-12</id>
     </readout>
 
     <readout name="MuonChamberPositiveEndcapReadout">
       <segmentation type="ProjectiveCylinder" phi_bins="1500" theta_bins="900"/>
-      <id>system:4,layer:2,theta:10,phi:11</id>
+      <id>system:4,layer:2,theta:10,phi:-11</id>
     </readout>
 
     <readout name="MuonChamberNegativeEndcapReadout">
       <segmentation type="ProjectiveCylinder" phi_bins="1500" theta_bins="900"/>
-      <id>system:4,layer:2,theta:10,phi:11</id>
+      <id>system:4,layer:2,theta:10,phi:-11</id>
     </readout>
   </readouts>
 
@@ -127,7 +127,7 @@
 
 
     <!-- Positve E n d C a p - -->
-    <detector name="PositiveMuonEndcap" type="SimpleSensitiveLayeredCylinder_o1_v00"  vis="MuonVisEnv" id="42" readout="MuonChamberPositiveEndcapReadout">
+    <detector name="MuonPositiveEndcap" type="SimpleSensitiveLayeredCylinder_o1_v00"  vis="MuonVisEnv" id="42" readout="MuonChamberPositiveEndcapReadout">
       <sensitive type="SimpleTrackerSD"/>
       <dimensions rmin="EndcapInnerRadius" rmax="EndcapOuterRadius" dz="EndcapLength/2.0" z_offset="EndcapZOffset" material="Air"/>
       <!-- 1st Endcap mRWELL layer -->
@@ -183,7 +183,7 @@
 
 
     <!-- Negative E n d C a p -->
-    <detector name="NegativeMuonEndcap" type="SimpleSensitiveLayeredCylinder_o1_v00"  vis="MuonVisEnv" id="43" readout="MuonChamberNegativeEndcapReadout">
+    <detector name="MuonNegativeEndcap" type="SimpleSensitiveLayeredCylinder_o1_v00"  vis="MuonVisEnv" id="43" readout="MuonChamberNegativeEndcapReadout">
       <sensitive type="SimpleTrackerSD"/>
       <dimensions rmin="EndcapInnerRadius" rmax="EndcapOuterRadius" dz="EndcapLength/2.0" z_offset="-EndcapZOffset" material="Air"/>
 
