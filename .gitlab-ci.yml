@@ -9,6 +9,7 @@ generate-root:
     - cvmfs
   stage: .pre
   script:
+    - yum install -y glibc-devel
     - source /cvmfs/sw.hsf.org/key4hep/setup.sh
     - mkdir -p build install
     - cd build
