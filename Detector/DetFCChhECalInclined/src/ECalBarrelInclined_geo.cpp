@@ -186,6 +186,15 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
   uint numPlanes =
       round(M_PI / asin((passiveThickness + activeThickness + readoutThickness) / (2. * caloDim.rmin() * cos(angle))));
 
+  // The following code checks if the xml geometry file contains a constant defining
+  // the number of planes in the barrel. In that case, it makes the program abort
+  // if the number of planes in the xml is different from the one calculated from
+  // the geometry. This is because the number of plane information (retrieved from the
+  // xml) is used in other parts of the code (the readout for the FCC-ee ECAL with
+  // inclined modules). In principle the code above should be refactored so that the number
+  // of planes is one of the inputs of the calculation and other geometrical parameters
+  // are adjusted accordingly. This is left for the future, and we use the workaround
+  // below to enforce for the time being that the number of planes is "correct"
   int nModules = -1;
   try {
     nModules = aLcdd.constant<int>("ECalBarrelNumPlanes");
@@ -199,7 +208,6 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
     // make the code crash (incidentSvc does not work)
      assert(nModules == numPlanes);
   }
-  //std::cout << "Number of modules read from detector metadata and used in readout class: " << m_nModules << std::endl;
   double dPhi = 2. * M_PI / numPlanes;
   lLog << MSG::INFO << "number of passive plates = " << numPlanes << " azim. angle difference =  " << dPhi << endmsg;
   lLog << MSG::INFO << " distance at inner radius (cm) = " << 2. * M_PI * caloDim.rmin() / numPlanes << "\n"
