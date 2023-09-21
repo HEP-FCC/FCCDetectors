@@ -24,8 +24,11 @@ public:
   /// destructor
   virtual ~FCCSWGridModuleThetaMerged() = default;
 
-  /// read nmodules from detector metadata
+  /// read n(modules) from detector metadata
   void GetNModulesFromGeom();
+
+  /// read n(layers) from detector metadata
+  void GetNLayersFromGeom();
   
   /**  Determine the local position based on the cell ID.
    *   @param[in] aCellId ID of a cell.
@@ -59,20 +62,30 @@ public:
    *   @param[in] layer
    *   return The number of merged cells in theta
    */
-  inline int mergedThetaCells(const int layer) const { return m_mergedCellsTheta[layer]; }
+  inline int mergedThetaCells(const int layer) const {
+    if (layer<m_mergedCellsTheta.size())
+      return m_mergedCellsTheta[layer];
+    else
+      return 1;
+  }
   /**  Get the number of merged modules (inclined in phi)
    *   @param[in] layer
-   *   return The number of merged cells in theta
+   *   return The number of merged modules
    */
-  inline int mergedModules(const int layer) const { return m_mergedModules[layer]; }
-  /**  Get the number of modules
+  inline int mergedModules(const int layer) const {
+    if (layer<m_mergedModules.size())
+      return m_mergedModules[layer];
+    else
+      return 1;
+  }
+  /**  Get the total number of modules of detector
    *   return The number of modules (as it was set by the user in the xml file..)
    */
   inline int nModules() const { return m_nModules; }
-  /**  Set the number of modules
-   *   return The number of modules (as it was set by the user in the xml file..)
+  /**  Get the number of layers
+   *   return The number of layers
    */
-  inline void setNModules(const int nModules) { m_nModules = nModules; }
+  inline int nLayers() const { return m_nLayers; }
   /**  Get the field name used for the layer
    *   return The field name for the layer.
    */
@@ -92,9 +105,12 @@ protected:
   /// vector of number of modules to be merged for each layer
   std::vector<int> m_mergedModules;
 
-  /// to be seen how to retrieve this initialization step from the geometry
   /// number of modules (or, equivalently, the deltaPhi between adjacent modules)
   int m_nModules;
+
+  /// number of layers (from the geometry)
+  int m_nLayers;
+  
 };
 }
 }

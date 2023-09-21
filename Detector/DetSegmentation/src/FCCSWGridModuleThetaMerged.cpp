@@ -18,6 +18,7 @@ FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const std::string& cellEn
   registerParameter("mergedCells_Theta", "Numbers of merged cells in theta per layer", m_mergedCellsTheta, std::vector<int>());
   registerParameter("mergedModules", "Numbers of merged modules per layer", m_mergedModules, std::vector<int>());
   GetNModulesFromGeom();
+  GetNLayersFromGeom();
 }
 
 FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const BitFieldCoder* decoder) : GridTheta(decoder) {
@@ -29,9 +30,9 @@ FCCSWGridModuleThetaMerged::FCCSWGridModuleThetaMerged(const BitFieldCoder* deco
   registerIdentifier("identifier_layer", "Cell ID identifier for layer", m_layerID, "layer");
   registerIdentifier("identifier_module", "Cell ID identifier for module", m_moduleID, "module");
   registerParameter("mergedCells_Theta", "Numbers of merged cells in theta per layer", m_mergedCellsTheta, std::vector<int>());
-  registerParameter("mergedModules", "Numbers of merged cells in phi per layer", m_mergedModules, std::vector<int>());
-  registerParameter("nModules", "Number of modules", m_nModules, 1545);
+  registerParameter("mergedModules", "Numbers of merged modules per layer", m_mergedModules, std::vector<int>());
   GetNModulesFromGeom();
+  GetNLayersFromGeom();
 }
 
 void FCCSWGridModuleThetaMerged::GetNModulesFromGeom() {
@@ -45,6 +46,19 @@ void FCCSWGridModuleThetaMerged::GetNModulesFromGeom() {
   }
   std::cout << "Number of modules read from detector metadata and used in readout class: " << m_nModules << std::endl;
 }
+
+void FCCSWGridModuleThetaMerged::GetNLayersFromGeom() {
+  dd4hep::Detector* dd4hepgeo = &(dd4hep::Detector::getInstance());
+  try {
+    m_nLayers = dd4hepgeo->constant<int>("ECalBarrelNumLayers");
+  }
+  catch(...) {
+    std::cout << "Number of layers not found in detector metadata, exiting..." << std::endl;
+    exit(1);
+  }
+  std::cout << "Number of layers read from detector metadata and used in readout class: " << m_nLayers << std::endl;
+}
+
 /// determine the local position based on the cell ID
 Vector3D FCCSWGridModuleThetaMerged::position(const CellID& cID) const {
 

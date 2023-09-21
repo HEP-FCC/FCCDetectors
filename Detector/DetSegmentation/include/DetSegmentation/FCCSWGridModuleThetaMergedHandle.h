@@ -70,7 +70,6 @@ public:
     return access()->implementation->cellID(local, global, volID);
   }
 
-
   /// access the grid size in theta
   inline double gridSizeTheta() const { return access()->implementation->gridSizeTheta(); }
 
@@ -83,19 +82,17 @@ public:
   /// access the number of modules
   inline int nModules() const { return access()->implementation->nModules(); }
 
+  /// access the number of layers
+  inline int nLayers() const { return access()->implementation->nLayers(); }
+
   /// access the number of merged modules for given layer
   inline int mergedModules(const int layer) const { return access()->implementation->mergedModules(layer); }
-
 
   /// set the coordinate offset in theta
   inline void setOffsetTheta(double offset) const { access()->implementation->setOffsetTheta(offset); }
 
   /// set the grid size in theta
   inline void setGridSizeTheta(double cellSize) const { access()->implementation->setGridSizeTheta(cellSize); }
-
-  /// set the number of modules
-  inline void setNModules(int nModules) const { access()->implementation->setNModules(nModules); }
-
 
   /// access the field name used for theta
   inline const std::string& fieldNameTheta() const { return access()->implementation->fieldNameTheta(); }
@@ -108,12 +105,12 @@ public:
 
 
   /** \brief Returns a std::vector<double> of the cellDimensions of the given cell ID
-      in natural order of dimensions (dPhi, dTheta)
+      in natural order of dimensions (nModules, dTheta)
 
       Returns a std::vector of the cellDimensions of the given cell ID
-      \param cellID is ignored as all cells have the same dimension
+      \param cellID
       \return std::vector<double> size 2:
-      -# size in phi
+      -# size in module
       -# size in theta
   */
   inline std::vector<double> cellDimensions(const CellID& /*id*/) const {

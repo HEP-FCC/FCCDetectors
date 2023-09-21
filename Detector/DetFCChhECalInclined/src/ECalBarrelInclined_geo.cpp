@@ -66,6 +66,25 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
     layersTotalHeight += layer.repeat() * layer.thickness();
   }
   lLog << MSG::DEBUG << "Number of layers: " << numLayers << " total thickness " << layersTotalHeight << endmsg;
+  // The following code checks if the xml geometry file contains a constant defining
+  // the number of layers the barrel. In that case, it makes the program abort
+  // if the number of planes in the xml is different from the one calculated from
+  // the geometry. This is because the number of layers is needed
+  // in other parts of the code (the readout for the FCC-ee ECAL with
+  // inclined modules).
+  int nLayers = -1;
+  try {
+    nLayers = aLcdd.constant<int>("ECalBarrelNumLayers");
+  }
+  catch(...) {
+    ;
+  }
+  if (nLayers > 0 && nLayers != numLayers) {
+    lLog << MSG::ERROR << "Incorrect number of layers (ECalBarrelNumLayers) in xml file!" << endmsg;
+    // todo: incidentSvc->fireIncident(Incident("ECalConstruction", "GeometryFailure"));
+    // make the code crash (incidentSvc does not work)
+     assert(nLayers == numLayers);
+  }
 
   dd4hep::xml::DetElement readout = calo.child(_Unicode(readout));
   std::string readoutMaterial = readout.materialStr();
@@ -203,7 +222,7 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
     ;
   }
   if (nModules > 0 && nModules != numPlanes) {
-    lLog << MSG::ERROR << "Incorrect number of planes in xml file!" << endmsg;
+    lLog << MSG::ERROR << "Incorrect number of planes (ECalBarrelNumPlanes) in xml file!" << endmsg;
     // todo: incidentSvc->fireIncident(Incident("ECalConstruction", "GeometryFailure"));
     // make the code crash (incidentSvc does not work)
      assert(nModules == numPlanes);
