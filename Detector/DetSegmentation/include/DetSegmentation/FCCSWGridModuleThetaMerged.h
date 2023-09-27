@@ -63,7 +63,7 @@ public:
    *   return The number of merged cells in theta
    */
   inline int mergedThetaCells(const int layer) const {
-    if (layer<m_mergedCellsTheta.size())
+    if (layer < (int) m_mergedCellsTheta.size())
       return m_mergedCellsTheta[layer];
     else
       return 1;
@@ -73,7 +73,7 @@ public:
    *   return The number of merged modules
    */
   inline int mergedModules(const int layer) const {
-    if (layer<m_mergedModules.size())
+    if (layer < (int) m_mergedModules.size())
       return m_mergedModules[layer];
     else
       return 1;

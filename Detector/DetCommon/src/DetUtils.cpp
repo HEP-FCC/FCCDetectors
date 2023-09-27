@@ -16,6 +16,10 @@
 #define MM_2_CM 0.1
 #endif
 
+// GM for debug
+#include <iostream>
+
+#include <unordered_set>
 
 namespace det {
 namespace utils {
@@ -78,7 +82,7 @@ std::vector<std::vector<uint>> combinations(int N, int K) {
 
 std::vector<std::vector<int>> permutations(int K) {
   std::vector<std::vector<int>> indexes;
-  int N = pow(2, K);  // number of permutations with repetition of 2 numbers (0,1)
+  int N = pow(2, K);  // number of permutations with repetition of 2 numbers (-1,1)
   for (int i = 0; i < N; i++) {
     // permutation = binary representation of i
     std::vector<int> tmp;
@@ -94,11 +98,13 @@ std::vector<std::vector<int>> permutations(int K) {
   return indexes;
 }
 
+// use it for field module/phi
 int cyclicNeighbour(int aCyclicId, std::pair<int, int> aFieldExtremes) {
+  int nBins = aFieldExtremes.second - aFieldExtremes.first + 1;
   if (aCyclicId < aFieldExtremes.first) {
-    return aFieldExtremes.second + aCyclicId;
+    return  (aFieldExtremes.second + 1 - ((aFieldExtremes.first - aCyclicId) % nBins) );
   } else if (aCyclicId > aFieldExtremes.second) {
-    return aCyclicId % (aFieldExtremes.second + 1);
+    return ( ((aCyclicId - aFieldExtremes.first) % nBins) + aFieldExtremes.first) ;
   }
   return aCyclicId;
 }
@@ -111,7 +117,11 @@ std::vector<uint64_t> neighbours(const dd4hep::DDSegmentation::BitFieldCoder& aD
   dd4hep::DDSegmentation::CellID cID = aCellId;
   for (uint itField = 0; itField < aFieldNames.size(); itField++) {
     const auto& field = aFieldNames[itField];
-    dd4hep::DDSegmentation::CellID id = aDecoder.get(cID,field);
+    // note: get(..) returns a FieldID i.e. a int64_t
+    // while CellID (used previously) is a uint64_t
+    // similarly, the second argument of set(..)
+    // is signed (FieldID) rather than unsigned (CellID)
+    int id = aDecoder.get(cID,field);
     if (aFieldCyclic[itField]) {
       aDecoder[field].set(cID, cyclicNeighbour(id - 1, aFieldExtremes[itField]));
       neighbours.emplace_back(cID);
@@ -119,16 +129,248 @@ std::vector<uint64_t> neighbours(const dd4hep::DDSegmentation::BitFieldCoder& aD
       neighbours.emplace_back(cID);
     } else {
       if (id > aFieldExtremes[itField].first) {
-        aDecoder.set(cID, field, id - 1);
+        aDecoder[field].set(cID, id - 1);
         neighbours.emplace_back(cID);
       }
       if (id < aFieldExtremes[itField].second) {
-        aDecoder.set(cID, field, id + 1);
+        aDecoder[field].set(cID, id + 1);
         neighbours.emplace_back(cID);
       }
     }
-    aDecoder.set(cID, field, id);
+    aDecoder[field].set(cID, id);
   }
+  if (aDiagonal) {
+    std::vector<int> fieldIds;  // initial IDs
+    fieldIds.assign(aFieldNames.size(), 0);
+    // for each field get current Id
+    for (uint iField = 0; iField < aFieldNames.size(); iField++) {
+      const auto& field = aFieldNames[iField];
+      fieldIds[iField] = aDecoder.get(cID, field);
+    }
+    for (uint iLength = aFieldNames.size(); iLength > 1; iLength--) {
+      // get all combinations for a given length
+      const auto& indexes = combinations(aFieldNames.size(), iLength);
+      for (uint iComb = 0; iComb < indexes.size(); iComb++) {
+        // for current combination get all permutations of +- 1 operation on IDs
+        const auto& calculation = permutations(iLength);
+        // do the increase/decrease of bitfield
+        for (uint iCalc = 0; iCalc < calculation.size(); iCalc++) {
+          // set new Ids for each field combination
+          bool add = true;
+          for (uint iField = 0; iField < indexes[iComb].size(); iField++) {
+            if (aFieldCyclic[indexes[iComb][iField]]) {
+              aDecoder[aFieldNames[indexes[iComb][iField]]].set(cID, cyclicNeighbour(fieldIds[indexes[iComb][iField]] + calculation[iCalc][iField],
+                                                                                     aFieldExtremes[indexes[iComb][iField]]) );
+            } else if ((calculation[iCalc][iField] > 0 &&
+                        fieldIds[indexes[iComb][iField]] < aFieldExtremes[indexes[iComb][iField]].second) ||
+                       (calculation[iCalc][iField] < 0 &&
+                        fieldIds[indexes[iComb][iField]] > aFieldExtremes[indexes[iComb][iField]].first)) {
+              aDecoder[aFieldNames[indexes[iComb][iField]]].set(cID, fieldIds[indexes[iComb][iField]] + calculation[iCalc][iField]);
+            } else {
+              add = false;
+            }
+          }
+          // add new cellId to neighbours (unless it's beyond extrema)
+          if (add) {
+            neighbours.emplace_back(cID);
+          }
+          // reset ids
+          for (uint iField = 0; iField < indexes[iComb].size(); iField++) {
+            aDecoder[aFieldNames[indexes[iComb][iField]]].set(cID, fieldIds[indexes[iComb][iField]]);
+          }
+        }
+      }
+    }
+  }
+  return neighbours;
+}
+
+// use it for module-theta merged readout (FCCSWGridModuleThetaMerged)
+std::vector<uint64_t> neighbours_ModuleThetaMerged(const dd4hep::DDSegmentation::FCCSWGridModuleThetaMerged& aSeg,
+                                 const dd4hep::DDSegmentation::BitFieldCoder& aDecoder,
+                                 const std::vector<std::string>& aFieldNames,
+                                 const std::vector<std::pair<int, int>>& aFieldExtremes, uint64_t aCellId,
+                                 const std::vector<bool>& aFieldCyclic, bool aDiagonal) {
+  std::vector<uint64_t> neighbours;
+  int nLayer = aDecoder.get(aCellId, aSeg.fieldNameLayer());
+  dd4hep::DDSegmentation::CellID cID = aCellId;
+
+  for (uint itField = 0; itField < aFieldNames.size(); itField++) {
+    // retrieve name of field and corresponding value in cellID
+    const auto& field = aFieldNames[itField];
+    //dd4hep::DDSegmentation::CellID id = aDecoder.get(aCellId, field);
+    int id = aDecoder.get(aCellId, field);
+
+    if (field == aSeg.fieldNameLayer()) {
+      // for neighbours across different layers, we have to take into
+      // account that merging along module and/or theta could be different
+      // so one cell in layer N could be neighbour to several in layer N+-1
+      //dd4hep::DDSegmentation::CellID module_id = aDecoder.get(aCellId, aSeg.fieldNameModule());
+      //dd4hep::DDSegmentation::CellID theta_id = aDecoder.get(aCellId, aSeg.fieldNameTheta());
+      int module_id = aDecoder.get(aCellId, aSeg.fieldNameModule());
+      int theta_id = aDecoder.get(aCellId, aSeg.fieldNameTheta());
+
+      /*
+      // for inner layer (N-1)
+      if (id > aFieldExtremes[itField].first) {
+        aDecoder.set(cID, field, id - 1);
+        if (aSeg.mergedModules(nLayer) == aSeg.mergedModules(nLayer-1)) {
+	  // if the numbers of merged cells across 2 layers are the same we just do +-1
+          neighbours.emplace_back(cID);
+        } else {
+	  // otherwise, we need to do some math
+	  // note: even if number of merged cells in layer-1 is larger, a cell
+	  // in layer could neighbour more than one cell in layer-1 if the merged
+	  // cells are not aligned, for example if cells are grouped by 3 in a layer
+	  // and by 4 in the next one, cell 435 in the former (which groups together
+	  // 435-436-437) will be neighbour to cells 432 and 436 of the latter
+	  // this might introduce duplicates, we will remove them later
+	  // another issue is that it could add spurious cells beyond the maximum module number
+	  // to prevent this we would need to know the max module number in layer -1
+	  // which would require modifying this function passing the extrema for all layers
+	  // instead of the extrema only for a certain layer
+	  // this border effect is also present in the original method..
+          for (int i=0; i < aSeg.mergedModules(nLayer); i++) {
+            aDecoder.set(cID, aSeg.fieldNameModule(), (module_id + i) - ((module_id + i) % aSeg.mergedModules(nLayer-1)));
+            neighbours.emplace_back(cID);
+	  }
+        }
+	// reset module ID
+	aDecoder.set(cID, aSeg.fieldNameModule(), module_id);
+
+        // do the same for theta
+	// this might introduce some duplicates
+        if (aSeg.mergedThetaCells(nLayer) == aSeg.mergedThetaCells(nLayer-1)) {
+	  // if the numbers of merged cells across 2 layers are the same we just do +-1
+          neighbours.emplace_back(cID);
+        } else {
+          for (int i=0; i < aSeg.mergedThetaCells(nLayer); i++) {
+            aDecoder.set(cID, aSeg.fieldNameTheta(), (theta_id + i) - ((theta_id + i) % aSeg.mergedThetaCells(nLayer-1)));
+            neighbours.emplace_back(cID);
+	  }
+        }
+	// reset theta
+	aDecoder.set(cID, aSeg.fieldNameTheta(), theta_id);
+      }
+      // for outer layer (N+1)
+      if (id < aFieldExtremes[itField].second) {
+        aDecoder.set(cID, field, id + 1);
+        if (aSeg.mergedModules(nLayer) == aSeg.mergedModules(nLayer+1)) {
+          neighbours.emplace_back(cID);
+	  // note: in theta, there can be border effects leading to cells outside of
+	  // the detector volume to be added - consider the case of a theta cell at z=zmax
+	  // then in outer layer the cell with same thetaID could be beyond zmax
+	  // anyway these corresponds to regions outside the acceptance of the full calo
+	  // so probably in clusters that get dropped because outside of fiducial region
+        } else {
+	  for (int i=0; i < aSeg.mergedModules(nLayer); i++) {
+            aDecoder.set(cID, aSeg.fieldNameModule(), (module_id + i) - ((module_id + i) % aSeg.mergedModules(nLayer+1)));
+            neighbours.emplace_back(cID);
+	  }
+        }
+	// reset module ID
+	aDecoder.set(cID, aSet.fieldNameModule(), module_id);
+	// do the same for theta
+	// this might introduce some duplicates
+        if (aSeg.mergedThetaCells(nLayer) == aSeg.mergedThetaCells(nLayer+1)) {
+          neighbours.emplace_back(cID);
+        } else {
+          for (int i=0; i < aSeg.mergedThetaCells(nLayer); i++) {
+            aDecoder.set(cID, aSeg.fieldNameTheta(), (theta_id + i) - ((theta_id + i) % aSeg.mergedThetaCells(nLayer+1)));
+            neighbours.emplace_back(cID);
+	  }
+        }
+	// reset theta
+	aDecoder.set(cID, aSeg.fieldNameTheta(), theta_id);
+      }
+    }
+    */
+      for (int deltaLayer = -1; deltaLayer<2; deltaLayer+=2) {
+	// no neighbours in layer N-1 for innermost layer
+	if (id == aFieldExtremes[itField].first && deltaLayer<0) continue;
+	// and in layer N+1 for outermost layer
+	if (id == aFieldExtremes[itField].second && deltaLayer>0) continue;
+
+	// set layer field of neighbour cell
+        aDecoder.set(cID, field, id + deltaLayer);
+
+	// find the neighbour(s) in module and theta
+	// if the numbers of module (theta) merged cells across 2 layers are the
+	// same then we just take the same module (theta) ID
+	// otherwise, we need to do some math to account for the different mergings
+	// note: even if number of merged cells in layer-1 is larger, a cell
+	// in layer could neighbour more than one cell in layer-1 if the merged
+	// cells are not aligned, for example if cells are grouped by 3 in a layer
+	// and by 4 in the next one, cell 435 in the former (which groups together
+	// 435-436-437) will be neighbour to cells 432 and 436 of the latter
+	// this might introduce duplicates, we will remove them later
+	// another issue is that it could add spurious cells beyond the maximum module number
+	// to prevent this we would need to know the max module number in layer -1
+	// which would require modifying this function passing the extrema for all layers
+	// instead of the extrema only for a certain layer
+	// this border effect is also present in the original method..
+	std::vector<int> neighbourModules;
+        if (aSeg.mergedModules(nLayer) == aSeg.mergedModules(nLayer+deltaLayer)) {
+          neighbourModules.emplace_back(module_id);
+        }
+	else {
+          for (int i=0; i < aSeg.mergedModules(nLayer); i++) {
+            neighbourModules.emplace_back((module_id + i) - ((module_id + i) % aSeg.mergedModules(nLayer+deltaLayer)));
+	  }
+        }
+	std::vector<int> neighbourThetaCells;
+        if (aSeg.mergedThetaCells(nLayer) == aSeg.mergedThetaCells(nLayer+deltaLayer)) {
+	  neighbourThetaCells.emplace_back(theta_id);
+	}
+	else {
+	  for (int i=0; i < aSeg.mergedThetaCells(nLayer); i++) {
+	    neighbourThetaCells.emplace_back((theta_id + i) - ((theta_id + i) % aSeg.mergedThetaCells(nLayer+deltaLayer)));
+	  }
+	}
+	for (unsigned int i=0 ; i < neighbourModules.size(); i++) {
+	  aDecoder.set(cID, aSeg.fieldNameModule(), neighbourModules[i]);
+	  for (unsigned int j=0 ; j < neighbourThetaCells.size(); j++) {
+	    aDecoder.set(cID, aSeg.fieldNameTheta(), neighbourThetaCells[j]);
+	    neighbours.emplace_back(cID);
+	  }
+	}
+      }
+      // reset module and theta of cellID
+      aDecoder.set(cID, aSeg.fieldNameModule(), module_id);
+      aDecoder.set(cID, aSeg.fieldNameTheta(), theta_id);
+    }
+    // for neighbours in module/theta direction, do +-nMergedCells instead of +-1
+    else if (field == aSeg.fieldNameModule()) {
+      int newid = cyclicNeighbour(id + aSeg.mergedModules(nLayer), aFieldExtremes[itField]);
+      // the following line is needed in case the number of modules is not
+      // a multiple of the number of merged modules
+      // for instance if nModules=1545 and mergedModules =2
+      // the last module, 1544, is neighbour of 0, but
+      // cyclicNeighbour(1546) will return 1
+      newid -= (newid % aSeg.mergedModules(nLayer));
+      aDecoder[field].set(cID, newid);
+      neighbours.emplace_back(cID);
+
+      newid = cyclicNeighbour(id - aSeg.mergedModules(nLayer), aFieldExtremes[itField]);
+      newid -= (newid % aSeg.mergedModules(nLayer));
+      aDecoder[field].set(cID, newid);
+      neighbours.emplace_back(cID);
+    }
+    else if (field == aSeg.fieldNameTheta()) {
+      if (id-aSeg.mergedThetaCells(nLayer) >= aFieldExtremes[itField].first) {
+        aDecoder[field].set(cID, id - aSeg.mergedThetaCells(nLayer));
+        neighbours.emplace_back(cID);
+      }
+      if (id+aSeg.mergedThetaCells(nLayer) <= aFieldExtremes[itField].second) {
+        aDecoder[field].set(cID, id + aSeg.mergedThetaCells(nLayer));
+        neighbours.emplace_back(cID);
+      }
+    }
+    // restore cellID
+    aDecoder[field].set(cID, id);
+  }
+
+  // Diagonal case : TODO
   if (aDiagonal) {
     std::vector<int> fieldIds;  // initial IDs
     fieldIds.assign(aFieldNames.size(), 0);
@@ -172,6 +414,11 @@ std::vector<uint64_t> neighbours(const dd4hep::DDSegmentation::BitFieldCoder& aD
       }
     }
   }
+  // remove duplicates
+  std::unordered_set<uint64_t> s;
+  for (uint64_t i : neighbours)
+    s.insert(i);
+  neighbours.assign( s.begin(), s.end() );
   return neighbours;
 }
 
@@ -265,6 +512,11 @@ std::array<double, 2> tubeEtaExtremes(uint64_t aVolumeId) {
   // eta segmentation calculate maximum eta from the inner radius (no offset is taken into account)
   double maxEta = 0;
   double minEta = 0;
+
+  double rIn = sizes.x();
+  double rOut = sizes.y();
+  double dZ = sizes.z();
+
   // check if it is a cylinder centred at z=0
   dd4hep::VolumeManager volMgr = dd4hep::Detector::getInstance().volumeManager();
   auto detelement = volMgr.lookupDetElement(aVolumeId);
@@ -272,16 +524,76 @@ std::array<double, 2> tubeEtaExtremes(uint64_t aVolumeId) {
   double outGlobal[3];
   double inLocal[] = {0, 0, 0};  // to get middle of the volume
   transformMatrix.LocalToMaster(inLocal, outGlobal);
-  if (outGlobal[2] < 1e-10) {
+  double zCenter = outGlobal[2];
+  if (fabs(zCenter) < 1e-10) {
     // this assumes cylinder centred at z=0
-    maxEta = CLHEP::Hep3Vector(sizes.x(), 0, sizes.z()).eta();
+    maxEta = CLHEP::Hep3Vector(rIn, 0, dZ).eta();
     minEta = -maxEta;
   } else {
+    // GM: I think this calculation is not correct
+    /*
     maxEta = CLHEP::Hep3Vector(sizes.x(), 0, std::max(sizes.z() + outGlobal[2], -sizes.z() + outGlobal[2])).eta();
     minEta = CLHEP::Hep3Vector(sizes.y(), 0, std::min(sizes.z() + outGlobal[2], -sizes.z() + outGlobal[2])).eta();
+    */
+    maxEta = std::max(
+		      CLHEP::Hep3Vector(rIn, 0, zCenter+dZ).eta(),
+		      CLHEP::Hep3Vector(rOut, 0, zCenter+dZ).eta()
+		      );
+    minEta = std::min(
+		      CLHEP::Hep3Vector(rIn, 0, zCenter-dZ).eta(),
+		      CLHEP::Hep3Vector(rOut, 0, zCenter-dZ).eta()
+		      );
   }
   return {minEta, maxEta};
 }
+
+// GM: unnneded, kept for debug, will remove before merge
+/*
+std::array<double, 2> tubeThetaExtremes(uint64_t aVolumeId) {
+  // get x-y-z sizes of cylinder
+  auto sizes = tubeDimensions(aVolumeId);
+  if (sizes.mag() == 0) {
+    // if it is not a cylinder maybe it is a cone (same calculation for extremes)
+    sizes = coneDimensions(aVolumeId);
+    if (sizes.mag() == 0) {
+      return {0, 0};
+    }
+  }
+  // for some reason the code does not arrive here,
+  // it looks like a cylinder is not found and thus
+  // the envelope is used instead
+  double rIn = sizes.x();
+  double rOut = sizes.y();
+  double dZ = sizes.z();
+  // theta segmentation calculate maximum theta from the inner radius (no offset is taken into account)
+  double maxTheta = 0;
+  double minTheta = 0;
+  // check if it is a cylinder centred at z=0
+  dd4hep::VolumeManager volMgr = dd4hep::Detector::getInstance().volumeManager();
+  auto detelement = volMgr.lookupDetElement(aVolumeId);
+  const auto& transformMatrix = detelement.nominal().worldTransformation();
+  double outGlobal[3];
+  double inLocal[] = {0, 0, 0};  // to get middle of the volume
+  transformMatrix.LocalToMaster(inLocal, outGlobal);
+  double zCenter = outGlobal[2];
+  if (fabs(zCenter) < 1e-6) {
+    // this assumes cylinder centred at z=0
+    minTheta = CLHEP::Hep3Vector(rIn, 0, dZ).theta();
+    maxTheta = M_PI-minTheta;
+  } else {
+    // need max/min vs rOut case if origin is not inside volume of detector
+    maxTheta = std::max(
+			CLHEP::Hep3Vector(rIn, 0, zCenter - dZ).theta(),
+			CLHEP::Hep3Vector(rOut, 0, zCenter - dZ).theta()
+			);
+    minTheta = std::min(
+			CLHEP::Hep3Vector(rIn, 0, zCenter + dZ).theta(),
+			CLHEP::Hep3Vector(rOut, 0, zCenter + dZ).theta()
+			);
+  }
+  return {minTheta, maxTheta};
+}
+*/
 
 std::array<double, 2> envelopeEtaExtremes (uint64_t aVolumeId) {
   dd4hep::VolumeManager volMgr = dd4hep::Detector::getInstance().volumeManager();
@@ -314,6 +626,41 @@ std::array<double, 2> envelopeEtaExtremes (uint64_t aVolumeId) {
   return {minEta, maxEta};
 }
 
+// GM: unnneded, kept for debug, will remove before merge
+/*
+std::array<double, 2> envelopeThetaExtremes (uint64_t aVolumeId) {
+  dd4hep::VolumeManager volMgr = dd4hep::Detector::getInstance().volumeManager();
+  auto detelement = volMgr.lookupDetElement(aVolumeId);
+  const auto& transformMatrix = detelement.nominal().worldTransformation();
+  // calculate values of theta in all possible corners of the envelope
+  auto dim = envelopeDimensions(aVolumeId);
+  double minTheta = 0;
+  double maxTheta = 0;
+  for (uint i = 0; i < 8; i++) {
+    // coefficients to get all combinations of corners
+    int iX = -1 + 2 * ((i / 2) % 2);
+    int iY = -1 + 2 * (i % 2);
+    int iZ = -1 + 2 * (i / 4);
+    double outDimGlobal[3];
+    double inDimLocal[] = {iX * dim.x(), iY * dim.y(), iZ * dim.z()};
+    transformMatrix.LocalToMaster(inDimLocal, outDimGlobal);
+    double theta = CLHEP::Hep3Vector(outDimGlobal[0], outDimGlobal[1], outDimGlobal[2]).theta();
+    if (i == 0) {
+      minTheta = theta;
+      maxTheta = theta;
+    }
+    if (theta < minTheta) {
+      minTheta = theta;
+    }
+    if (theta > maxTheta) {
+      maxTheta = theta;
+    }
+  }
+  // std::cout << "DEBUG: minTheta = " << minTheta << " maxTheta = " << maxTheta << std::endl;
+  return {minTheta, maxTheta};
+}
+*/
+
 std::array<double, 2> volumeEtaExtremes(uint64_t aVolumeId) {
   // try if volume is a cylinder/disc
   auto etaExtremes = tubeEtaExtremes(aVolumeId);
@@ -323,6 +670,19 @@ std::array<double, 2> volumeEtaExtremes(uint64_t aVolumeId) {
     return envelopeEtaExtremes(aVolumeId);
   }
 }
+
+// GM: unnneded, kept for debug, will remove before merge
+/*
+std::array<double, 2> volumeThetaExtremes(uint64_t aVolumeId) {
+  // try if volume is a cylinder/disc
+  auto thetaExtremes = tubeThetaExtremes(aVolumeId);
+  if (thetaExtremes[0] != 0 or thetaExtremes[1] != 0) {
+    return thetaExtremes;
+  } else {
+    return envelopeThetaExtremes(aVolumeId);
+  }
+}
+*/
 
 std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentation::FCCSWGridPhiEta& aSeg) {
   // get segmentation number of bins in phi
@@ -336,6 +696,60 @@ std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentati
   uint cellsEta = ceil(( etaExtremes[1] - etaExtremes[0] - etaCellSize ) / 2 / etaCellSize) * 2 + 1;
   uint minEtaID = int(floor((etaExtremes[0] + 0.5 * etaCellSize - aSeg.offsetEta()) / etaCellSize));
   return {phiCellNumber, cellsEta, minEtaID};
+}
+
+std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentation::FCCSWGridPhiTheta& aSeg) {
+  uint phiCellNumber = aSeg.phiBins();
+  double thetaCellSize = aSeg.gridSizeTheta();
+  auto etaExtremes = volumeEtaExtremes(aVolumeId);
+  double thetaMin = 2.*atan(exp(-etaExtremes[1]));
+  double thetaMax = 2.*atan(exp(-etaExtremes[0]));
+
+  // GM debug - remove before merge
+  /*
+  auto thetaExtremes = volumeThetaExtremes(aVolumeId);
+  std::cout << thetaMin << " " << thetaExtremes[0] << std::endl;
+  std::cout << thetaMax << " " << thetaExtremes[1] << std::endl;
+  assert(abs(thetaMin-thetaExtremes[0])<1e-7);
+  assert(abs(thetaMax-thetaExtremes[1])<1e-7);
+  */
+  uint cellsTheta = ceil(( thetaMax - thetaMin - thetaCellSize ) / 2 / thetaCellSize) * 2 + 1;
+  uint minThetaID = int(floor((thetaMin + 0.5 * thetaCellSize - aSeg.offsetTheta()) / thetaCellSize));
+  return {phiCellNumber, cellsTheta, minThetaID};
+}
+
+std::array<uint, 3> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentation::FCCSWGridModuleThetaMerged& aSeg) {
+
+  const dd4hep::DDSegmentation::BitFieldCoder* aDecoder = aSeg.decoder();
+  int nLayer = aDecoder->get(aVolumeId, aSeg.fieldNameLayer());
+  // + 0.5 to avoid integer division
+  uint moduleCellNumber = ceil((aSeg.nModules() + 0.5) / aSeg.mergedModules(nLayer));
+  // get minimum and maximum theta of volume
+  auto etaExtremes = volumeEtaExtremes(aVolumeId);
+  double thetaMin = 2.*atan(exp(-etaExtremes[1]));
+  double thetaMax = 2.*atan(exp(-etaExtremes[0]));
+  // GM debug - remove before merge
+  /*
+  auto thetaExtremes = volumeThetaExtremes(aVolumeId);
+  std::cout << thetaMin << " " << thetaExtremes[0] << std::endl;
+  std::cout << thetaMax << " " << thetaExtremes[1] << std::endl;
+  assert(abs(thetaMin - thetaExtremes[0]) < 1e-7);
+  assert(abs(thetaMax - thetaExtremes[1]) < 1e-7);
+  */
+
+  // convert to minimum and maximum theta bins
+  double thetaCellSize = aSeg.gridSizeTheta();
+  double thetaOffset = aSeg.offsetTheta();
+  uint minThetaID = int(floor((thetaMin + 0.5 * thetaCellSize - thetaOffset) / thetaCellSize));
+  uint maxThetaID = int(floor((thetaMax + 0.5 * thetaCellSize - thetaOffset) / thetaCellSize));
+  // correct minThetaID and maxThetaID for merging
+  uint mergedThetaCells = aSeg.mergedThetaCells(nLayer);
+  minThetaID -= (minThetaID % mergedThetaCells);
+  maxThetaID -= (maxThetaID % mergedThetaCells);
+  uint cellsTheta = 1 + (maxThetaID - minThetaID)/ mergedThetaCells;
+  // GM debug - remove before merge
+  //std::cout << "DEBUG: layer = " << nLayer << " moduleCellNumber = " << moduleCellNumber << " cellsTheta = " << cellsTheta << " minThetaID = " << minThetaID << std::endl;
+  return {moduleCellNumber, cellsTheta, minThetaID};
 }
 
 std::array<uint, 2> numberOfCells(uint64_t aVolumeId, const dd4hep::DDSegmentation::PolarGridRPhi& aSeg) {
