@@ -23,7 +23,8 @@
     <!-- Inclination angle of the lead plates -->
     <constant name="InclinationAngle" value="50*degree"/>
     <!-- thickness of active volume between two absorber plates at barrel Rmin, measured perpendicular to the readout plate -->
-    <constant name="LArGapThickness" value="1.239749*2*mm"/>
+    <!--constant name="LArGapThickness" value="1.239749*2*mm"/-->
+    <constant name="LArGapThickness" value="1.256*2*mm"/>
 
     <!-- Air margin, thicknesses of cryostat and LAr bath -->
     <constant name="AirMarginThickness" value="54*mm"/>    <!-- Space holder for air gap between cryostat vessels --> 
@@ -58,7 +59,7 @@
     <!-- When employing trapezoidal planes Pb_thickness corresponds to the minimum thickness, i.e at the front of the calo -->
     <constant name="Pb_thickness" value="1.80*mm"/>
     <constant name="planeLength" value="-EMBarrel_rmin*cos(InclinationAngle) + sqrt(EMBarrel_rmax*EMBarrel_rmax - EMBarrel_rmin*EMBarrel_rmin*sin(InclinationAngle)*sin(InclinationAngle))"/>
-    <constant name="ECalBarrelNumPlanes" value="1545"/>
+    <constant name="ECalBarrelNumPlanes" value="1536"/>
     <constant name="ECalBarrelNumLayers" value="12"/>
     <constant name="phi" value="asin(planeLength / EMBarrel_rmax * sin(InclinationAngle))"/>
     <!-- use a different value for Pb_thickness_max when employing trapezoidal planes -->
@@ -83,13 +84,13 @@
     <!-- readout for the simulation, with the baseline merging: 2x along the module direction in each layer; 4x along theta in each layer except layer 1 -->
     <!-- the lists mergedCells_Theta and mergedModules define the number of cells to group together in the theta and module direction as a function of the layer -->
     <readout name="ECalBarrelModuleThetaMerged">
-      <segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="4 1 4 4 4 4 4 4 4 4 4 4" mergedModules="2 2 2 2 2 2 2 2 2 2 2 2" grid_size_theta="0.009817477/4" offset_theta="0.5902785"/>
+      <segmentation type="FCCSWGridModuleThetaMerged" nModules="1536" mergedCells_Theta="4 1 4 4 4 4 4 4 4 4 4 4" mergedModules="2 2 2 2 2 2 2 2 2 2 2 2" grid_size_theta="0.009817477/4" offset_theta="0.5902785"/>
         <id>system:4,cryo:1,type:3,subtype:3,layer:8,module:11,theta:10</id>
     </readout>
 
     <!-- example of adding a second readout for the reconstruction, to compare the two -->
     <readout name="ECalBarrelModuleThetaMerged2">
-      <segmentation type="FCCSWGridModuleThetaMerged" nModules="1545" mergedCells_Theta="2 4 2 1 2 1 2 2 1 1 1 2" mergedModules="2 1 1 2 2 1 1 1 2 2 1 1" grid_size_theta="0.009817477/4" offset_theta="0.5902785"/>
+      <segmentation type="FCCSWGridModuleThetaMerged" nModules="1536" mergedCells_Theta="2 4 2 1 2 1 2 2 1 1 1 2" mergedModules="2 1 1 2 2 1 1 1 2 2 1 1" grid_size_theta="0.009817477/4" offset_theta="0.5902785"/>
         <id>system:4,cryo:1,type:3,subtype:3,layer:8,module:11,theta:10</id>
     </readout>
   </readouts>
