@@ -100,7 +100,6 @@ std::vector<uint64_t> neighbours_ModuleThetaMerged(const dd4hep::DDSegmentation:
                                  const std::vector<std::string>& aFieldNames,
                                  const std::vector<std::pair<int, int>>& aFieldExtremes,
                                  uint64_t aCellId,
-                                 const std::vector<bool>& aFieldCyclic = {false, false, false, false},
                                  bool aDiagonal = false);
 
 /** Get minimal and maximal values that can be decoded in the fields of the bitfield.
