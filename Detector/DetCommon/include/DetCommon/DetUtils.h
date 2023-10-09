@@ -134,30 +134,17 @@ CLHEP::Hep3Vector coneDimensions(uint64_t aVolumeId);
  */
 std::array<double, 2> tubeEtaExtremes(uint64_t aVolumeId);
 
-// GM: unnneded, kept for debug, will remove before merge
-  /** Get the extrema in theta of a tube or cone volume.
- *   @param[in] aVolumeId The volume ID.
- *   return Pseudorapidity extrema (eta_min, eta_max).
- */
-//std::array<double, 2> tubeThetaExtremes(uint64_t aVolumeId);
-
 /** Get the extrema in pseudorapidity of an envelope.
  *   @param[in] aVolumeId The volume ID.
  *   return Pseudorapidity extrema (eta_min, eta_max).
  */
 std::array<double, 2> envelopeEtaExtremes(uint64_t aVolumeId);
 
-// GM UNNEEDED  CAN USE PREVIOUS ONE AND CONVERT ETA TO THETA
-//std::array<double, 2> envelopeThetaExtremes(uint64_t aVolumeId);
-
 /** Get the extrema in pseudorapidity of a volume. First try to match tube or cone, if it fails use an envelope shape.
  *   @param[in] aVolumeId The volume ID.
  *   return Pseudorapidity extrema (eta_min, eta_max).
  */
 std::array<double, 2> volumeEtaExtremes(uint64_t aVolumeId);
-
-// GM UNNEEDED  CAN USE PREVIOUS ONE AND CONVERT ETA TO THETA
-//std::array<double, 2> volumeThetaExtremes(uint64_t aVolumeId);
 
 /** Get the number of cells for the volume and a given Cartesian XY segmentation.
  *   For an example see: Test/TestReconstruction/tests/options/testcellcountingXYZ.py.
