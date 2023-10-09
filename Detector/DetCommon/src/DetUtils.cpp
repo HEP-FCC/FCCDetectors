@@ -188,226 +188,163 @@ std::vector<uint64_t> neighbours(const dd4hep::DDSegmentation::BitFieldCoder& aD
 std::vector<uint64_t> neighbours_ModuleThetaMerged(const dd4hep::DDSegmentation::FCCSWGridModuleThetaMerged& aSeg,
 						   const dd4hep::DDSegmentation::BitFieldCoder& aDecoder,
 						   const std::vector<std::string>& aFieldNames,
-						   const std::vector<std::pair<int, int>>& aFieldExtremes, uint64_t aCellId,
+						   const std::vector<std::pair<int, int>>& aFieldExtremes,
+						   uint64_t aCellId,
 						   bool aDiagonal) {
-  std::vector<uint64_t> neighbours;
-  int nLayer = aDecoder.get(aCellId, aSeg.fieldNameLayer());
-  dd4hep::DDSegmentation::CellID cID = aCellId;
 
-  // find index of module in field extremes vector
-  int idModuleField = -1;
+  std::vector<uint64_t> neighbours;
+
+  // check that field names and extremes have the proper length
+  if (aFieldNames.size() != 3 || aFieldExtremes.size()!=3) {
+    std::cout << "ERROR: the vectors aFieldNames and aFieldSizes should be of length = 3, corresponding to the theta/module/layer fields" << std::endl;
+    std::cout << "ERROR: will return empty neighbour map" << std::endl;
+    return neighbours;
+  }
+
+  // find index of layer, module and theta in field extremes vector
+  int idModuleField(-1);
+  int idThetaField(-1);
+  int idLayerField(-1);
   for (uint itField = 0; itField < aFieldNames.size(); itField++) {
-    if (aFieldNames[itField] == aSeg.fieldNameModule()) {
+    if (aFieldNames[itField] == aSeg.fieldNameModule())
       idModuleField = (int) itField;
-      break;
-    }
+    else if (aFieldNames[itField] == aSeg.fieldNameTheta())
+      idThetaField = (int) itField;
+    else if (aFieldNames[itField] == aSeg.fieldNameLayer())
+      idLayerField = (int) itField;
+   
   }
   if (idModuleField < 0) {
     std::cout << "WARNING: module field " << aSeg.fieldNameModule() << " not found in aFieldNames vector" << std::endl;
     std::cout << "WARNING: will return empty neighbour map" << std::endl;
     return neighbours;
   }
+  if (idThetaField < 0) {
+    std::cout << "WARNING: theta field " << aSeg.fieldNameTheta() << " not found in aFieldNames vector" << std::endl;
+    std::cout << "WARNING: will return empty neighbour map" << std::endl;
+    return neighbours;
+  }
+  if (idLayerField < 0) {
+    std::cout << "WARNING: layer field " << aSeg.fieldNameLayer() << " not found in aFieldNames vector" << std::endl;
+    std::cout << "WARNING: will return empty neighbour map" << std::endl;
+    return neighbours;
+  }
+  
+  // retrieve layer/module/theta of cell under study
+  int layer_id = aDecoder.get(aCellId, aFieldNames[idLayerField]);
+  int module_id = aDecoder.get(aCellId, aFieldNames[idModuleField]);
+  int theta_id = aDecoder.get(aCellId, aFieldNames[idThetaField]);
 
   // now find the neighbours
-  for (uint itField = 0; itField < aFieldNames.size(); itField++) {
-    // retrieve name of field and corresponding value in cellID
-    const auto& field = aFieldNames[itField];
-    //dd4hep::DDSegmentation::CellID id = aDecoder.get(aCellId, field);
-    int id = aDecoder.get(aCellId, field);
+  dd4hep::DDSegmentation::CellID cID = aCellId;
 
-    if (field == aSeg.fieldNameLayer()) {
-
-      // for neighbours across different layers, we have to take into
-      // account that merging along module and/or theta could be different
-      // so one cell in layer N could be neighbour to several in layer N+-1
-      int module_id = aDecoder.get(aCellId, aSeg.fieldNameModule());
-      int theta_id = aDecoder.get(aCellId, aSeg.fieldNameTheta());
+  // for neighbours across different layers, we have to take into
+  // account that merging along module and/or theta could be different
+  // so one cell in layer N could be neighbour to several in layer N+-1
+  // The cells are classified in a different way whether they are
+  // direct neighbours (common surface), diagonal neighbours (common edge or vertex)
+  // or neither.
+  // To decide this, we need to check how the cells are related in both directions:
+  // neighbours (edge at least partially in common), diagonal neigbours (common vertex),
+  // none
+  int neighbourTypeModuleDir; // 0: not neighbour; 1: diagonal neighbour; 2: neighbour in module direction
+  int neighbourTypeThetaDir; // 0: not neighbour; 1: diagonal neighbour; 2: neighbour in module direction
+  
+  for (int deltaLayer = -1; deltaLayer<2; deltaLayer+=2) {
+    
+    // no neighbours in layer N-1 for innermost layer
+    if (layer_id == aFieldExtremes[idLayerField].first && deltaLayer<0) continue;
+    // and in layer N+1 for outermost layer
+    if (layer_id == aFieldExtremes[idLayerField].second && deltaLayer>0) continue;
+    
+    // set layer field of neighbour cell
+    aDecoder.set(cID, aSeg.fieldNameLayer(), layer_id + deltaLayer);
+    
+    // find the neighbour(s) in module and theta
+    // if the numbers of module (theta) merged cells across 2 layers are the
+    // same then we just take the same module (theta) ID
+    // otherwise, we need to do some math to account for the different mergings
+    // note: even if number of merged cells in layer-1 is larger, a cell
+    // in layer could neighbour more than one cell in layer-1 if the merged
+    // cells are not aligned, for example if cells are grouped by 3 in a layer
+    // and by 4 in the next one, cell 435 in the former (which groups together
+    // 435-436-437) will be neighbour to cells 432 and 436 of the latter
+    // this might introduce duplicates, we will remove them later
+    // another issue is that it could add spurious cells beyond the maximum module number
+    // to prevent this we would need to know the max module number in layer -1
+    // which would require modifying this function passing the extrema for all layers
+    // instead of the extrema only for a certain layer
+    // this border effect is also present in the original method..
+    for (int i=-1; i <= aSeg.mergedThetaCells(layer_id); i++) {
+      int theta_id_neighbour = (theta_id + i) - ((theta_id + i) % aSeg.mergedThetaCells(layer_id+deltaLayer));
+      if (theta_id_neighbour >= theta_id && theta_id_neighbour < (theta_id + aSeg.mergedThetaCells(layer_id))) neighbourTypeThetaDir = 2;
+      else if (theta_id_neighbour < theta_id && theta_id_neighbour > (theta_id - aSeg.mergedThetaCells(layer_id+deltaLayer))) neighbourTypeThetaDir = 2;
+      else if (theta_id_neighbour == (theta_id + aSeg.mergedThetaCells(layer_id))) neighbourTypeThetaDir = 1;
+      else if (theta_id_neighbour == (theta_id - aSeg.mergedThetaCells(layer_id+deltaLayer))) neighbourTypeThetaDir = 1;
+      else neighbourTypeThetaDir = 0;
       
-      // The cells are classified in a different way whether they are
-      // direct neighbours (common surface), diagonal neighbours (common edge or vertex)
-      // or neither.
-      // To decide this, we need to check how the cells are related in both directions:
-      // neighbours (edge at least partially in common), diagonal neigbours (common vertex),
-      // none
-      int neighbourTypeModuleDir; // 0: not neighbour; 1: diagonal neighbour; 2: neighbour in module direction
-      int neighbourTypeThetaDir; // 0: not neighbour; 1: diagonal neighbour; 2: neighbour in module direction
-
-      for (int deltaLayer = -1; deltaLayer<2; deltaLayer+=2) {
- 
-	// no neighbours in layer N-1 for innermost layer
-	if (id == aFieldExtremes[itField].first && deltaLayer<0) continue;
-	// and in layer N+1 for outermost layer
-	if (id == aFieldExtremes[itField].second && deltaLayer>0) continue;
-
-	// set layer field of neighbour cell
-        aDecoder.set(cID, field, id + deltaLayer);
-
-	// find the neighbour(s) in module and theta
-	// if the numbers of module (theta) merged cells across 2 layers are the
-	// same then we just take the same module (theta) ID
-	// otherwise, we need to do some math to account for the different mergings
-	// note: even if number of merged cells in layer-1 is larger, a cell
-	// in layer could neighbour more than one cell in layer-1 if the merged
-	// cells are not aligned, for example if cells are grouped by 3 in a layer
-	// and by 4 in the next one, cell 435 in the former (which groups together
-	// 435-436-437) will be neighbour to cells 432 and 436 of the latter
-	// this might introduce duplicates, we will remove them later
-	// another issue is that it could add spurious cells beyond the maximum module number
-	// to prevent this we would need to know the max module number in layer -1
-	// which would require modifying this function passing the extrema for all layers
-	// instead of the extrema only for a certain layer
-	// this border effect is also present in the original method..
-
-	// OLD VERSION
-	/*
-	std::vector<int> neighbourModules;
-        if (aSeg.mergedModules(nLayer) == aSeg.mergedModules(nLayer+deltaLayer)) {
-          neighbourModules.emplace_back(module_id);
-        }
-	else {
-          for (int i=0; i < aSeg.mergedModules(nLayer); i++) {
-            neighbourModules.emplace_back((module_id + i) - ((module_id + i) % aSeg.mergedModules(nLayer+deltaLayer)));
-	  }
-        }
-	std::vector<int> neighbourThetaCells;
-        if (aSeg.mergedThetaCells(nLayer) == aSeg.mergedThetaCells(nLayer+deltaLayer)) {
-	  neighbourThetaCells.emplace_back(theta_id);
+      // if there is no point of contact along theta, no need to check also for module direction
+      if (neighbourTypeThetaDir == 0) continue;
+      // if we are not considering diagonal neighbours, and cells in theta have only an edge in common, then skip
+      if (!aDiagonal && neighbourTypeThetaDir == 1) continue; 
+      // otherwise, check status along module direction
+      for (int j=-1; j <= aSeg.mergedModules(layer_id); j++) {
+	int module_id_neighbour = (module_id + j) - ((module_id + j) % aSeg.mergedModules(layer_id+deltaLayer));
+	int module_id_neighbour_cyclic = cyclicNeighbour(module_id_neighbour,
+							 aFieldExtremes[idModuleField]
+							 );
+	
+	if (module_id_neighbour >= module_id && module_id_neighbour < (module_id + aSeg.mergedModules(layer_id))) neighbourTypeModuleDir = 2;
+	else if (module_id_neighbour < module_id && module_id_neighbour > (module_id - aSeg.mergedModules(layer_id+deltaLayer))) neighbourTypeModuleDir = 2;
+	else if (module_id_neighbour == (module_id + aSeg.mergedModules(layer_id))) neighbourTypeModuleDir = 1;
+	else if (module_id_neighbour == (module_id - aSeg.mergedModules(layer_id+deltaLayer))) neighbourTypeModuleDir = 1;
+	else neighbourTypeModuleDir = 0;
+	
+	// if there is no point of contact along module, then skip
+	if (neighbourTypeModuleDir == 0) continue;
+	// otherwise: if neighbours along both module and theta, or along one of the two
+	// and we also consider diagonal neighbours, then add cells to list of neighbours
+	if ( (neighbourTypeModuleDir == 2 && neighbourTypeThetaDir==2) || 
+	     (aDiagonal && neighbourTypeThetaDir > 0 && neighbourTypeModuleDir>0) ) {
+	  aDecoder.set(cID, aSeg.fieldNameModule(), module_id_neighbour_cyclic);
+	  aDecoder.set(cID, aSeg.fieldNameTheta(), theta_id_neighbour);
+	  neighbours.emplace_back(cID);
 	}
-	else {
-	  for (int i=0; i < aSeg.mergedThetaCells(nLayer); i++) {
-	    neighbourThetaCells.emplace_back((theta_id + i) - ((theta_id + i) % aSeg.mergedThetaCells(nLayer+deltaLayer)));
-	  }
-	}
-	for (unsigned int i=0 ; i < neighbourModules.size(); i++) {
-	  aDecoder.set(cID, aSeg.fieldNameModule(), neighbourModules[i]);
-	  for (unsigned int j=0 ; j < neighbourThetaCells.size(); j++) {
-	    aDecoder.set(cID, aSeg.fieldNameTheta(), neighbourThetaCells[j]);
-	    neighbours.emplace_back(cID);
-	  }
-	}
-	*/
-
-	// NEW VERSION
-	for (int i=-1; i <= aSeg.mergedThetaCells(nLayer); i++) {
-	  int theta_id_neighbour = (theta_id + i) - ((theta_id + i) % aSeg.mergedThetaCells(nLayer+deltaLayer));
-	  if (theta_id_neighbour >= theta_id && theta_id_neighbour < (theta_id + aSeg.mergedThetaCells(nLayer))) neighbourTypeThetaDir = 2;
-	  else if (theta_id_neighbour < theta_id && theta_id_neighbour > (theta_id - aSeg.mergedThetaCells(nLayer+deltaLayer))) neighbourTypeThetaDir = 2;
-	  else if (theta_id_neighbour == (theta_id + aSeg.mergedThetaCells(nLayer))) neighbourTypeThetaDir = 1;
-	  else if (theta_id_neighbour == (theta_id - aSeg.mergedThetaCells(nLayer+deltaLayer))) neighbourTypeThetaDir = 1;
-	  else neighbourTypeThetaDir = 0;
-		  
-	  // if there is no point of contact along theta, no need to check also for module direction
-	  if (neighbourTypeThetaDir == 0) continue;
-	  // if we are not considering diagonal neighbours, and cells in theta have only an edge in common, then skip
-	  if (!aDiagonal && neighbourTypeThetaDir == 1) continue; 
-	  // otherwise, check status along module direction
-	  for (int j=-1; j <= aSeg.mergedModules(nLayer); j++) {
-	    int module_id_neighbour = (module_id + j) - ((module_id + j) % aSeg.mergedModules(nLayer+deltaLayer));
-	    int module_id_neighbour_cyclic = cyclicNeighbour(module_id_neighbour,
-							     aFieldExtremes[idModuleField]
-							     );
-
-	    if (module_id_neighbour >= module_id && module_id_neighbour < (module_id + aSeg.mergedModules(nLayer))) neighbourTypeModuleDir = 2;
-	    else if (module_id_neighbour < module_id && module_id_neighbour > (module_id - aSeg.mergedModules(nLayer+deltaLayer))) neighbourTypeModuleDir = 2;
-	    else if (module_id_neighbour == (module_id + aSeg.mergedModules(nLayer))) neighbourTypeModuleDir = 1;
-	    else if (module_id_neighbour == (module_id - aSeg.mergedModules(nLayer+deltaLayer))) neighbourTypeModuleDir = 1;
-	    else neighbourTypeModuleDir = 0;
-	  
-	    // if there is no point of contact along module, then skip
-	    if (neighbourTypeModuleDir == 0) continue;
-	    // otherwise: if neighbours along both module and theta, or along one of the two
-	    // and we also consider diagonal neighbours, then add cells to list of neighbours
-	    if ( (neighbourTypeModuleDir == 2 && neighbourTypeThetaDir==2) || 
-		 (aDiagonal && ((neighbourTypeThetaDir > 1) || (neighbourTypeModuleDir>1))) ) {
-	      aDecoder.set(cID, aSeg.fieldNameModule(), module_id_neighbour_cyclic);
-	      aDecoder.set(cID, aSeg.fieldNameTheta(), theta_id_neighbour);
-	      neighbours.emplace_back(cID);
-	    }
-	  }
-	}
-	// end NEW VERSION
-      }
-      // reset module and theta of cellID
-      aDecoder.set(cID, aSeg.fieldNameModule(), module_id);
-      aDecoder.set(cID, aSeg.fieldNameTheta(), theta_id);
-    }
-    // for neighbours in module/theta direction, do +-nMergedCells instead of +-1
-    else if (field == aSeg.fieldNameModule()) {
-      int newid = cyclicNeighbour(id + aSeg.mergedModules(nLayer), aFieldExtremes[itField]);
-      // the following line is needed in case the number of modules is not
-      // a multiple of the number of merged modules
-      // for instance if nModules=1545 and mergedModules =2
-      // the last module, 1544, is neighbour of 0, but
-      // cyclicNeighbour(1546) will return 1
-      newid -= (newid % aSeg.mergedModules(nLayer));
-      aDecoder[field].set(cID, newid);
-      neighbours.emplace_back(cID);
-
-      newid = cyclicNeighbour(id - aSeg.mergedModules(nLayer), aFieldExtremes[itField]);
-      newid -= (newid % aSeg.mergedModules(nLayer));
-      aDecoder[field].set(cID, newid);
-      neighbours.emplace_back(cID);
-    }
-    else if (field == aSeg.fieldNameTheta()) {
-      if (id-aSeg.mergedThetaCells(nLayer) >= aFieldExtremes[itField].first) {
-        aDecoder[field].set(cID, id - aSeg.mergedThetaCells(nLayer));
-        neighbours.emplace_back(cID);
-      }
-      if (id+aSeg.mergedThetaCells(nLayer) <= aFieldExtremes[itField].second) {
-        aDecoder[field].set(cID, id + aSeg.mergedThetaCells(nLayer));
-        neighbours.emplace_back(cID);
-      }
-    }
-    // restore cellID
-    aDecoder[field].set(cID, id);
-  }
-
-  // Diagonal case : TODO
-  /*
-  if (aDiagonal) {
-    std::vector<int> fieldIds;  // initial IDs
-    fieldIds.assign(aFieldNames.size(), 0);
-    // for each field get current Id
-    for (uint iField = 0; iField < aFieldNames.size(); iField++) {
-      const auto& field = aFieldNames[iField];
-      fieldIds[iField] = aDecoder.get(cID, field);
-    }
-    for (uint iLength = aFieldNames.size(); iLength > 1; iLength--) {
-      // get all combinations for a given length
-      const auto& indexes = combinations(aFieldNames.size(), iLength);
-      for (uint iComb = 0; iComb < indexes.size(); iComb++) {
-        // for current combination get all permutations of +- 1 operation on IDs
-        const auto& calculation = permutations(iLength);
-        // do the increase/decrease of bitfield
-        for (uint iCalc = 0; iCalc < calculation.size(); iCalc++) {
-          // set new Ids for each field combination
-          bool add = true;
-          for (uint iField = 0; iField < indexes[iComb].size(); iField++) {
-            if (aFieldCyclic[indexes[iComb][iField]]) {
-              aDecoder[aFieldNames[indexes[iComb][iField]]].set(cID, cyclicNeighbour(fieldIds[indexes[iComb][iField]] + calculation[iCalc][iField],
-										     aFieldExtremes[indexes[iComb][iField]]) );
-            } else if ((calculation[iCalc][iField] > 0 &&
-                        fieldIds[indexes[iComb][iField]] < aFieldExtremes[indexes[iComb][iField]].second) ||
-                       (calculation[iCalc][iField] < 0 &&
-                        fieldIds[indexes[iComb][iField]] > aFieldExtremes[indexes[iComb][iField]].first)) {
-              aDecoder[aFieldNames[indexes[iComb][iField]]].set(cID, fieldIds[indexes[iComb][iField]] + calculation[iCalc][iField]);
-            } else {
-              add = false;
-            }
-          }
-          // add new cellId to neighbours (unless it's beyond extrema)
-          if (add) {
-            neighbours.emplace_back(cID);
-          }
-          // reset ids
-          for (uint iField = 0; iField < indexes[iComb].size(); iField++) {
-            aDecoder[aFieldNames[indexes[iComb][iField]]].set(cID, fieldIds[indexes[iComb][iField]]);
-          }
-        }
       }
     }
   }
-  */
+  // reset cellID
+  // aDecoder.set(cID, aSeg.fieldNameModule(), module_id);
+  // aDecoder.set(cID, aSeg.fieldNameTheta(), theta_id);
+
+  // for neighbours in module/theta direction at same layer_id, do +-nMergedCells instead of +-1
+  aDecoder.set(cID, aSeg.fieldNameLayer(), layer_id);
+  // loop over theta cells
+  for (int i=-1; i<=1; i++) {
+    // calculate theta_id of neighbour
+    int theta_id_neighbour = theta_id + i*aSeg.mergedThetaCells(layer_id);
+    // check that it is within the ranges
+    if (
+	(theta_id_neighbour < aFieldExtremes[idThetaField].first) ||
+	(theta_id_neighbour > aFieldExtremes[idThetaField].second)
+	) continue;
+    // set theta_id of cell ID
+    aDecoder[aSeg.fieldNameTheta()].set(cID, theta_id + i*aSeg.mergedThetaCells(layer_id));
+    // loop over modules
+    for (int j=-1; j<=1; j++) {
+      // skip the cell under study (i==j==0)
+      if (i==0 && j==0) continue;
+      // calculate module_id of neighbour
+      int newid = cyclicNeighbour(module_id + j*aSeg.mergedModules(layer_id), aFieldExtremes[idModuleField]);
+      newid -= (newid % aSeg.mergedModules(layer_id));
+      // set module_if of cell ID
+      aDecoder[aSeg.fieldNameModule()].set(cID, newid);
+      // add cell to neighbour list
+      if ( i==0 || j==0 || aDiagonal ) { // first two conditions correspond to non diagonal neighbours
+	neighbours.emplace_back(cID);
+      }
+    }
+  }
   
   // remove duplicates
   std::unordered_set<uint64_t> s;
