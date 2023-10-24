@@ -1,14 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0"
-       xmlns:xs="http://www.w3.org/2001/XMLSchema"
-       xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
+<?xml version="1.0" ?><lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
 
-  <info name="FCCee_ECalBarrel"
-        title="Settings for FCCee Inclined ECal Barrel Calorimeter"
-        author="M.Aleksa,J.Faltova,A.Zaborowska, V. Volkl"
-        url="no"
-        status="development"
-        version="1.0">
+  <info name="FCCee_ECalBarrel" title="Settings for FCCee Inclined ECal Barrel Calorimeter" author="M.Aleksa,J.Faltova,A.Zaborowska, V. Volkl" url="no" status="development" version="1.0">
     <comment>
       Settings for the inclined EM calorimeter.
       The barrel is filled with liquid argon. Passive material includes lead in the middle and steal on the outside, glued together.
@@ -118,20 +110,20 @@
         </active>
         <passive>
           <rotation angle="InclinationAngle"/>  <!-- inclination angle -->
-          <inner thickness="Pb_thickness" sensitive="false">
+          <inner thickness="Pb_thickness" sensitive="true">
             <material name="Lead"/>
           </inner>
-          <innerMax thickness="Pb_thickness_max" sensitive="false">
+          <innerMax thickness="Pb_thickness_max" sensitive="true">
             <material name="Lead"/>
           </innerMax>
-          <glue thickness="Glue_thickness" sensitive="false">
+          <glue thickness="Glue_thickness" sensitive="true">
             <material name="lArCaloGlue"/>
           </glue>
-          <outer thickness="Steel_thickness" sensitive="false">
+          <outer thickness="Steel_thickness" sensitive="true">
             <material name="lArCaloSteel"/>
           </outer>
         </passive>
-        <readout thickness="readout_thickness" sensitive="false">
+        <readout thickness="readout_thickness" sensitive="true">
           <material name="PCB"/>
         </readout>
         <layers> <!-- pcb electrode segmentation in the radial direction -->

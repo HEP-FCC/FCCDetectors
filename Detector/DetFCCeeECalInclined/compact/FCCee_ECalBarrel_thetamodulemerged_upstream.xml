@@ -1,14 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0"
-       xmlns:xs="http://www.w3.org/2001/XMLSchema"
-       xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
+<?xml version="1.0" ?><lccdd xmlns:compact="http://www.lcsim.org/schemas/compact/1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xs:noNamespaceSchemaLocation="http://www.lcsim.org/schemas/compact/1.0/compact.xsd">
 
-  <info name="FCCee_ECalBarrel"
-        title="Settings for FCCee Inclined ECal Barrel Calorimeter"
-        author="M.Aleksa,J.Faltova,A.Zaborowska, V. Volkl"
-        url="no"
-        status="development"
-        version="1.0">
+  <info name="FCCee_ECalBarrel" title="Settings for FCCee Inclined ECal Barrel Calorimeter" author="M.Aleksa,J.Faltova,A.Zaborowska, V. Volkl" url="no" status="development" version="1.0">
     <comment>
       Settings for the inclined EM calorimeter.
       The barrel is filled with liquid argon. Passive material includes lead in the middle and steal on the outside, glued together.
@@ -19,7 +11,7 @@
     </comment>
   </info>
 
-  <define>
+  <define><constant name="BarECal_rmax" value="3840*mm"/>
     <!-- Inclination angle of the lead plates -->
     <constant name="InclinationAngle" value="50*degree"/>
     <!-- thickness of active volume between two absorber plates at barrel Rmin, measured perpendicular to the readout plate -->
@@ -33,7 +25,7 @@
     <constant name="CryoBarrelFrontCold" value="3.8*mm"/>  <!-- Al solid equivalent of 0.043 X0 sandwich CFRP -->
     <constant name="CryoBarrelFront" value="CryoBarrelFrontWarm+CryoBarrelFrontCold"/>
 
-    <constant name="CryoBarrelBackCold" value="30*mm"/>   <!-- Al solid corresponding to 0.34 X0 -->
+    <constant name="CryoBarrelBackCold" value="1100*mm"/>   <!-- Al solid corresponding to 0.34 X0 -->
     <constant name="CryoBarrelBackWarm" value="2.7*mm"/>  <!-- Al solid equivalent of 0.03 X0 sandwich CFRP -->
     <constant name="SolenoidBarrel" value="70*mm"/>    <!-- Al solenoid with thickness of 0.8 X0 -->
     <constant name="CryoBarrelBack" value="CryoBarrelBackWarm+SolenoidBarrel+CryoBarrelBackCold"/>
@@ -103,9 +95,9 @@
       <cryostat name="ECAL_Cryo">
         <material name="Aluminum"/>
 	<dimensions rmin1="BarCryoECal_rmin" rmin2="BarCryoECal_rmin+CryoBarrelFront" rmax1="BarCryoECal_rmax-CryoBarrelBack" rmax2="BarCryoECal_rmax" dz="BarCryoECal_dz"/>
-        <front sensitive="false"/> <!-- inner wall of the cryostat -->
-        <side sensitive="false"/> <!-- both sides of the cryostat -->
-        <back sensitive="false"/> <!-- outer wall of the cryostat -->
+        <front sensitive="true"/> <!-- inner wall of the cryostat -->
+        <side sensitive="true"/> <!-- both sides of the cryostat -->
+        <back sensitive="true"/> <!-- outer wall of the cryostat -->
       </cryostat>
       <calorimeter name="EM_barrel">
         <!-- offset defines the numbering of the modules: module==0 for phi=0 direction -->

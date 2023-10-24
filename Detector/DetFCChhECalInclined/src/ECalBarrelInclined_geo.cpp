@@ -205,6 +205,11 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
   uint numPlanes =
       round(M_PI / asin((passiveThickness + activeThickness + readoutThickness) / (2. * caloDim.rmin() * cos(angle))));
 
+  double dPhi = 2. * M_PI / numPlanes;
+  lLog << MSG::INFO << "number of passive plates = " << numPlanes << " azim. angle difference =  " << dPhi << endmsg;
+  lLog << MSG::INFO << " distance at inner radius (cm) = " << 2. * M_PI * caloDim.rmin() / numPlanes << "\n"
+       << " distance at outer radius (cm) = " << 2. * M_PI * caloDim.rmax() / numPlanes << endmsg;
+
   // The following code checks if the xml geometry file contains a constant defining
   // the number of planes in the barrel. In that case, it makes the program abort
   // if the number of planes in the xml is different from the one calculated from
@@ -227,10 +232,6 @@ static dd4hep::detail::Ref_t createECalBarrelInclined(dd4hep::Detector& aLcdd,
     // make the code crash (incidentSvc does not work)
      assert(nModules == numPlanes);
   }
-  double dPhi = 2. * M_PI / numPlanes;
-  lLog << MSG::INFO << "number of passive plates = " << numPlanes << " azim. angle difference =  " << dPhi << endmsg;
-  lLog << MSG::INFO << " distance at inner radius (cm) = " << 2. * M_PI * caloDim.rmin() / numPlanes << "\n"
-       << " distance at outer radius (cm) = " << 2. * M_PI * caloDim.rmax() / numPlanes << endmsg;
   // Readout is in the middle between two passive planes
   double offsetPassivePhi = caloDim.offset() + dPhi / 2.;
   double offsetReadoutPhi = caloDim.offset() + 0;

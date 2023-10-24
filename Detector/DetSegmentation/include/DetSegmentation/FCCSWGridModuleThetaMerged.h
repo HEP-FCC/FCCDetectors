@@ -63,7 +63,7 @@ public:
    *   return The number of merged cells in theta
    */
   inline int mergedThetaCells(const int layer) const {
-    if (layer<m_mergedCellsTheta.size())
+    if (layer < (int) m_mergedCellsTheta.size())
       return m_mergedCellsTheta[layer];
     else
       return 1;
@@ -73,7 +73,7 @@ public:
    *   return The number of merged modules
    */
   inline int mergedModules(const int layer) const {
-    if (layer<m_mergedModules.size())
+    if (layer < (int) m_mergedModules.size())
       return m_mergedModules[layer];
     else
       return 1;
@@ -100,9 +100,9 @@ protected:
   std::string m_layerID;
   /// the field name used for the read-out module (can differ from module due to merging)
   std::string m_moduleID;
-  /// vector of number of cells to be merged along theta for each layer
+  /// vector of number of cells to be merged along theta for each layer (typically between 1 and 4)
   std::vector<int> m_mergedCellsTheta;
-  /// vector of number of modules to be merged for each layer
+  /// vector of number of modules to be merged for each layer (typically 1 or 2)
   std::vector<int> m_mergedModules;
 
   /// number of modules (or, equivalently, the deltaPhi between adjacent modules)
