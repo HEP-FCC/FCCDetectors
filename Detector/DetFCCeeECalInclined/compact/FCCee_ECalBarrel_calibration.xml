@@ -26,7 +26,7 @@
     <constant name="LArGapThickness" value="1.239749*2*mm"/>
 
     <!-- Air margin, thicknesses of cryostat and LAr bath -->
-    <constant name="AirMarginThickness" value="54*mm"/>    <!-- Space holder for air gap between cryostat vessels --> 
+    <constant name="AirMarginThickness" value="49*mm"/>    <!-- Space holder for air gap between cryostat vessels --> 
 
     <constant name="CryoBarrelFrontWarm" value="10*mm"/>   <!-- Al solid corresponding to 0.11 X0 -->
     <constant name="CryoBarrelFrontCold" value="3.8*mm"/>  <!-- Al solid equivalent of 0.043 X0 sandwich CFRP -->
