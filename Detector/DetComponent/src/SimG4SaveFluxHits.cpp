@@ -48,8 +48,8 @@ StatusCode SimG4SaveFluxHits::initialize() {
             << "Make sure you have GeoSvc and SimSvc in the right order in the configuration." << endmsg;
     return StatusCode::FAILURE;
   }
-  auto lcdd = m_geoSvc->lcdd();
-  auto allReadouts = lcdd->readouts();
+  auto det = m_geoSvc->getDetector();
+  auto allReadouts = det->readouts();
   for (auto& readoutName : m_readoutNames) {
     if (allReadouts.find(readoutName) == allReadouts.end()) {
       error() << "Readout " << readoutName << " not found! Please check tool configuration." << endmsg;
@@ -93,9 +93,9 @@ StatusCode SimG4SaveFluxHits::saveOutput(const G4Event& aEvent) {
       collect = collections->GetHC(iter_coll);
       if (std::find(m_readoutNames.begin(), m_readoutNames.end(), collect->GetName()) != m_readoutNames.end()) {
         // Add CellID encoding string to collection metadata
-        // auto lcdd = m_geoSvc->lcdd();
-        // auto allReadouts = lcdd->readouts();
-        // auto idspec = lcdd->idSpecification(collect->GetName());
+        // auto det = m_geoSvc->getDetector();
+        // auto allReadouts = det->readouts();
+        // auto idspec = det->idSpecification(collect->GetName());
         // auto field_str = idspec.fieldDescription();
         // auto& coll_md = m_podioDataSvc->getProvider().getCollectionMetaData( m_cellID.get()->getID() );
         // coll_md.setValue("CellIDEncodingString", field_str);
