@@ -2,7 +2,7 @@
 # Package: DetTrackerSimple
 ################################################################################
 
-install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/compact DESTINATION Detector/DetTrackerSimple)
+install(DIRECTORY ${CMAKE_CURRENT_LIST_DIR}/compact DESTINATION ${CMAKE_INSTALL_DATADIR}/${CMAKE_PROJECT_NAME}/Detector/DetTrackerSimple)
 
 file(GLOB sources src/*.cpp)
 add_dd4hep_plugin(DetTrackerSimple SHARED ${sources})
