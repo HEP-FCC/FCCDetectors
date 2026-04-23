@@ -29,6 +29,8 @@
     <constant name="world_z" value="world_size"/>
   </define>
 
+  <include ref="${DD4hepINSTALL}/DDDetectors/compact/detector_types.xml"/>
+
   <include ref="./FCCee_DectDimensions.xml" />
 
   <include ref="../../../DetFCCeeCommon/compact/Beampipe.xml"/>
