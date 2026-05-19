@@ -33,6 +33,11 @@
     <constant name="EMBarrel_rmin" value="BarCryoECal_rmin+CommonCryoThicknessFront+LArBathThicknessFront"/>
     <constant name="EMBarrel_rmax" value="BarCryoECal_rmax-CommonCryoThicknessBack-LArBathThicknessBack"/>
     <constant name="EMBarrel_dz" value="BarECal_dz-CommonCryoThicknessSide"/>
+    <!-- Bath with margin for safe inclination -->
+    <constant name="safeMargin" value="3*mm"/>
+    <constant name="Bath_rmin" value="EMBarrel_rmin - safeMargin"/>
+    <constant name="Bath_rmax" value="EMBarrel_rmax + safeMargin"/>
+
     <!-- thickness of active volume between two absorber plates, measuring perpendicular to the readout plate -->
     <constant name="LAr_thickness" value="2.306*mm"/>
     <!-- passive layer consists of lead in the middle and steel on the outside, glued -->
@@ -76,6 +81,10 @@
 	      <side sensitive="false"/> <!-- both sides of the cryostat -->
 	      <back sensitive="false"/> <!-- outer wall of the cryostat -->
       </cryostat>
+      <bath name="ECAL_bath">
+        <material name="LAr"/>
+        <dimensions rmin="Bath_rmin" rmax="Bath_rmax" dz="EMBarrel_dz"/>
+      </bath>
       <calorimeter name="EM_barrel">
 	      <dimensions rmin="EMBarrel_rmin" rmax="EMBarrel_rmax" dz="EMBarrel_dz" offset="-50/180*pi"/>
 	      <active thickness="LAr_thickness">
