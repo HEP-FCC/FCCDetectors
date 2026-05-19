@@ -28,7 +28,7 @@
             
             <type_flags type=" DetType_CALORIMETER + DetType_ELECTROMAGNETIC + DetType_ENDCAP"/>
 
-            <sensitive type="SimpleCalorimeterSD"/>
+            <sensitive type="FastSimCalorimeterSD"/>
 
             <envelope vis="ECALVis">
                 <shape type="BooleanShape" operation="Subtraction" material="Air">
