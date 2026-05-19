@@ -28,7 +28,7 @@
 
         <comment>Part of beampipe made of Beryllium</comment>
         
-        <detector name="BeBeampipe" type="DD4hep_Beampipe_o1_v01" insideTrackingVolume="true" nocore="true" vis="BeamPipeVis">
+        <detector name="BeBeampipe" type="DD4hep_Beampipe_o1_v01" insideTrackingVolume="true" nocore="true" vis="BeamPipeVis" region="BeampipeRegion">
             <parameter crossingangle="CrossingAngle" />
             <envelope vis="BlueVis">
                 <shape type="Assembly"/>
@@ -40,7 +40,7 @@
 
         </detector>
 
-	<detector name="BeamPipe" type="DD4hep_Beampipe_o1_v01" insideTrackingVolume="true" vis="BeamPipeVis" >
+	<detector name="BeamPipe" type="DD4hep_Beampipe_o1_v01" insideTrackingVolume="true" vis="BeamPipeVis" region="BeampipeRegion">
             <envelope vis="BlueVis">
                 <shape type="Assembly"/>
             </envelope>
@@ -75,7 +75,7 @@
 
 </detector>
 <comment>Full Cone Tungsten Shield</comment>
-<detector name="BeamPipeShield" type="DD4hep_Mask_o1_v01" insideTrackingVolume="true" vis="TantalumVis" >
+<detector name="BeamPipeShield" type="DD4hep_Mask_o1_v01" insideTrackingVolume="true" vis="TantalumVis" region="BeampipeRegion">
         <parameter crossingangle="CrossingAngle" />
 
         <comment>Before HOM space</comment>
@@ -99,7 +99,7 @@
         </detector>
 <comment>Asymmetric Tungsten Shield no Rotation</comment>
 
-<detector name="BeamPipeShield_noRot" type="DD4hep_Mask_o1_v01" insideTrackingVolume="true" vis="TantalumVis"  >
+<detector name="BeamPipeShield_noRot" type="DD4hep_Mask_o1_v01" insideTrackingVolume="true" vis="TantalumVis" region="BeampipeRegion">
         <parameter crossingangle="CrossingAngle" rotationX="true"/>
 
         <section type="Center"        
